@@ -1,0 +1,131 @@
+---
+title: "Generate and Review Synthetic OMOP Patients"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Generate and Review Synthetic OMOP Patients}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview
+
+This article shows an end-to-end workflow with `patientGenerator`:
+
+1. generate synthetic patients in OMOP CDM format with `patientChat`,
+2. inspect and curate those patients with `patientDesigner`,
+3. use Hecate concept search from the designer while editing concept IDs.
+
+```{r setup}
+library(patientGenerator)
+```
+
+## 1) Generate a synthetic cohort with patientChat
+
+`patientChat` is an R6 class that prompts an LLM and returns schema-constrained JSON.
+
+```{r chat-example, eval = FALSE}
+# OPENAI_API_KEY must be available in your environment
+generator <- patientChat$new(model = "gpt-5.2", echo = "none")
+
+generator$prompt(
+  paste(
+    "Generate exactly 5 synthetic patients in OMOP CDM v5.4.",
+    "Include one observation period and at least one condition occurrence per patient."
+  )
+)
+
+# Save to default test-set location managed by the package
+generator$save(name = "five-patients-demo")
+```
+
+### Optional: assist generation with a concept list
+
+If you provide a concept list (`concept_id`, `concept_name`, `domain_id`, etc.),
+`patientChat` can use it via the internal retrieval tool during generation.
+
+```{r chat-codelist, eval = FALSE}
+codelist <- readRDS(
+  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
+)
+
+generator <- patientChat$new(
+  model = "gpt-5.2",
+  codelist_data = codelist,
+  echo = "none"
+)
+
+generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
+```
+
+## 2) Review and edit generated cohorts in patientDesigner
+
+`patientDesigner()` starts a D3/Shiny application where you can load, review, and edit JSON test sets.
+
+```{r designer-open, eval = FALSE}
+patientDesigner()
+```
+
+Main capabilities in the app:
+
+- browse and load available JSON test sets,
+- edit `person`, `observation_period`, `condition_occurrence`, `drug_exposure`, and `measurement`,
+- inspect timeline and raw table outputs,
+- save updated cohorts back to JSON.
+
+You can also target a specific folder:
+
+```{r designer-path, eval = FALSE}
+patientDesigner(path = "/path/to/my/testsets")
+```
+
+## 3) Search concept codes with Hecate from the designer
+
+The concept search module in `patientDesigner` uses `hecateSearch()` under the hood.
+This helps you find OMOP concept IDs while filling concept fields.
+
+### Configure Hecate with environment variables
+
+```{r hecate-env, eval = FALSE}
+Sys.setenv(
+  HECATE_BASE_URL = "https://your-hecate-server/api",
+  HECATE_API_KEY = "your-api-key",
+  HECATE_TIMEOUT_MS = "15000"
+)
+```
+
+### Or configure with package options
+
+```{r hecate-options, eval = FALSE}
+options(patientgenerator.hecate = list(
+  base_url = "https://your-hecate-server/api",
+  timeout_ms = 15000,
+  api_key = "your-api-key"
+))
+```
+
+### Direct Hecate search example
+
+```{r hecate-search, eval = FALSE}
+res <- hecateSearch(
+  query = "hypertension",
+  domainId = "Condition",
+  standardConcept = "S",
+  limit = 20
+)
+
+head(res)
+```
+
+## Practical recommendations
+
+- Start with small cohorts (1 to 5 patients) to validate your prompts.
+- Keep prompts explicit about OMOP tables and required fields.
+- Use `patientDesigner` for quality control before sharing test sets.
+- Use Hecate filters (`domainId`, `standardConcept`) to reduce ambiguous concept matches.

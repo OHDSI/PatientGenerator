@@ -10,6 +10,7 @@
 # Package build/check artifacts
 /*.tar.gz
 /*.Rcheck/
+/benchmarks/
 
 # renv local state (keep renv.lock tracked)
 renv/library/
