@@ -27,6 +27,18 @@ test_that("patientChat benchmark across all available models for diabetes + sema
     testthat::skip("No models returned by availableModels().")
   }
 
+  # Optional filtering for targeted benchmark runs.
+  # Example:
+  #   PATIENTGENERATOR_MODEL_BENCHMARK_REGEX='^(gpt-5|gpt-5-mini|gpt-5-nano)$'
+  model_regex <- Sys.getenv("PATIENTGENERATOR_MODEL_BENCHMARK_REGEX", unset = "")
+  if (nzchar(model_regex)) {
+    models <- models[grepl(model_regex, models)]
+  }
+
+  if (length(models) == 0) {
+    testthat::skip("No models matched PATIENTGENERATOR_MODEL_BENCHMARK_REGEX.")
+  }
+
   benchmark_prompt <- paste(
     "Generate exactly 10 synthetic patients in OMOP-CDM v5.4.",
     "For each patient, include at least one condition_occurrence for diabetes mellitus.",

@@ -49,17 +49,13 @@ Expected output artifact:
 Set `results_csv` to your generated file path and re-knit.
 
 ```{r load-results}
-results_csv <- Sys.getenv("PATIENTGENERATOR_BENCHMARK_RESULTS_CSV", unset = "")
-
-if (!nzchar(results_csv)) {
-  # TODO: replace with your actual benchmark CSV path before publishing results.
-  results_csv <- "PATH/TO/patientChat_model_benchmark_results.csv"
-}
+default_results_csv <- "vignettes/data/patientChat_model_benchmark_results_gpt5_main_2026-02-28.csv"
+results_csv <- Sys.getenv("PATIENTGENERATOR_BENCHMARK_RESULTS_CSV", unset = default_results_csv)
 
 results <- if (file.exists(results_csv)) {
   utils::read.csv(results_csv, stringsAsFactors = FALSE)
 } else {
-  message("Benchmark CSV not found. Update `results_csv` and re-knit.")
+  message("Benchmark CSV not found. Set PATIENTGENERATOR_BENCHMARK_RESULTS_CSV and re-knit.")
   data.frame(
     model = character(),
     status = character(),
@@ -69,6 +65,28 @@ results <- if (file.exists(results_csv)) {
     error = character(),
     stringsAsFactors = FALSE
   )
+}
+```
+
+## Published snapshot (2026-02-28)
+
+The repository currently includes one published benchmark run for core GPT-5 models.
+
+```{r snapshot}
+if (nrow(results) > 0) {
+  successful <- results[results$status %in% c("success", "success_non_10"), , drop = FALSE]
+  failed <- results[results$status == "error", , drop = FALSE]
+
+  if (nrow(successful) > 0) {
+    best <- successful[which.min(successful$elapsed_seconds), , drop = FALSE]
+    cat(
+      "Fastest successful model:", best$model,
+      sprintf("(%.2f seconds).", best$elapsed_seconds), "\n"
+    )
+  }
+
+  cat("Successful runs:", nrow(successful), "\n")
+  cat("Failed runs:", nrow(failed), "\n")
 }
 ```
 
