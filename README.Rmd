@@ -104,4 +104,4 @@ options(patientgenerator.hecate = list(
 ## Learn more
 
 - Vignette: `vignette("synthetic-patient-workflow", package = "patientGenerator")`
-- Reference docs are available in the package website built with `pkgdown`.
+- Reference docs and benchmark results are published in the GitHub Pages documentation site.

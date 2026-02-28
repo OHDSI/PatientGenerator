@@ -1,0 +1,10 @@
+title: patientGenerator
+description: Generate and curate OMOP CDM synthetic patient test sets.
+baseurl: "/patientGenerator"
+url: "https://mi-erasmusmc.github.io"
+theme: minima
+markdown: kramdown
+header_pages:
+  - reference.md
+  - articles/synthetic-patient-workflow.md
+  - articles/patientchat-model-benchmark-results.md
