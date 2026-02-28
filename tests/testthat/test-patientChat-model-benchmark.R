@@ -50,6 +50,46 @@ test_that("patientChat benchmark across all available models for diabetes + sema
     gsub("[^A-Za-z0-9._-]", "_", x)
   }
 
+  plot_benchmark_results <- function(results, plot_file = NULL) {
+    if (!requireNamespace("ggplot2", quietly = TRUE)) {
+      message("ggplot2 not available; skipping benchmark plot generation.")
+      return(NULL)
+    }
+
+    plot_data <- results
+    plot_data$model <- factor(
+      plot_data$model,
+      levels = plot_data$model[order(plot_data$elapsed_seconds, decreasing = TRUE)]
+    )
+
+    p <- ggplot2::ggplot(
+      plot_data,
+      ggplot2::aes(x = model, y = elapsed_seconds, fill = status)
+    ) +
+      ggplot2::geom_col(width = 0.7) +
+      ggplot2::coord_flip() +
+      ggplot2::labs(
+        title = "patientChat benchmark by model",
+        subtitle = "Task: 10 OMOP patients with diabetes + semaglutide",
+        x = "Model",
+        y = "Elapsed seconds",
+        fill = "Status"
+      ) +
+      ggplot2::theme_minimal(base_size = 12)
+
+    if (!is.null(plot_file)) {
+      ggplot2::ggsave(
+        filename = plot_file,
+        plot = p,
+        width = 10,
+        height = 6,
+        dpi = 120
+      )
+    }
+
+    p
+  }
+
   out_dir_env <- Sys.getenv("PATIENTGENERATOR_MODEL_BENCHMARK_DIR", unset = "")
   out_dir <- if (nzchar(out_dir_env)) {
     out_dir_env
@@ -117,12 +157,21 @@ test_that("patientChat benchmark across all available models for diabetes + sema
 
   results_file <- file.path(out_dir, "patientChat_model_benchmark_results.csv")
   utils::write.csv(results, results_file, row.names = FALSE)
+  plot_file <- file.path(out_dir, "patientChat_model_benchmark_plot.png")
+  benchmark_plot <- plot_benchmark_results(results, plot_file = plot_file)
 
   message("Model benchmark output directory: ", out_dir)
   message("Model benchmark results file: ", results_file)
+  if (!is.null(benchmark_plot)) {
+    message("Model benchmark plot file: ", plot_file)
+    print(benchmark_plot)
+  }
   print(results)
 
   # Keep assertions minimal: this test is intended to collect benchmark data.
   testthat::expect_equal(nrow(results), length(models))
   testthat::expect_true(file.exists(results_file))
+  if (requireNamespace("ggplot2", quietly = TRUE)) {
+    testthat::expect_true(file.exists(plot_file))
+  }
 })
