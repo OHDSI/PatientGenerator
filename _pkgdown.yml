@@ -19,6 +19,7 @@ articles:
     navbar: Workflows
     contents:
       - synthetic-patient-workflow
+      - patientchat-model-benchmark-results
 
 reference:
   - title: Generation APIs
