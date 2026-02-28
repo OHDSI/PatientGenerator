@@ -24,7 +24,7 @@
 #' @importFrom R6 R6Class
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' generator <- patientChat$new()
 #' generator$prompt("Give me 5 patients")
 #' generator$save("my_test")

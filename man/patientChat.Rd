@@ -22,7 +22,7 @@ integration of search tools and functionality, and creating a set of patients
 to test analytical packages.
 }
 \examples{
-\donttest{
+\dontrun{
 generator <- patientChat$new()
 generator$prompt("Give me 5 patients")
 generator$save("my_test")
