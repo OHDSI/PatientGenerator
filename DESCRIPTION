@@ -11,6 +11,8 @@ Description: Tools to generate synthetic patient-level test datasets in the
     OMOP Common Data Model (CDM). Includes a chat-driven generator backed by
     large language models and an interactive Shiny designer for editing CDM
     test sets
+URL: https://github.com/mi-erasmusmc/patientGenerator
+BugReports: https://github.com/mi-erasmusmc/patientGenerator/issues
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -37,4 +39,6 @@ Imports:
 Suggests:
     knitr,
     rmarkdown
+VignetteBuilder: knitr
+Config/Needs/website: pkgdown
 Config/testthat/edition: 3

@@ -1,0 +1,41 @@
+template:
+  bootstrap: 5
+
+home:
+  title: patientGenerator
+  description: Generate and curate OMOP CDM synthetic patient test sets with LLM and D3 tooling.
+
+navbar:
+  structure:
+    left: [home, reference, articles]
+    right: [github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/mi-erasmusmc/patientGenerator
+
+articles:
+  - title: Workflows
+    navbar: Workflows
+    contents:
+      - synthetic-patient-workflow
+
+reference:
+  - title: Generation APIs
+    contents:
+      - patientChat
+      - patientChatNaive
+      - availableModels
+  - title: Design and Curation
+    contents:
+      - patientDesigner
+      - getTestSets
+      - conceptSearchUI
+      - conceptSearchServer
+  - title: Vocabulary Search
+    contents:
+      - hecateClient
+      - hecateSearch
+  - title: Utilities
+    contents:
+      - "%||%"
