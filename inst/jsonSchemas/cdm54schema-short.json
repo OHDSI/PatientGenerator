@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OMOP CDM 5.4 Subset Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "person",
+    "observation_period",
+    "drug_exposure",
+    "condition_occurrence"
+  ],
+  "properties": {
+    "person": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "person_id",
+          "gender_concept_id",
+          "year_of_birth",
+          "month_of_birth",
+          "day_of_birth",
+          "race_concept_id",
+          "ethnicity_concept_id",
+          "location_id",
+          "provider_id",
+          "care_site_id",
+          "person_source_value",
+          "gender_source_value",
+          "gender_source_concept_id",
+          "race_source_value",
+          "race_source_concept_id",
+          "ethnicity_source_value",
+          "ethnicity_source_concept_id"
+        ],
+        "properties": {
+          "person_id": { "type": "integer" },
+          "gender_concept_id": { "type": "integer" },
+          "year_of_birth": { "type": "integer" },
+          "month_of_birth": { "type": ["integer", "null"] },
+          "day_of_birth": { "type": ["integer", "null"] },
+          "race_concept_id": { "type": ["integer", "null"] },
+          "ethnicity_concept_id": { "type": ["integer", "null"] },
+          "location_id": { "type": ["integer", "null"] },
+          "provider_id": { "type": ["integer", "null"] },
+          "care_site_id": { "type": ["integer", "null"] },
+          "person_source_value": { "type": ["string", "null"] },
+          "gender_source_value": { "type": ["string", "null"] },
+          "gender_source_concept_id": { "type": ["integer", "null"] },
+          "race_source_value": { "type": ["string", "null"] },
+          "race_source_concept_id": { "type": ["integer", "null"] },
+          "ethnicity_source_value": { "type": ["string", "null"] },
+          "ethnicity_source_concept_id": { "type": ["integer", "null"] }
+        }
+      }
+    },
+
+    "observation_period": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "observation_period_id",
+          "person_id",
+          "observation_period_start_date",
+          "observation_period_end_date",
+          "period_type_concept_id"
+        ],
+        "properties": {
+          "observation_period_id": { "type": "integer" },
+          "person_id": { "type": "integer" },
+          "observation_period_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "observation_period_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_type_concept_id": { "type": "integer" }
+        }
+      }
+    },
+
+    "drug_exposure": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "drug_exposure_id",
+          "person_id",
+          "drug_concept_id",
+          "drug_exposure_start_date",
+          "drug_exposure_end_date",
+          "verbatim_end_date",
+          "drug_type_concept_id",
+          "stop_reason",
+          "refills",
+          "quantity",
+          "days_supply",
+          "sig",
+          "route_concept_id",
+          "lot_number",
+          "provider_id",
+          "visit_occurrence_id",
+          "visit_detail_id",
+          "drug_source_value",
+          "drug_source_concept_id",
+          "route_source_value",
+          "dose_unit_source_value"
+        ],
+        "properties": {
+          "drug_exposure_id": { "type": "integer" },
+          "person_id": { "type": "integer" },
+          "drug_concept_id": { "type": "integer" },
+          "drug_exposure_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "drug_exposure_end_date": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "verbatim_end_date": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "drug_type_concept_id": { "type": ["integer", "null"] },
+          "stop_reason": { "type": ["string", "null"] },
+          "refills": { "type": ["integer", "null"] },
+          "quantity": { "type": ["number", "null"] },
+          "days_supply": { "type": ["integer", "null"] },
+          "sig": { "type": ["string", "null"] },
+          "route_concept_id": { "type": ["integer", "null"] },
+          "lot_number": { "type": ["string", "null"] },
+          "provider_id": { "type": ["integer", "null"] },
+          "visit_occurrence_id": { "type": ["integer", "null"] },
+          "visit_detail_id": { "type": ["integer", "null"] },
+          "drug_source_value": { "type": ["string", "null"] },
+          "drug_source_concept_id": { "type": ["integer", "null"] },
+          "route_source_value": { "type": ["string", "null"] },
+          "dose_unit_source_value": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "condition_occurrence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "condition_occurrence_id",
+          "person_id",
+          "condition_concept_id",
+          "condition_start_date",
+          "condition_end_date",
+          "condition_type_concept_id",
+          "condition_status_concept_id",
+          "stop_reason",
+          "provider_id",
+          "visit_occurrence_id",
+          "visit_detail_id",
+          "condition_source_value",
+          "condition_source_concept_id",
+          "condition_status_source_value"
+        ],
+        "properties": {
+          "condition_occurrence_id": { "type": "integer" },
+          "person_id": { "type": "integer" },
+          "condition_concept_id": { "type": "integer" },
+          "condition_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "condition_end_date": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "condition_type_concept_id": { "type": ["integer", "null"] },
+          "condition_status_concept_id": { "type": ["integer", "null"] },
+          "stop_reason": { "type": ["string", "null"] },
+          "provider_id": { "type": ["integer", "null"] },
+          "visit_occurrence_id": { "type": ["integer", "null"] },
+          "visit_detail_id": { "type": ["integer", "null"] },
+          "condition_source_value": { "type": ["string", "null"] },
+          "condition_source_concept_id": { "type": ["integer", "null"] },
+          "condition_status_source_value": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1774 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OMOP CDM v5.4 (Strict, Non-Vocabulary Tables)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+      "person",
+      "observation_period",
+      "death",
+      "visit_occurrence",
+      "visit_detail",
+      "condition_occurrence",
+      "drug_exposure",
+      "procedure_occurrence",
+      "measurement",
+      "observation",
+      "device_exposure",
+      "specimen",
+      "note",
+      "note_nlp",
+      "location",
+      "care_site",
+      "provider",
+      "payer_plan_period",
+      "cost",
+      "fact_relationship"
+  ],
+  "properties": {
+    "person": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["person_id", "gender_concept_id", "year_of_birth", "month_of_birth", "day_of_birth", "birth_datetime", "race_concept_id", "ethnicity_concept_id", "location_id", "provider_id", "care_site_id", "person_source_value", "gender_source_value", "gender_source_concept_id", "race_source_value", "race_source_concept_id", "ethnicity_source_value", "ethnicity_source_concept_id"],
+        "properties": {
+          "person_id": {
+            "type": [
+              "integer",
+              "null"
+          ],
+          "default": null
+          },
+          "gender_concept_id": {
+            "type": [
+              "integer",
+              "null"
+          ],
+          "default": null
+          },
+          "year_of_birth": {
+            "type": [
+              "integer",
+              "null"
+          ],
+          "default": null
+          },
+          "month_of_birth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+          "default": null
+          },
+          "day_of_birth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+          "default": null
+          },
+          "birth_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+          "format": "date-time",
+          "default": null
+          },
+          "race_concept_id": {
+            "type": [
+              "integer",
+              "null"
+          ],
+          "default": null
+          },
+          "ethnicity_concept_id": {
+            "type": [
+              "integer",
+              "null"
+          ],
+          "default": null
+          },
+          "location_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null
+          },
+          "care_site_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+             "default": null
+          },
+          "person_source_value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "gender_source_value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "gender_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null
+          },
+          "race_source_value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "race_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null
+          },
+          "ethnicity_source_value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "ethnicity_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null
+          }
+        }
+      }
+    },
+    "observation_period": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observation_period_id", "person_id", "observation_period_start_date", "observation_period_end_date", "period_type_concept_id"],
+        "properties": {
+          "observation_period_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "observation_period_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "observation_period_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_type_concept_id": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "death": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["person_id", "death_date", "death_datetime", "death_type_concept_id", "cause_concept_id", "cause_source_value", "cause_source_concept_id"],
+        "properties": {
+          "person_id": {
+            "type": "integer"
+          },
+          "death_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "death_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "death_type_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "cause_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "cause_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cause_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "visit_occurrence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["visit_occurrence_id", "person_id", "visit_concept_id", "visit_start_date", "visit_start_datetime", "visit_end_date", "visit_end_datetime", "visit_type_concept_id", "provider_id", "care_site_id", "visit_source_value", "visit_source_concept_id", "admitted_from_concept_id", "admitted_from_source_value", "discharged_to_concept_id", "discharged_to_source_value", "preceding_visit_occurrence_id"],
+        "properties": {
+          "visit_occurrence_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "visit_concept_id": {
+            "type": "integer"
+          },
+          "visit_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "visit_start_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "visit_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "visit_end_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "visit_type_concept_id": {
+            "type": "integer"
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "care_site_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visit_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "admitted_from_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "admitted_from_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "discharged_to_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "discharged_to_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "preceding_visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "visit_detail": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["visit_detail_id", "person_id", "visit_detail_concept_id", "visit_detail_start_date", "visit_detail_start_datetime", "visit_detail_end_date", "visit_detail_end_datetime", "visit_detail_type_concept_id", "provider_id", "care_site_id", "visit_detail_source_value", "visit_detail_source_concept_id", "admitted_from_concept_id", "admitted_from_source_value", "discharged_to_concept_id", "discharged_to_source_value", "preceding_visit_detail_id", "visit_occurrence_id"],
+        "properties": {
+          "visit_detail_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "visit_detail_concept_id": {
+            "type": "integer"
+          },
+          "visit_detail_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "visit_detail_start_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "visit_detail_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "visit_detail_end_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "visit_detail_type_concept_id": {
+            "type": "integer"
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "care_site_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visit_detail_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "admitted_from_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "admitted_from_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "discharged_to_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "discharged_to_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "preceding_visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "condition_occurrence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["condition_occurrence_id", "person_id", "condition_concept_id", "condition_start_date", "condition_start_datetime", "condition_end_date", "condition_end_datetime", "condition_type_concept_id", "condition_status_concept_id", "stop_reason", "provider_id", "visit_occurrence_id", "visit_detail_id", "condition_source_value", "condition_source_concept_id", "condition_status_source_value"],
+        "properties": {
+          "condition_occurrence_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "condition_concept_id": {
+            "type": "integer"
+          },
+          "condition_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "condition_start_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "condition_end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "condition_end_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "condition_type_concept_id": {
+            "type": "integer"
+          },
+          "condition_status_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "stop_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "condition_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "condition_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "condition_status_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "drug_exposure": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["drug_exposure_id", "person_id", "drug_concept_id", "drug_exposure_start_date", "drug_exposure_start_datetime", "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date", "drug_type_concept_id", "stop_reason", "refills", "quantity", "days_supply", "sig", "route_concept_id", "lot_number", "provider_id", "visit_occurrence_id", "visit_detail_id", "drug_source_value", "drug_source_concept_id", "route_source_value", "dose_unit_source_value"],
+        "properties": {
+          "drug_exposure_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "drug_concept_id": {
+            "type": "integer"
+          },
+          "drug_exposure_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "drug_exposure_start_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "drug_exposure_end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "drug_exposure_end_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "verbatim_end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "drug_type_concept_id": {
+            "type": "integer"
+          },
+          "stop_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "refills": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "days_supply": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "sig": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "route_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "lot_number": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "drug_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "drug_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "route_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dose_unit_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "procedure_occurrence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["procedure_occurrence_id", "person_id", "procedure_concept_id", "procedure_date", "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id", "quantity", "provider_id", "visit_occurrence_id", "visit_detail_id", "procedure_source_value", "procedure_source_concept_id", "modifier_source_value"],
+        "properties": {
+          "procedure_occurrence_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "procedure_concept_id": {
+            "type": "integer"
+          },
+          "procedure_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "procedure_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "procedure_type_concept_id": {
+            "type": "integer"
+          },
+          "modifier_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "procedure_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "procedure_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "modifier_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "measurement": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["measurement_id", "person_id", "measurement_concept_id", "measurement_date", "measurement_datetime", "measurement_time", "measurement_type_concept_id", "operator_concept_id", "value_as_number", "value_as_concept_id", "unit_concept_id", "range_low", "range_high", "provider_id", "visit_occurrence_id", "visit_detail_id", "measurement_source_value", "measurement_source_concept_id", "unit_source_value", "value_source_value"],
+        "properties": {
+          "measurement_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "measurement_concept_id": {
+            "type": "integer"
+          },
+          "measurement_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "measurement_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "measurement_time": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$"
+          },
+          "measurement_type_concept_id": {
+            "type": "integer"
+          },
+          "operator_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "value_as_number": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "value_as_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "unit_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "range_low": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "range_high": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "measurement_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "measurement_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "unit_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "observation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observation_id", "person_id", "observation_concept_id", "observation_date", "observation_datetime", "observation_type_concept_id", "value_as_number", "value_as_string", "value_as_concept_id", "qualifier_concept_id", "unit_concept_id", "provider_id", "visit_occurrence_id", "visit_detail_id", "observation_source_value", "observation_source_concept_id", "unit_source_value", "qualifier_source_value", "value_source_value", "observation_event_id", "obs_event_field_concept_id"],
+        "properties": {
+          "observation_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "observation_concept_id": {
+            "type": "integer"
+          },
+          "observation_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "observation_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "observation_type_concept_id": {
+            "type": "integer"
+          },
+          "value_as_number": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "value_as_string": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value_as_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "qualifier_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "unit_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "observation_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "observation_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "unit_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "qualifier_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "observation_event_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "obs_event_field_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "device_exposure": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["device_exposure_id", "person_id", "device_concept_id", "device_exposure_start_date", "device_exposure_start_datetime", "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id", "unique_device_id", "quantity", "provider_id", "visit_occurrence_id", "visit_detail_id", "device_source_value", "device_source_concept_id"],
+        "properties": {
+          "device_exposure_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "device_concept_id": {
+            "type": "integer"
+          },
+          "device_exposure_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "device_exposure_start_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "device_exposure_end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "device_exposure_end_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "device_type_concept_id": {
+            "type": "integer"
+          },
+          "unique_device_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "device_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "device_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "specimen": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["specimen_id", "person_id", "specimen_concept_id", "specimen_type_concept_id", "specimen_date", "specimen_datetime", "quantity", "unit_concept_id", "anatomic_site_concept_id", "disease_status_concept_id", "specimen_source_id", "specimen_source_value", "unit_source_value", "anatomic_site_source_value", "disease_status_source_value"],
+        "properties": {
+          "specimen_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "specimen_concept_id": {
+            "type": "integer"
+          },
+          "specimen_type_concept_id": {
+            "type": "integer"
+          },
+          "specimen_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "specimen_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "anatomic_site_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "disease_status_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "specimen_source_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "specimen_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "anatomic_site_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "disease_status_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "note": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["note_id", "person_id", "note_date", "note_datetime", "note_type_concept_id", "note_class_concept_id", "note_title", "note_text", "encoding_concept_id", "language_concept_id", "provider_id", "visit_occurrence_id", "visit_detail_id", "note_source_value"],
+        "properties": {
+          "note_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "note_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "note_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "note_type_concept_id": {
+            "type": "integer"
+          },
+          "note_class_concept_id": {
+            "type": "integer"
+          },
+          "note_title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note_text": {
+            "type": "string"
+          },
+          "encoding_concept_id": {
+            "type": "integer"
+          },
+          "language_concept_id": {
+            "type": "integer"
+          },
+          "provider_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_occurrence_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "visit_detail_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "note_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "note_nlp": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["note_nlp_id", "note_id", "section_concept_id", "snippet", "offset", "lexical_variant", "note_nlp_concept_id", "note_nlp_source_concept_id", "nlp_system", "nlp_date", "nlp_datetime", "term_exists", "term_temporal", "term_modifiers"],
+        "properties": {
+          "note_nlp_id": {
+            "type": "integer"
+          },
+          "note_id": {
+            "type": "integer"
+          },
+          "section_concept_id": {
+            "type": "integer"
+          },
+          "snippet": {
+            "type": "string"
+          },
+          "offset": {
+            "type": "string"
+          },
+          "lexical_variant": {
+            "type": "string"
+          },
+          "note_nlp_concept_id": {
+            "type": "integer"
+          },
+          "note_nlp_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "nlp_system": {
+            "type": "string"
+          },
+          "nlp_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "nlp_datetime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "term_exists": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_temporal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "term_modifiers": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "location": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["location_id", "address_1", "address_2", "city", "state", "zip", "county", "location_source_value", "country_concept_id", "country_source_value", "latitude", "longitude"],
+        "properties": {
+          "location_id": {
+            "type": "integer"
+          },
+          "address_1": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "address_2": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "city": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "zip": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "county": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "location_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "country_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "country_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "care_site": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["care_site_id", "care_site_name", "place_of_service_concept_id", "location_id", "care_site_source_value", "place_of_service_source_value"],
+        "properties": {
+          "care_site_id": {
+            "type": "integer"
+          },
+          "care_site_name": {
+            "type": "string"
+          },
+          "place_of_service_concept_id": {
+            "type": "integer"
+          },
+          "location_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "care_site_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "place_of_service_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "provider": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["provider_id", "provider_name", "npi", "dea", "specialty_concept_id", "care_site_id", "year_of_birth", "gender_concept_id", "provider_source_value", "specialty_source_value", "specialty_source_concept_id", "gender_source_value", "gender_source_concept_id"],
+        "properties": {
+          "provider_id": {
+            "type": "integer"
+          },
+          "provider_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "npi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dea": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "specialty_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "care_site_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "year_of_birth": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "gender_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "provider_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "specialty_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "specialty_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "gender_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gender_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "payer_plan_period": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["payer_plan_period_id", "person_id", "payer_plan_period_start_date", "payer_plan_period_end_date", "payer_concept_id", "payer_source_value", "payer_source_concept_id", "plan_concept_id", "plan_source_value", "plan_source_concept_id", "sponsor_concept_id", "sponsor_source_value", "sponsor_source_concept_id", "family_source_value", "stop_reason_concept_id", "stop_reason_source_value", "stop_reason_source_concept_id"],
+        "properties": {
+          "payer_plan_period_id": {
+            "type": "integer"
+          },
+          "person_id": {
+            "type": "integer"
+          },
+          "payer_plan_period_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "payer_plan_period_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "payer_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "payer_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payer_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "plan_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "plan_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "plan_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "sponsor_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "sponsor_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sponsor_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "family_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stop_reason_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "stop_reason_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stop_reason_source_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "cost": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cost_id", "cost_event_id", "cost_domain_id", "cost_type_concept_id", "currency_concept_id", "total_charge", "total_cost", "total_paid", "paid_by_payer", "paid_by_patient", "paid_patient_copay", "paid_patient_coinsurance", "paid_patient_deductible", "paid_by_primary", "paid_ingredient_cost", "paid_dispensing_fee", "payer_plan_period_id", "amount_allowed", "revenue_code_concept_id", "revenue_code_source_value", "drg_concept_id", "drg_source_value"],
+        "properties": {
+          "cost_id": {
+            "type": "integer"
+          },
+          "cost_event_id": {
+            "type": "integer"
+          },
+          "cost_domain_id": {
+            "type": "string"
+          },
+          "cost_type_concept_id": {
+            "type": "integer"
+          },
+          "currency_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "total_charge": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "total_cost": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "total_paid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_by_payer": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_by_patient": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_patient_copay": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_patient_coinsurance": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_patient_deductible": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_by_primary": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_ingredient_cost": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "paid_dispensing_fee": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "payer_plan_period_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "amount_allowed": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "revenue_code_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "revenue_code_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "drg_concept_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "drg_source_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "fact_relationship": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain_concept_id_1", "fact_id_1", "domain_concept_id_2", "fact_id_2", "relationship_concept_id"],
+        "properties": {
+          "domain_concept_id_1": {
+            "type": "integer"
+          },
+          "fact_id_1": {
+            "type": "integer"
+          },
+          "domain_concept_id_2": {
+            "type": "integer"
+          },
+          "fact_id_2": {
+            "type": "integer"
+          },
+          "relationship_concept_id": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
