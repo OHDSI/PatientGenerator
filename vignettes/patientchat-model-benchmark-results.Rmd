@@ -7,17 +7,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
 ## Overview
 
-This article is a skeleton to report benchmark results for `patientChat` across
-all models returned by `availableModels()`.
+This article reports benchmark results for `patientChat` using the core GPT-5 models.
+The content is documentation-only and does not execute benchmark code during website builds.
 
 Benchmark task definition:
 
@@ -26,11 +19,29 @@ Benchmark task definition:
 - Include semaglutide in `drug_exposure`.
 - Record elapsed generation time per model.
 
-## 1) Run the benchmark script (manual step)
+Run date for the published snapshot: 2026-02-28.
 
-Use the benchmark test file:
+## Published snapshot (2026-02-28)
 
-```{r run-benchmark, eval = FALSE}
+| Model      | Status  | Elapsed Seconds | Person Count | Notes |
+|:-----------|:--------|----------------:|-------------:|:------|
+| gpt-5-nano | success | 93.07           | 10           | Fastest successful run |
+| gpt-5      | success | 129.06          | 10           | Stable output |
+| gpt-5-mini | success | 140.62          | 10           | Stable output |
+| gpt-5.1    | error   | 72.76           | NA           | Invalid JSON text returned |
+| gpt-5.2    | error   | 75.57           | NA           | Invalid JSON text returned |
+
+Summary:
+
+- Successful runs: 3/5 models.
+- Failed runs: 2/5 models.
+- Fastest successful model: `gpt-5-nano` (93.07 seconds).
+
+## How to reproduce (manual)
+
+Use the benchmark test file to generate a fresh CSV:
+
+```r
 Sys.setenv(
   OPENAI_API_KEY = "<your-key>",
   PATIENTGENERATOR_RUN_MODEL_BENCHMARK = "true",
@@ -44,116 +55,7 @@ Expected output artifact:
 
 - `/path/to/benchmark-output/patientChat_model_benchmark_results.csv`
 
-## 2) Load benchmark CSV
+## Optional plotting helper (for local analysis)
 
-Set `results_csv` to your generated file path and re-knit.
-
-```{r load-results}
-default_results_csv <- "vignettes/data/patientChat_model_benchmark_results_gpt5_main_2026-02-28.csv"
-results_csv <- Sys.getenv("PATIENTGENERATOR_BENCHMARK_RESULTS_CSV", unset = default_results_csv)
-
-results <- if (file.exists(results_csv)) {
-  utils::read.csv(results_csv, stringsAsFactors = FALSE)
-} else {
-  message("Benchmark CSV not found. Set PATIENTGENERATOR_BENCHMARK_RESULTS_CSV and re-knit.")
-  data.frame(
-    model = character(),
-    status = character(),
-    elapsed_seconds = numeric(),
-    person_count = integer(),
-    output_file = character(),
-    error = character(),
-    stringsAsFactors = FALSE
-  )
-}
-```
-
-## Published snapshot (2026-02-28)
-
-The repository currently includes one published benchmark run for core GPT-5 models.
-
-```{r snapshot}
-if (nrow(results) > 0) {
-  successful <- results[results$status %in% c("success", "success_non_10"), , drop = FALSE]
-  failed <- results[results$status == "error", , drop = FALSE]
-
-  if (nrow(successful) > 0) {
-    best <- successful[which.min(successful$elapsed_seconds), , drop = FALSE]
-    cat(
-      "Fastest successful model:", best$model,
-      sprintf("(%.2f seconds).", best$elapsed_seconds), "\n"
-    )
-  }
-
-  cat("Successful runs:", nrow(successful), "\n")
-  cat("Failed runs:", nrow(failed), "\n")
-}
-```
-
-## 3) Raw results table
-
-```{r raw-table}
-if (nrow(results) > 0) {
-  knitr::kable(results, caption = "Raw benchmark output")
-}
-```
-
-## 4) Successful runs ranked by speed
-
-```{r ranking}
-if (nrow(results) > 0) {
-  successful <- results[results$status %in% c("success", "success_non_10"), , drop = FALSE]
-  successful <- successful[order(successful$elapsed_seconds), , drop = FALSE]
-
-  knitr::kable(successful, caption = "Successful runs sorted by elapsed_seconds")
-}
-```
-
-## 5) Timing summary
-
-```{r summary}
-if (nrow(results) > 0) {
-  successful <- results[results$status %in% c("success", "success_non_10"), , drop = FALSE]
-  if (nrow(successful) > 0) {
-    timing_summary <- data.frame(
-      metric = c("n_success", "mean_seconds", "median_seconds", "min_seconds", "max_seconds"),
-      value = c(
-        nrow(successful),
-        mean(successful$elapsed_seconds),
-        stats::median(successful$elapsed_seconds),
-        min(successful$elapsed_seconds),
-        max(successful$elapsed_seconds)
-      )
-    )
-    knitr::kable(timing_summary, caption = "Timing summary for successful runs")
-  }
-}
-```
-
-## 6) Timing plot
-
-```{r plot}
-if (nrow(results) > 0) {
-  successful <- results[results$status %in% c("success", "success_non_10"), , drop = FALSE]
-  if (nrow(successful) > 0) {
-    ordered_idx <- order(successful$elapsed_seconds)
-    barplot(
-      successful$elapsed_seconds[ordered_idx],
-      names.arg = successful$model[ordered_idx],
-      las = 2,
-      col = "#2E86AB",
-      border = NA,
-      ylab = "Elapsed seconds",
-      main = "patientChat benchmark by model (lower is faster)"
-    )
-  }
-}
-```
-
-## 7) Interpretation notes (fill after run)
-
-Use this section to summarize:
-
-1. Fastest stable model(s) for this cohort-generation task.
-2. Models that returned errors or unstable outputs.
-3. Recommended default model policy for package users.
+The benchmark test script includes a helper that builds a `ggplot2` bar chart from the CSV.
+Use it locally when you want visual comparison after collecting results.

@@ -33,8 +33,7 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          install.packages(c("pkgdown", "remotes"), repos = "https://cloud.r-project.org")
-          remotes::install_deps(dependencies = TRUE, repos = "https://cloud.r-project.org")
+          install.packages("pkgdown", repos = "https://cloud.r-project.org")
         shell: Rscript {0}
 
       - name: Build site
