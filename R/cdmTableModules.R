@@ -88,12 +88,7 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       "end_date",
       sep = "_"
     )
-    columnList <- columnNames(
-      name = id,
-      limit = NULL
-    ) |>
-      names() |>
-      tail(-2)
+    columnList <- columnNames(name = id, limit = NULL) |> names() |> tail(-2)
 
     ### ADD --------------------------------------------------------------------
     observeEvent(input$add, {
@@ -173,10 +168,7 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
     ### UPDATE OTHER FIELDS ----------------------------------------------------
     observe({
       inputs <- reactiveValuesToList(input)
-      table_inputs <- inputs[
-        names(inputs) |>
-          columnList
-      ]
+      table_inputs <- inputs[names(inputs) %>% columnList]
       no_date_inputs <- table_inputs[grep(
         "date",
         names(table_inputs),
@@ -207,10 +199,7 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
         no_date_inputs
       )
       # browser()
-      do.call(
-        cdm[[id]]$update,
-        args
-      )
+      do.call(cdm[[id]]$update, args)
     })
 
     ### DELETE EVENT ------------------------------------------------------------
