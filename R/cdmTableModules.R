@@ -64,15 +64,36 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       table_id <- id
     }
 
-    table_event_id <- paste(id, "id", sep = "_")
+    table_event_id <- paste(
+      id,
+      "id",
+      sep = "_"
+    )
     if (id == "drug_exposure") {
       table_concept_id <- "drug_concept_id"
     } else {
-      table_concept_id <- paste(table_id, "concept_id", sep = "_")
+      table_concept_id <- paste(
+        table_id,
+        "concept_id",
+        sep = "_"
+      )
     }
-    table_start_date <- paste(table_id, "start_date", sep = "_")
-    table_end_date <- paste(table_id, "end_date", sep = "_")
-    columnList <- columnNames(name = id, limit = NULL) |> names() |> tail(-2)
+    table_start_date <- paste(
+      table_id,
+      "start_date",
+      sep = "_"
+    )
+    table_end_date <- paste(
+      table_id,
+      "end_date",
+      sep = "_"
+    )
+    columnList <- columnNames(
+      name = id,
+      limit = NULL
+    ) |>
+      names() |>
+      tail(-2)
 
     ### ADD --------------------------------------------------------------------
     observeEvent(input$add, {
@@ -81,7 +102,10 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       req(input$add)
       req(person_id_selected)
       # Create new event for that person in object
-      cdm[[id]]$add(person_id = person_id_selected() |> as.integer())
+      cdm[[id]]$add(
+        person_id = person_id_selected() |>
+          as.integer()
+      )
       # Pull data from that person
       cdmTable <- cdm[[id]]$data() %>%
         filter(person_id == as.numeric(person_id_selected()))
@@ -90,8 +114,10 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       updateSelectInput(
         session,
         "person_id",
-        choices = cdmTable[["person_id"]] %>% unique(),
-        selected = cdmTable[["person_id"]] %>% unique()
+        choices = cdmTable[["person_id"]] |>
+          unique(),
+        selected = cdmTable[["person_id"]] |>
+          unique()
       )
       # When creating a new event the selected option is the last in the table
       updateSelectInput(
@@ -117,7 +143,7 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       placeholderText = "e.g. Metformin"
     )
 
-    # Observe the event id to update its corresponding fields in the interface
+    ### UPDATE INTERFACE -------------------------------------------------------
     observeEvent(
       input[[table_event_id]],
       {
@@ -127,7 +153,9 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
         cdmTable <- cdm[[id]]$data()
         cdmTableRow <- cdmTable |>
           filter(
-            .data[[table_event_id]] == input[[table_event_id]] |> as.integer()
+            .data[[table_event_id]] ==
+              input[[table_event_id]] |>
+                as.integer()
           )
 
         # Update
@@ -142,10 +170,13 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       ignoreInit = TRUE
     )
 
-    ### UPDATE OTHER FIELDS -----------------------------------------------------------
+    ### UPDATE OTHER FIELDS ----------------------------------------------------
     observe({
       inputs <- reactiveValuesToList(input)
-      table_inputs <- inputs[names(inputs) %in% columnList]
+      table_inputs <- inputs[
+        names(inputs) |>
+          columnList
+      ]
       no_date_inputs <- table_inputs[grep(
         "date",
         names(table_inputs),
@@ -168,14 +199,21 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
         na.rm = TRUE
       ))
       args <- c(
-        list(event_id = as.integer(input[[table_event_id]])),
+        list(
+          event_id = as.integer(
+            input[[table_event_id]]
+          )
+        ),
         no_date_inputs
       )
       # browser()
-      do.call(cdm[[id]]$update, args)
+      do.call(
+        cdm[[id]]$update,
+        args
+      )
     })
 
-    # # Delete event
+    ### DELETE EVENT ------------------------------------------------------------
     observeEvent(input$delete, {
       req(input[[table_event_id]])
 
@@ -209,8 +247,8 @@ cdmTableServer <- function(id, cdm, person_id_selected, syncing) {
       }
     })
     elongation_click <- reactiveVal(NULL)
-    #
-    # # Elongation
+
+    ### ELONGATION ---------------------------------------------------------------
     observeEvent(
       list(input[[table_start_date]], input[[table_end_date]]),
       {
