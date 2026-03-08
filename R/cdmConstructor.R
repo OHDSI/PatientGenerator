@@ -14,11 +14,38 @@ cdmConstructor <- R6::R6Class("cdmConstructor",
                                 },
                                 add = function(person_id) {
                                   checkmate::assertInteger(person_id)
-                                  name_event_id <- paste(private$.tableName, "id", sep = "_")
-                                  event_id <-  if (length(private$.data[[name_event_id]]) == 0) {1L} else {private$.data[[name_event_id]][length(private$.data[[name_event_id]])] |> as.integer() + 1L}
+                                  name_event_id <- paste(
+                                    private$.tableName,
+                                    "id",
+                                    sep = "_"
+                                    )
+                                  event_id <-  if (
+                                    length(
+                                      private$.data[[name_event_id]]
+                                      ) == 0) {
+                                    1L
+                                  } else {
+                                      private$.data[[name_event_id]][length(
+                                        private$.data[[name_event_id]]
+                                        )] |> 
+                                      as.integer() + 
+                                      1L
+                                  }
+                                  browser()
                                   new_person_data <- private$.defaultPersonData()
-                                  new_row <- private$.constructNewRow(name_event_id, event_id, c(person_id = person_id, new_person_data))
-                                  private$.data <- rbindlist(list(private$.data, new_row))
+                                  new_row <- private$.constructNewRow(
+                                    name_event_id,
+                                    event_id, c(
+                                      person_id = person_id,
+                                      new_person_data
+                                      )
+                                    )
+                                  private$.data <- rbindlist(
+                                    list(
+                                      private$.data,
+                                      new_row
+                                      )
+                                    )
                                 },
                                 update = function(event_id, ...) {
                                   new_data <- list(...)
@@ -159,58 +186,97 @@ cdmConstructor <- R6::R6Class("cdmConstructor",
                                 getCdmDataTimeline = function() {
                                   # browser()
                                   if (self$person$data() |> length() != 0) {
+                                    browser()
 
                                     observation_period_table <- self$observation_period$data() %>%
-                                      mutate(type = "observation_period",
-                                             concept_id = as.integer(0),
-                                             observation_period_start_date = as.Date(observation_period_start_date),
-                                             observation_period_end_date = as.Date(observation_period_end_date)) %>%
-                                      select(observation_period_id,
-                                             concept_id,
-                                             person_id,
-                                             observation_period_start_date,
-                                             observation_period_end_date,
-                                             type) %>%
-                                      rename(event_id = observation_period_id,
-                                             start_date = observation_period_start_date,
-                                             end_date = observation_period_end_date)
+                                      mutate(
+                                        type = "observation_period",
+                                        concept_id = as.integer(0),
+                                        observation_period_start_date = as.Date(
+                                          observation_period_start_date
+                                          ),
+                                        observation_period_end_date = as.Date(
+                                          observation_period_end_date
+                                          )
+                                        ) %>%
+                                      select(
+                                        observation_period_id,
+                                        concept_id,
+                                        person_id,
+                                        observation_period_start_date,
+                                        observation_period_end_date,
+                                        type
+                                        ) %>%
+                                      rename(
+                                        event_id = observation_period_id,
+                                        start_date = observation_period_start_date,
+                                        end_date = observation_period_end_date
+                                        )
                                     # browser()
                                     condition_exposure_table <- self$condition_occurrence$data() %>%
-                                      mutate(type = "condition_occurrence",
-                                             condition_concept_id = as.integer(condition_concept_id),
-                                             condition_start_date = as.Date(condition_start_date),
-                                             condition_end_date = as.Date(condition_end_date)) %>%
-                                      select(condition_occurrence_id,
-                                             condition_concept_id,
-                                             person_id,
-                                             condition_start_date,
-                                             condition_end_date,
-                                             type) %>%
-                                      rename(event_id = condition_occurrence_id,
-                                             concept_id = condition_concept_id,
-                                             start_date = condition_start_date,
-                                             end_date = condition_end_date)
+                                      mutate(
+                                        type = "condition_occurrence",
+                                        condition_concept_id = as.integer(
+                                          condition_concept_id
+                                          ),
+                                        condition_start_date = as.Date(
+                                          condition_start_date
+                                          ),
+                                        condition_end_date = as.Date(
+                                          condition_end_date
+                                          )
+                                        ) %>%
+                                      select(
+                                        condition_occurrence_id,
+                                        condition_concept_id,
+                                        person_id,
+                                        condition_start_date,
+                                        condition_end_date,
+                                        type
+                                        ) %>%
+                                      rename(
+                                        event_id = condition_occurrence_id,
+                                        concept_id = condition_concept_id,
+                                        start_date = condition_start_date,
+                                        end_date = condition_end_date
+                                        )
                                     # browser()
                                     drug_exposure_table <- self$drug_exposure$data() %>%
-                                      mutate(type = "drug_exposure",
-                                             drug_concept_id = as.integer(drug_concept_id),
-                                             drug_exposure_start_date = as.Date(drug_exposure_start_date),
-                                             drug_exposure_end_date = as.Date(drug_exposure_end_date)) %>%
-                                      select(drug_exposure_id,
-                                             drug_concept_id,
-                                             person_id,
-                                             drug_exposure_start_date,
-                                             drug_exposure_end_date,
-                                             type) %>%
-                                      rename(event_id = drug_exposure_id,
-                                             concept_id = drug_concept_id,
-                                             start_date = drug_exposure_start_date,
-                                             end_date = drug_exposure_end_date)
+                                      mutate(
+                                        type = "drug_exposure",
+                                        drug_concept_id = as.integer(
+                                          drug_concept_id
+                                          ),
+                                        drug_exposure_start_date = as.Date(
+                                          drug_exposure_start_date
+                                          ),
+                                        drug_exposure_end_date = as.Date(
+                                          drug_exposure_end_date
+                                          )
+                                        ) %>%
+                                      select(
+                                        drug_exposure_id,
+                                        drug_concept_id,
+                                        person_id,
+                                        drug_exposure_start_date,
+                                        drug_exposure_end_date,
+                                        type
+                                        ) %>%
+                                      rename(
+                                        event_id = drug_exposure_id,
+                                        concept_id = drug_concept_id,
+                                        start_date = drug_exposure_start_date,
+                                        end_date = drug_exposure_end_date
+                                        )
                                     # browser()
-                                    cdmData <- dplyr::bind_rows(observation_period_table,
-                                                                condition_exposure_table,
-                                                                drug_exposure_table) %>%
-                                      mutate(categories = row_number())
+                                    cdmData <- dplyr::bind_rows(
+                                      observation_period_table,
+                                      condition_exposure_table,
+                                      drug_exposure_table
+                                      ) %>%
+                                      mutate(
+                                        categories = row_number()
+                                        )
 
                                   } else {
                                     cdmData <- data.frame()
@@ -223,11 +289,24 @@ cdmConstructor <- R6::R6Class("cdmConstructor",
                                 # Export data to json
                                 getDrugExposureData = function() {
 
-                                  drug_exposure_json <- jsonlite::toJSON(self$drug_exposure_data,
-                                                                    dataframe = "rows", null = "null", na = "null", auto_unbox = TRUE,
-                                                                    digits = getOption("shiny.json.digits", 16), use_signif = TRUE, force = TRUE,
-                                                                    POSIXt = "ISO8601", UTC = TRUE, rownames = FALSE, keep_vec_names = TRUE,
-                                                                    json_verabitm = TRUE)
+                                  drug_exposure_json <- jsonlite::toJSON(
+                                    self$drug_exposure_data,
+                                    dataframe = "rows",
+                                    null = "null",
+                                    na = "null",
+                                    auto_unbox = TRUE,
+                                    digits = getOption(
+                                      "shiny.json.digits",
+                                      16
+                                      ),
+                                    use_signif = TRUE,
+                                    force = TRUE,
+                                    POSIXt = "ISO8601",
+                                    UTC = TRUE,
+                                    rownames = FALSE,
+                                    keep_vec_names = TRUE,
+                                    json_verabitm = TRUE
+                                    )
 
                                   return(drug_exposure_json)
 

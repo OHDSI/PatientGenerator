@@ -115,34 +115,42 @@ cdmTableServer <- function(
         tail(-2)
 
       ### ADD --------------------------------------------------------------------
-      observeEvent(input$add, {
-        # browser()
-        # Require add button and the person id
-        req(input$add)
-        req(person_id_selected)
-        # Create new event for that person in object
-        cdm[[id]]$add(person_id = person_id_selected() |> as.integer())
-        # Pull data from that person
-        cdmTable <- cdm[[id]]$data() %>%
-          filter(person_id == as.numeric(person_id_selected()))
+      observeEvent(
+        input$add,
+        {
+          # browser()
+          # Require add button and the person id
+          req(input$add)
+          req(person_id_selected)
+          # Create new event for that person in object
+          cdm[[id]]$add(person_id = person_id_selected() |> as.integer())
+          # Pull data from that person
+          cdmTable <- cdm[[id]]$data() %>%
+            dplyr::filter(
+              person_id ==
+                as.numeric(
+                  person_id_selected()
+                )
+            )
 
-        # Update interface to reflect addition
-        updateSelectInput(
-          session,
-          "person_id",
-          choices = cdmTable[["person_id"]] %>% unique(),
-          selected = cdmTable[["person_id"]] %>% unique()
-        )
-        # When creating a new event the selected option is the last in the table
-        updateSelectInput(
-          session,
-          table_event_id,
-          choices = cdmTable[[table_event_id]],
-          selected = cdmTable[[table_event_id]][length(cdmTable[[
-            table_event_id
-          ]])]
-        )
-      })
+          # Update interface to reflect addition
+          updateSelectInput(
+            session,
+            "person_id",
+            choices = cdmTable[["person_id"]] %>% unique(),
+            selected = cdmTable[["person_id"]] %>% unique()
+          )
+          # When creating a new event the selected option is the last in the table
+          updateSelectInput(
+            session,
+            table_event_id,
+            choices = cdmTable[[table_event_id]],
+            selected = cdmTable[[table_event_id]][length(
+              cdmTable[[table_event_id]]
+            )]
+          )
+        }
+      )
 
       ### SEARCH CONCEPT ---------------------------------------------------------
       conceptSearchServer(

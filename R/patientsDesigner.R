@@ -337,6 +337,7 @@ patientDesigner <- function(path = NULL) {
     cdmDataTimeline <- reactive({
       pid <- suppressWarnings(as.numeric(person_module()))
       req(!is.na(pid), length(pid) == 1)
+      # browser()
       cdm$getCdmDataTimeline() %>%
         dplyr::filter(.data$person_id == pid)
     }) %>% bindEvent(data_version(),
