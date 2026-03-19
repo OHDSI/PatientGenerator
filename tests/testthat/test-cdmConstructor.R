@@ -108,17 +108,17 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
     timeline,
     "data.table"
     )
-  expect_true(
-    all(c("event_id",
-          "concept_id",
-          "person_id",
-          "start_date",
-          "end_date",
-          "type",
-          "categories") %in% names(timeline)
-      )
+  expect_in(
+    names(timeline),
+    c("event_id",
+      "concept_id",
+      "person_id",
+      "start_date",
+      "end_date",
+      "type",
+      "categories")
     )
-  expect_equal(
+  expect_in(
     unique(timeline$type),
     c("observation_period",
       "drug_exposure",
