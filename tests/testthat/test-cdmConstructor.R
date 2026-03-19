@@ -1,3 +1,36 @@
+test_that("Initialize correctly tables defined in the parameter", {
+  
+  tables <- c(
+    "observation_period"
+  )
+  
+  cdm <- cdmConstructor$new(tables = tables)
+  
+  for (i in seq_along(tables)) {
+    expect_r6_class(
+      cdm[[tables[i]]],
+      "cdmTable"
+    )
+  }
+  
+  tables <- c(
+    "observation_period",
+    "drug_exposure",
+    "condition_occurrence",
+    "measurement"
+    )
+  
+  cdm <- cdmConstructor$new(tables = tables)
+  
+  for (i in seq_along(tables)) {
+    expect_r6_class(
+      cdm[[tables[i]]],
+      "cdmTable"
+    )
+  }
+  
+})
+
 test_that("cdmConstructor reset empties core tables", {
   cdm <- new_cdm()
   cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
@@ -56,16 +89,43 @@ test_that("observation/condition/drug dates can be updated", {
 
 test_that("getCdmData and getCdmDataTimeline return valid structures", {
   cdm <- new_cdm()
-  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
+  cdm$person$add(
+    gender_concept_id = 8532L,
+    year_of_birth = 1967L
+    )
   cdm$observation_period$add(person_id = 1L)
+  cdm$condition_occurrence$add(person_id = 1L)
   cdm$drug_exposure$add(person_id = 1L)
+  cdm$measurement$add(person_id = 1L)
 
   cdm_json <- cdm$getCdmData()
-  expect_true(jsonlite::validate(cdm_json))
+  expect_true(
+    jsonlite::validate(cdm_json)
+    )
 
   timeline <- cdm$getCdmDataTimeline()
-  expect_s3_class(timeline, "data.table")
-  expect_true(all(c("event_id", "concept_id", "person_id", "start_date", "end_date", "type", "categories") %in% names(timeline)))
+  expect_s3_class(
+    timeline,
+    "data.table"
+    )
+  expect_true(
+    all(c("event_id",
+          "concept_id",
+          "person_id",
+          "start_date",
+          "end_date",
+          "type",
+          "categories") %in% names(timeline)
+      )
+    )
+  expect_equal(
+    unique(timeline$type),
+    c("observation_period",
+      "drug_exposure",
+      "condition_occurrence",
+      "measurement"
+      )
+  )
 })
 
 test_that("loadJsonTestSet loads source test fixtures", {
