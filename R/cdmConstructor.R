@@ -23,6 +23,7 @@ cdmConstructor <- R6::R6Class(
       }
     },
     add = function(person_id) {
+      # browser()
       checkmate::assertInteger(person_id)
       name_event_id <- paste(
         private$.tableName,
@@ -30,9 +31,7 @@ cdmConstructor <- R6::R6Class(
         sep = "_"
         )
       event_id <-  if (
-        length(
-          private$.data[[name_event_id]]
-          ) == 0) {
+        length(private$.data[[name_event_id]]) == 0) {
         1L
       } else {
           private$.data[[name_event_id]][length(
@@ -50,11 +49,13 @@ cdmConstructor <- R6::R6Class(
           new_person_data
           )
         )
+      # browser()
       private$.data <- rbindlist(
         list(
           private$.data,
           new_row
-          )
+          ),
+        fill = TRUE
         )
       },
     update = function(event_id, ...) {
@@ -124,11 +125,13 @@ cdmConstructor <- R6::R6Class(
     loadJsonTestSet = function(path) {
       self$reset()
       # browser()
-      # cdm_schema <- jsonvalidate::json_validator(system.file("jsonSchemas",
-      #                                                        "cdm54schema-complete.json",
-      #                                                        package = "TestGenerator"),
-      #                                            engine = "ajv")
-      # checkmate::assertFileExists(path)
+      # cdm_schema <- jsonvalidate::json_validator(
+      #   system.file("jsonSchemas",
+      #               "cdm54schema-complete.json",
+      #               package = "TestGenerator"),
+      #   engine = "ajv"
+      #   )
+      checkmate::assertFileExists(path)
       jsonData <- jsonlite::fromJSON(path)
       # if (!cdm_schema(toJSON(jsonData, auto_unbox = TRUE))) {
       #   stop("Invalid data structure!")
@@ -140,7 +143,11 @@ cdmConstructor <- R6::R6Class(
                              "observation_period",
                              "condition_occurrence",
                              "drug_exposure",
-                             "measurement")) {
+                             "measurement",
+                             "procedure_occurrence")) {
+          # if (tableName == "condition_occurrence") {
+          #   browser()
+          # }
           classTable <- class(jsonData[[tableName]])
           table_data <- jsonData[[tableName]] |> as.data.table()
           if (classTable == "data.frame") {

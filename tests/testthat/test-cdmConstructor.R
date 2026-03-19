@@ -136,3 +136,119 @@ test_that("loadJsonTestSet loads source test fixtures", {
   expect_no_error(cdm$loadJsonTestSet(path))
   expect_gt(nrow(cdm$person$data()), 0)
 })
+
+test_that("Testing methods on LLM testset", {
+  
+  # An LLM testset for this test
+  # model <- pick_openai_model()
+  # patientGenerator <- patientChat$new(model)
+
+  ### Test set description for this test:
+  # patientGenerator$prompt(
+  #   "Population (person table):
+  #     - 10 adult patients
+  #     - 5 female
+  #     - 5 male
+  #     
+  #    Observation Period:
+  #     - Start date between date of birth each person and end of observation 2025-12-31
+  #     
+  #    Condition Occurrence:
+  #      - All patients must have Diabetes (condition_concept_id: 201826)
+  #      - Condition start date between 2015-01-01 and 2020-12-31
+  #   
+  #    Drug Exposure:
+  #      - All patients must have Semaglutide (drug_concept_id: 19079450)
+  #      - Drug exposure in a window of 0 to 30 days after index date
+  #   
+  #    Measurement:
+  #      - All patients must have Fasting glucose (measurement_concept_id: 3018251)
+  #   
+  #    Procedure cccurrence:
+  #      - 50% of patients (5 patients) must have Amputation of toe (procedure_concept_id: 4159766)
+  #      
+  #    Output Requirements:
+  #     - Fill only specified tables in this prompt"
+  #   )
+  # patientGenerator$save("test_diabetes_patients")
+  
+  ### Check testset
+  # cdm <- TestGenerator::patientsCDM(
+  #   testName = "test_diabetes_patients"
+  #   )
+  # 
+  # cdm$person |> 
+  #   collect() |> 
+  #   nrow() |> 
+  #   expect_equal(10)
+  # 
+  # cdm$procedure_occurrence |> 
+  #   collect() |> 
+  #   nrow() |> 
+  #   expect_equal(5)
+  
+  path <- testthat::test_path(
+    "testCases",
+    "test_diabetes_patients.json"
+    )
+  
+  expect_no_error({
+    cdm <- new_cdm()
+    timeline_data <- cdm$loadJsonTestSet(path)
+    cdm$condition_occurrence$add(person_id = 1L)
+    cdm$drug_exposure$add(person_id = 1L)
+    cdm$measurement$add(person_id = 1L)
+    cdm$procedure_occurrence$add(person_id = 1L)
+  })
+  
+  cdm$condition_occurrence$data() |> 
+    pull(person_id) |> 
+    expect_length(11)
+  
+  cdm$drug_exposure$data() |> 
+    pull(person_id) |> 
+    expect_length(11)
+  
+  cdm$measurement$data() |> 
+    pull(person_id) |> 
+    expect_length(11)
+  
+  cdm$procedure_occurrence$data() |> 
+    pull(person_id) |> 
+    expect_length(6)
+  
+})
+
+test_that("Testing methods on LLM testset 'objective_1_patient'", {
+  
+  path <- testthat::test_path(
+    "testCases",
+    "objective_1_patients.json"
+  )
+  
+  expect_no_error({
+    cdm <- new_cdm()
+    timeline_data <- cdm$loadJsonTestSet(path)
+    cdm$condition_occurrence$add(person_id = 1L)
+    cdm$drug_exposure$add(person_id = 1L)
+    cdm$measurement$add(person_id = 1L)
+    cdm$procedure_occurrence$add(person_id = 1L)
+  })
+  
+  cdm$condition_occurrence$data() |> 
+    pull(person_id) |> 
+    expect_length(11)
+  
+  cdm$drug_exposure$data() |> 
+    pull(person_id) |> 
+    expect_length(11)
+  
+  cdm$measurement$data() |> 
+    pull(person_id) |> 
+    expect_length(11)
+  
+  cdm$procedure_occurrence$data() |> 
+    pull(person_id) |> 
+    expect_length(6)
+  
+})
