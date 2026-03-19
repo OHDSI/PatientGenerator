@@ -97,6 +97,7 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
   cdm$condition_occurrence$add(person_id = 1L)
   cdm$drug_exposure$add(person_id = 1L)
   cdm$measurement$add(person_id = 1L)
+  cdm$procedure_occurrence$add(person_id = 1L)
 
   cdm_json <- cdm$getCdmData()
   expect_true(
@@ -123,7 +124,8 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
     c("observation_period",
       "drug_exposure",
       "condition_occurrence",
-      "measurement"
+      "measurement",
+      "procedure_occurrence"
       )
   )
 })

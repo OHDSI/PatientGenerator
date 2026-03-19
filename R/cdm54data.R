@@ -19,23 +19,55 @@ choicesList <- function(tableName) {
 #' @noRd
 read_parquet_file <- function(file) {
   con <- DBI::dbConnect(duckdb::duckdb())
-  on.exit(DBI::dbDisconnect(con, shutdown = TRUE), add = TRUE)
-  path_sql <- gsub("'", "''", path.expand(file))
-  DBI::dbGetQuery(con, paste0("SELECT * FROM read_parquet('", path_sql, "')"))
+  on.exit(DBI::dbDisconnect(
+    con,
+    shutdown = TRUE
+    ),
+    add = TRUE
+    )
+  path_sql <- gsub(
+    "'",
+    "''",
+    path.expand(file)
+    )
+  DBI::dbGetQuery(
+    con,
+    paste0(
+      "SELECT * FROM read_parquet('",
+      path_sql,
+      "')"
+      )
+    )
 }
 
-columnNames <- function(name = NULL, limit = NULL, ommitTime = TRUE, cdmVersion = "5.4") {
+columnNames <- function(
+    name = NULL,
+    limit = NULL,
+    ommitTime = TRUE,
+    cdmVersion = "5.4"
+    ) {
 
-  cdmSpecificationPath <- system.file("cdmTableSpecifications",
-                                      paste0("emptycdm_", cdmVersion),
-                                      package = "patientGenerator")
-  # supported_tables <- file.path(cdmSpecificationPath) |> list.files() |> stringr::str_remove(".parquet")
-  supported_tables <- c("person",
-                        "observation_period",
-                        "condition_occurrence",
-                        "drug_exposure",
-                        "measurement")
+  cdmSpecificationPath <- system.file(
+    "cdmTableSpecifications",
+    paste0(
+      "emptycdm_",
+      cdmVersion
+      ),
+    package = "patientGenerator"
+    )
 
+  # supported_tables <- file.path(cdmSpecificationPath) |> 
+  #    list.files() |> 
+  #   stringr::str_remove(".parquet")
+  
+  supported_tables <- c(
+    "person",
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+    )
 
   if (!is.null(name)) {
 
@@ -49,11 +81,24 @@ columnNames <- function(name = NULL, limit = NULL, ommitTime = TRUE, cdmVersion 
       stop("Error: Variable 'name' should be a cdm table")
     }
 
-    file <- file.path(cdmSpecificationPath, paste0(name, ".parquet"))
+    file <- file.path(
+      cdmSpecificationPath,
+      paste0(
+        name,
+        ".parquet"
+        )
+      )
     table_data <- read_parquet_file(file) |>
       data.table::as.data.table()
     if (isTRUE(ommitTime)) {
-      table_data <- table_data[ , .SD, .SDcols = !grepl("time", names(table_data))]
+      table_data <- table_data[
+        ,
+        .SD,
+        .SDcols = !grepl(
+          "time",
+          names(table_data)
+          )
+        ]
     }
     if (!is.null(limit)) {
       table_data <- table_data[, 1:limit]
@@ -62,15 +107,31 @@ columnNames <- function(name = NULL, limit = NULL, ommitTime = TRUE, cdmVersion 
 
   } else {
 
-    path <- file.path(cdmSpecificationPath) |> list.files(full.names = TRUE)
+    path <- file.path(cdmSpecificationPath) |> 
+      list.files(
+        full.names = TRUE
+        )
     cdm_tables <- list()
 
     for(table_name in supported_tables){
-      file <- file.path(cdmSpecificationPath, paste0(table_name, ".parquet"))
+      file <- file.path(
+        cdmSpecificationPath,
+        paste0(
+          table_name,
+          ".parquet"
+          )
+        )
       table_data <- read_parquet_file(file) |>
         data.table::as.data.table()
       if (isTRUE(ommitTime)) {
-        table_data <- table_data[ , .SD, .SDcols = !grepl("time", names(table_data))]
+        table_data <- table_data[
+          ,
+          .SD,
+          .SDcols = !grepl(
+            "time",
+            names(table_data)
+            )
+          ]
       }
       if (!is.null(limit)) {
         table_data <- table_data[, 1:limit]

@@ -7,11 +7,13 @@ cdmConstructor <- R6::R6Class(
     drug_exposure = NULL,
     condition_occurrence = NULL,
     measurement = NULL,
+    procedure_occurrence = NULL,
     initialize = function(tables = c(
       "observation_period",
       "drug_exposure",
       "condition_occurrence",
-      "measurement"
+      "measurement",
+      "procedure_occurrence"
       )
     ) {
       self$tables <- tables
@@ -228,6 +230,7 @@ cdmConstructor <- R6::R6Class(
           lapply(
             self$tables, 
             function(table_name) {
+              # browser()
               cols <- c(
                 self[[table_name]]$tableNameId(),
                 "person_id",
