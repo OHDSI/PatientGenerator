@@ -224,13 +224,10 @@ cdmConstructor <- R6::R6Class(
     # Export data to json
     getCdmDataTimeline = function() {
       if (self$person$data() |> length() > 0) {
-        # browser()
         tables_timeline <- setNames(
           lapply(
             self$tables, 
             function(table_name) {
-              # browser()
-              # print(table_name)
               cols <- c(
                 self[[table_name]]$tableNameId(),
                 "person_id",
@@ -278,126 +275,10 @@ cdmConstructor <- R6::R6Class(
         ) |> 
           mutate(categories = row_number())
         
-        return(data_timeline)
-        
-        
-                
-        # data_timeline <- lapply(
-        #   self$tables, 
-        #   function(table_name) {
-        #     browser()
-        #     name_id <- self[[table_name]]$tableNameId()
-        #     name_start_date <- self[[table_name]]$tableNameDate("start")
-        #     name_end_date <- self[[table_name]]$tableNameDate("end")
-        #     self[[table_name]]$data() 
-        #     # |> 
-        #     #   select(
-        #     #     observation_period_id,
-        #     #     concept_id,
-        #     #     person_id,
-        #     #     observation_period_start_date,
-        #     #     observation_period_end_date,
-        #     #     type
-        #     #   ) 
-        #       
-        #   }
-        # )
-        
-
-        # browser()
-        # observation_period_table <- self$observation_period$data() %>%
-        #   mutate(
-        #     type = "observation_period",
-        #     concept_id = as.integer(0),
-        #     observation_period_start_date = as.Date(
-        #       observation_period_start_date
-        #       ),
-        #     observation_period_end_date = as.Date(
-        #       observation_period_end_date
-        #       )
-        #     ) %>%
-        #   select(
-        #     observation_period_id,
-        #     concept_id,
-        #     person_id,
-        #     observation_period_start_date,
-        #     observation_period_end_date,
-        #     type
-        #     ) %>%
-        #   rename(
-        #     event_id = observation_period_id,
-        #     start_date = observation_period_start_date,
-        #     end_date = observation_period_end_date
-        #     )
-        # 
-        # condition_exposure_table <- self$condition_occurrence$data() %>%
-        #   mutate(
-        #     type = "condition_occurrence",
-        #     condition_concept_id = as.integer(
-        #       condition_concept_id
-        #       ),
-        #     condition_start_date = as.Date(
-        #       condition_start_date
-        #       ),
-        #     condition_end_date = as.Date(
-        #       condition_end_date
-        #       )
-        #     ) %>%
-        #   select(
-        #     condition_occurrence_id,
-        #     condition_concept_id,
-        #     person_id,
-        #     condition_start_date,
-        #     condition_end_date,
-        #     type
-        #     ) %>%
-        #   rename(
-        #     event_id = condition_occurrence_id,
-        #     concept_id = condition_concept_id,
-        #     start_date = condition_start_date,
-        #     end_date = condition_end_date
-        #     )
-        # 
-        # drug_exposure_table <- self$drug_exposure$data() %>%
-        #   mutate(
-        #     type = "drug_exposure",
-        #     drug_concept_id = as.integer(
-        #     drug_concept_id
-        #     ),
-        #     drug_exposure_start_date = as.Date(
-        #     drug_exposure_start_date
-        #     ),
-        #     drug_exposure_end_date = as.Date(
-        #       drug_exposure_end_date
-        #       )
-        #     ) %>%
-        #   select(
-        #     drug_exposure_id,
-        #     drug_concept_id,
-        #     person_id,
-        #     drug_exposure_start_date,
-        #     drug_exposure_end_date,
-        #     type
-        #     ) %>%
-        #   rename(
-        #     event_id = drug_exposure_id,
-        #     concept_id = drug_concept_id,
-        #     start_date = drug_exposure_start_date,
-        #     end_date = drug_exposure_end_date
-        #     )
-        # 
-        # cdmData <- dplyr::bind_rows(
-        #   observation_period_table,
-        #   condition_exposure_table,
-        #   drug_exposure_table
-        #   ) %>%
-        #   mutate(
-        #     categories = row_number()
-        #     )
         } else {
-          cdmData <- data.table::data.table()
+          data_timeline <- data.table::data.table()
           }
-      return(cdmData)
+      return(data_timeline)
       },
     # Export data to json
     getDrugExposureData = function() {
