@@ -13,14 +13,51 @@ const barHeight = 32
 const gap  = 12
 const axisPad = 12
 
-function initialColor(d, i) {
+// Colour functions
+// Colour functions
+function startColor(d, i) {
   if (d.type == "observation_period") {
     return "#E1B12C";
   } else if (d.type == "drug_exposure") {
-    return "#2ECC71";
+    return "#00B894";
   } else if (d.type == "condition_occurrence") {
-    return "#bd1c9d";
+    return "#D81B60";
+  } else if (d.type == "measurement") {
+    return "#E53935";
+  } else if (d.type == "procedure_occurrence") {
+    return "#1E88E5";
   }
+  return "#999";
+}
+
+function dragColor(type) {
+  if (type == "observation_period") {
+    return "#FFD54F";
+  } else if (type == "drug_exposure") {
+    return "#55E6C1";
+  } else if (type == "condition_occurrence") {
+    return "#F06292";
+  } else if (type == "measurement") {
+    return "#FF6F60";
+  } else if (type == "procedure_occurrence") {
+    return "#64B5F6";
+  }
+  return "#999";
+}
+
+function endColor(type) {
+  if (type == "observation_period") {
+    return "#B8860B";
+  } else if (type == "drug_exposure") {
+    return "#00796B";
+  } else if (type == "condition_occurrence") {
+    return "#8E0038";
+  } else if (type == "measurement") {
+    return "#B71C1C";
+  } else if (type == "procedure_occurrence") {
+    return "#0D47A1";
+  }
+  return "#999";
 }
 
 var domainStart = new Date(1980, 0, 1);
@@ -90,13 +127,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
   function dragStart(event, d) {
     // console.log(event)
     bar = d3.select(this)
-    if (d.type == "observation_period") {
-      bar.style("fill", "#FFD54F")
-    } else if (d.type == "drug_exposure") {
-      bar.style("fill", "#00dc00")
-    } else if (d.type == "condition_occurrence") {
-      bar.style("fill", "#cc37ae")
-    }
+    bar.style("fill", dragColor(d.type))
     Shiny.setInputValue(
     "bar_start",
      d,
@@ -277,13 +308,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
 
   function dragEnd(event, d) {
     bar = d3.select(this)
-    if (d.type == "observation_period") {
-      bar.style("fill", "#E1B12C")
-    } else if (d.type == "drug_exposure") {
-      bar.style("fill", "#2ECC71")
-    } else if (d.type == "condition_occurrence") {
-      bar.style("fill", "#bd1c9d")
-    }
+    bar.style("fill", endColor(d.type))
     Shiny.setInputValue(
       "bar_end",
       d,
@@ -348,7 +373,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr("width", d => xScale(new Date(d.end_date)) - xScale(new Date(d.start_date)))
     .attr("y", d => yScale(d.categories))
     .attr("height", barHeight)
-    .style("fill", initialColor)
+    .style("fill", startColor)
     .style("cursor", "pointer")
     .call(moveBar)
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
@@ -361,7 +386,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr('r', 5)
     .attr('cx', d => xScale(new Date(d.end_date)))
     .attr("cy", d => yScale(d.categories) + 16)
-    .style("fill", initialColor)
+    .style("fill", startColor)
     .style("cursor", "ew-resize")
     .call(elongRight)
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
@@ -374,7 +399,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr('r', 5)
     .attr('cx', d => xScale(new Date(d.start_date)))
     .attr("cy", d => yScale(d.categories) + 16)
-    .style("fill", initialColor)
+    .style("fill", startColor)
     .style("cursor", "ew-resize")
     .call(elongLeft)
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
