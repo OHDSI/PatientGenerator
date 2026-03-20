@@ -237,7 +237,6 @@ cdmConstructor <- R6::R6Class(
           lapply(
             self$tables, 
             function(table_name) {
-              # browser()
               cols <- c(
                 self[[table_name]]$tableNameId(),
                 "person_id",

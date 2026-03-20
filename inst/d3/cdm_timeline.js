@@ -165,10 +165,20 @@ r2d3.onRender(function(data, svg, width, height, options) {
     let name_start_date, name_end_date;
 
     if (d.type == "condition_occurrence") {
-        // Branch A: Special naming for conditions
-        // We make sure to assign to the same variable names used later
-        name_start_date = "#condition_occurrence-condition_start_date input";
-        name_end_date = "#condition_occurrence-condition_end_date input";
+      // Branch A: Special naming for conditions
+      // We make sure to assign to the same variable names used later
+      name_start_date = "#condition_occurrence-condition_start_date input";
+      name_end_date = "#condition_occurrence-condition_end_date input";
+      
+    } else if (d.type == "procedure_occurrence") {
+      
+      name_start_date = "#procedure_occurrence-procedure_date input";
+      name_end_date = "#procedure_occurrence-procedure_end_date input";
+    
+    } else if (d.type == "measurement") {
+            
+      name_start_date = "#measurement-measurement_date input";
+
     } else {
         // Branch B: Standard naming pattern
         name_start_date = "#" + d.type + "-" + d.type + "_start_date input";
@@ -287,11 +297,25 @@ r2d3.onRender(function(data, svg, width, height, options) {
     let name_start_date;
 
     if (d.type == "condition_occurrence") {
-        name_start_date = "#condition_occurrence-condition_start_date input";
-    } else {
-        name_start_date = "#" + d.type + "-" + d.type + "_start_date input";
-    }
+      // Branch A: Special naming for conditions
+      // We make sure to assign to the same variable names used later
+      name_start_date = "#condition_occurrence-condition_start_date input";
+      name_end_date = "#condition_occurrence-condition_end_date input";
+      
+    } else if (d.type == "procedure_occurrence") {
+      
+      name_start_date = "#procedure_occurrence-procedure_date input";
+      name_end_date = "#procedure_occurrence-procedure_end_date input";
+    
+    } else if (d.type == "measurement") {
+            
+      name_start_date = "#measurement-measurement_date input";
 
+    } else {
+        // Branch B: Standard naming pattern
+        name_start_date = "#" + d.type + "-" + d.type + "_start_date input";
+        name_end_date = "#" + d.type + "-" + d.type + "_end_date input";
+    }
     const value_start_date = d3.timeFormat("%Y-%m-%d")(new Date(d.start_date));
 
     d3.select(name_start_date)
