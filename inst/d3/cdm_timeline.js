@@ -404,7 +404,6 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .call(elongLeft)
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
 
-
   const oneDay = 24 * 60 * 60 * 1000;
   const totalMilliseconds = domainEnd - domainStart;
   const maxZoom = totalMilliseconds / oneDay;
