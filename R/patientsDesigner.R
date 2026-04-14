@@ -243,9 +243,24 @@ patientDesigner <- function(path = NULL) {
     observeEvent(person_module(), {
       req(person_module())
 
-      updateTableIdsNs(cdm = cdm, type = "observation_period", input_person_id = person_module, session = session)
-      updateTableIdsNs(cdm = cdm, type = "condition_occurrence", input_person_id = person_module, session = session)
-      updateTableIdsNs(cdm = cdm, type = "drug_exposure", input_person_id = person_module, session = session)
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "observation_period",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "condition_occurrence",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "drug_exposure",
+        input_person_id = person_module,
+        session = session
+        )
       # updateTableDatesNs(cdm,
       #                    type = "observation_period",
       #                    input_person_id = person_module,
@@ -337,6 +352,7 @@ patientDesigner <- function(path = NULL) {
     cdmDataTimeline <- reactive({
       pid <- suppressWarnings(as.numeric(person_module()))
       req(!is.na(pid), length(pid) == 1)
+      # browser()
       cdm$getCdmDataTimeline() %>%
         dplyr::filter(.data$person_id == pid)
     }) %>% bindEvent(data_version(),
