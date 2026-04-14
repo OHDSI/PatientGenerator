@@ -2,7 +2,7 @@ template:
   bootstrap: 5
 
 home:
-  title: patientGenerator
+  title: PatientGenerator
   description: Generate and curate OMOP CDM synthetic patient test sets with LLM and D3 tooling.
 
 navbar:
@@ -12,7 +12,7 @@ navbar:
   components:
     github:
       icon: fab fa-github
-      href: https://github.com/mi-erasmusmc/patientGenerator
+      href: https://github.com/mi-erasmusmc/PatientGenerator
 
 articles:
   - title: Workflows

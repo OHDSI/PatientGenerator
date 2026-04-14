@@ -1,4 +1,4 @@
 library(testthat)
-library(patientGenerator)
+library(PatientGenerator)
 
-test_check("patientGenerator")
+test_check("PatientGenerator")

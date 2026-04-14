@@ -1,9 +1,9 @@
 new_cdm <- function() {
-  getFromNamespace("cdmConstructor", "patientGenerator")$new()
+  getFromNamespace("cdmConstructor", "PatientGenerator")$new()
 }
 
 new_cdm_table <- function(type) {
-  getFromNamespace("cdmTable", "patientGenerator")$new(type = type)
+  getFromNamespace("cdmTable", "PatientGenerator")$new(type = type)
 }
 
-cdm_table_server <- getFromNamespace("cdmTableServer", "patientGenerator")
+cdm_table_server <- getFromNamespace("cdmTableServer", "PatientGenerator")

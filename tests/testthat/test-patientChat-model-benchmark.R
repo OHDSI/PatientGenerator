@@ -22,7 +22,7 @@ test_that("patientChat benchmark across all available models for diabetes + sema
     )
   }
 
-  models <- unique(patientGenerator::availableModels())
+  models <- unique(PatientGenerator::availableModels())
   if (length(models) == 0) {
     testthat::skip("No models returned by availableModels().")
   }

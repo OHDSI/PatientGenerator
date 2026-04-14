@@ -145,7 +145,7 @@ test_that("patientChat API flow creates loadable test set", {
 })
 
 test_that("patientChat with local codelist returns retrievable concepts", {
-  codelist_path <- system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
+  codelist_path <- system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
   codelist_data <- readRDS(codelist_path)
 
   skip_if_no_openai()

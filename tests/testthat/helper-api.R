@@ -8,7 +8,7 @@ skip_if_no_openai <- function() {
 
 pick_openai_model <- function() {
   models <- tryCatch(
-    patientGenerator::availableModels(),
+    PatientGenerator::availableModels(),
     error = function(e) testthat::skip(paste("Cannot list models:", conditionMessage(e)))
   )
   preferred <- c("gpt-5.2", "gpt-5", "gpt-4.1", "gpt-4o")
