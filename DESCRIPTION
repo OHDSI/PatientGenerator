@@ -32,7 +32,8 @@ Imports:
     R6,
     shiny,
     stringr,
-    testthat
+    testthat,
+    TestGenerator
 Suggests:
     knitr,
     rmarkdown,

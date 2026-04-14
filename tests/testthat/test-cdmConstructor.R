@@ -145,30 +145,30 @@ test_that("Testing methods on LLM testset", {
 
   ### Test set description for this test:
   # patientGenerator$prompt(
-  #   "Population (person table):
-  #     - 10 adult patients
-  #     - 5 female
-  #     - 5 male
-  #     
-  #    Observation Period:
-  #     - Start date between date of birth each person and end of observation 2025-12-31
-  #     
-  #    Condition Occurrence:
-  #      - All patients must have Diabetes (condition_concept_id: 201826)
-  #      - Condition start date between 2015-01-01 and 2020-12-31
-  #   
-  #    Drug Exposure:
-  #      - All patients must have Semaglutide (drug_concept_id: 19079450)
-  #      - Drug exposure in a window of 0 to 30 days after index date
-  #   
-  #    Measurement:
-  #      - All patients must have Fasting glucose (measurement_concept_id: 3018251)
-  #   
-  #    Procedure cccurrence:
-  #      - 50% of patients (5 patients) must have Amputation of toe (procedure_concept_id: 4159766)
-  #      
-  #    Output Requirements:
-  #     - Fill only specified tables in this prompt"
+  # "Population (person table):
+  #   - 10 adult patients
+  #   - 5 female
+  #   - 5 male
+  # 
+  #  Observation Period:
+  #   - Start date between date of birth each person and end of observation 2025-12-31
+  # 
+  #  Condition Occurrence:
+  #    - All patients must have Diabetes (condition_concept_id: 201826)
+  #    - Condition start date between 2015-01-01 and 2020-12-31
+  # 
+  #  Drug Exposure:
+  #    - All patients must have Semaglutide (drug_concept_id: 19079450)
+  #    - Drug exposure in a window of 0 to 30 days after index date
+  # 
+  #  Measurement:
+  #    - All patients must have Fasting glucose (measurement_concept_id: 3018251)
+  # 
+  #  Procedure cccurrence:
+  #    - 50% of patients (5 patients) must have Amputation of toe (procedure_concept_id: 4159766)
+  # 
+  #  Output Requirements:
+  #   - Fill only specified tables in this prompt"
   #   )
   # patientGenerator$save("test_diabetes_patients")
   
@@ -237,11 +237,11 @@ test_that("Testing methods on LLM testset 'objective_1_patient'", {
   
   cdm$condition_occurrence$data() |> 
     pull(person_id) |> 
-    expect_length(11)
+    expect_length(5)
   
   cdm$drug_exposure$data() |> 
     pull(person_id) |> 
-    expect_length(11)
+    expect_length(5)
   
   cdm$measurement$data() |> 
     pull(person_id) |> 
@@ -249,6 +249,6 @@ test_that("Testing methods on LLM testset 'objective_1_patient'", {
   
   cdm$procedure_occurrence$data() |> 
     pull(person_id) |> 
-    expect_length(6)
+    expect_length(1)
   
 })

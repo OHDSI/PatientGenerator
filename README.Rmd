@@ -47,22 +47,6 @@ generator$prompt(
 generator$save(name = "demo-cohort")
 ```
 
-### Optional: use your own concept list during generation
-
-```r
-codelist <- readRDS(
-  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
-)
-
-generator <- patientChat$new(
-  model = "gpt-5.2",
-  codelist_data = codelist,
-  echo = "none"
-)
-
-generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
-```
-
 ## Review and edit in patientDesigner
 
 ```r

@@ -25,7 +25,7 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     cdm <- TestGenerator::patientsCDM(testName = "patient-chat-test")
   })
   
-  icdm$person |>
+  cdm$person |>
     pull(person_id) |>
     length() |>
     expect_equal(5)
