@@ -1,0 +1,61 @@
+---
+title: "patientChat Model Benchmark Results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{patientChat Model Benchmark Results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Overview
+
+This article reports benchmark results for `patientChat` using the core GPT-5 models.
+The content is documentation-only and does not execute benchmark code during website builds.
+
+Benchmark task definition:
+
+- Generate exactly 10 synthetic OMOP CDM v5.4 patients.
+- Include diabetes in `condition_occurrence`.
+- Include semaglutide in `drug_exposure`.
+- Record elapsed generation time per model.
+
+Run date for the published snapshot: 2026-02-28.
+
+## Published snapshot (2026-02-28)
+
+| Model      | Status  | Elapsed Seconds | Person Count | Notes |
+|:-----------|:--------|----------------:|-------------:|:------|
+| gpt-5-nano | success | 93.07           | 10           | Fastest successful run |
+| gpt-5      | success | 129.06          | 10           | Stable output |
+| gpt-5-mini | success | 140.62          | 10           | Stable output |
+| gpt-5.1    | error   | 72.76           | NA           | Invalid JSON text returned |
+| gpt-5.2    | error   | 75.57           | NA           | Invalid JSON text returned |
+
+Summary:
+
+- Successful runs: 3/5 models.
+- Failed runs: 2/5 models.
+- Fastest successful model: `gpt-5-nano` (93.07 seconds).
+
+## How to reproduce (manual)
+
+Use the benchmark test file to generate a fresh CSV:
+
+```r
+Sys.setenv(
+  OPENAI_API_KEY = "<your-key>",
+  PATIENTGENERATOR_RUN_MODEL_BENCHMARK = "true",
+  PATIENTGENERATOR_MODEL_BENCHMARK_DIR = "/path/to/benchmark-output"
+)
+
+testthat::test_file("tests/testthat/test-patientChat-model-benchmark.R")
+```
+
+Expected output artifact:
+
+- `/path/to/benchmark-output/patientChat_model_benchmark_results.csv`
+
+## Optional plotting helper (for local analysis)
+
+The benchmark test script includes a helper that builds a `ggplot2` bar chart from the CSV.
+Use it locally when you want visual comparison after collecting results.
