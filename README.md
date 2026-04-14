@@ -1,7 +1,7 @@
 
-# patientGenerator
+# PatientGenerator
 
-`patientGenerator` helps you build OMOP CDM synthetic test sets in two
+`PatientGenerator` helps you build OMOP CDM synthetic test sets in two
 complementary ways:
 
 - `patientChat`: generate structured patient JSON with an LLM.
@@ -15,7 +15,7 @@ valid OMOP concept codes.
 
 ``` r
 # install.packages("pak")
-pak::pak("mi-erasmusmc/patientGenerator")
+pak::pak("mi-erasmusmc/PatientGenerator")
 ```
 
 ## Workflow overview
@@ -29,7 +29,7 @@ pak::pak("mi-erasmusmc/patientGenerator")
 ## Generate with patientChat
 
 ``` r
-library(patientGenerator)
+library(PatientGenerator)
 
 # Requires OPENAI_API_KEY in your environment
 generator <- patientChat$new(model = "gpt-5.2", echo = "none")
@@ -83,7 +83,7 @@ options(patientgenerator.hecate = list(
 ## Learn more
 
 - Vignette:
-  `vignette("synthetic-patient-workflow", package = "patientGenerator")`
+  `vignette("synthetic-patient-workflow", package = "PatientGenerator")`
 - Reference docs are available in the package website built with
   `pkgdown`.
 

@@ -113,7 +113,7 @@ patientDesigner <- function(path = NULL) {
     class = "p-0"
   ),
   padding = c(0),
-  title = "OHDSI - patientGenerator - PatientDesigner",
+  title = "OHDSI - PatientGenerator - PatientDesigner",
   theme = bs_theme(version = 5, bootswatch = "zephyr")  # initial theme
   )
 
@@ -440,7 +440,7 @@ patientDesigner <- function(path = NULL) {
     output$d3 <- renderD3({
       r2d3(
         data = cdmDataTimeline(),
-        script = system.file("d3/cdm_timeline.js", package = "patientGenerator"),
+        script = system.file("d3/cdm_timeline.js", package = "PatientGenerator"),
         height = 1000
       )
     })

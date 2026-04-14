@@ -16,11 +16,14 @@ testSetDir <- function(path = NULL, create = TRUE) {
   }
 
   if (is.null(path)) {
-    path <- getOption("patientGenerator.testSetDir", NULL)
+    path <- getOption(
+      "PatientGenerator.testSetDir",
+      getOption("patientGenerator.testSetDir", NULL)
+    )
   }
 
   if (is.null(path)) {
-    path <- file.path(tools::R_user_dir("patientGenerator", which = "data"), "testCases")
+    path <- file.path(tools::R_user_dir("PatientGenerator", which = "data"), "testCases")
   }
 
   if (isTRUE(create) && !dir.exists(path)) {

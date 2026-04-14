@@ -148,7 +148,7 @@ patientChat <- R6::R6Class(
     #' @param name Name of the file
     #' @param path To save the file.
     #' If NULL, the package first tries `testthat::test_path("testCases")`,
-    #' then checks `options(patientGenerator.testSetDir = "...")`, and finally
+    #' then checks `options(PatientGenerator.testSetDir = "...")`, and finally
     #' falls back to the package user data directory.
     save = function(name = "patient-chat-test",
                     path = NULL) {
@@ -201,7 +201,7 @@ patientChat <- R6::R6Class(
       if (is.null(jsonSchemaPath)) {
         json_schema_path <- system.file("jsonSchemas",
                                         "cdm54schema-complete.json",
-                                        package = "patientGenerator")
+                                        package = "PatientGenerator")
         checkmate::assertFileExists(json_schema_path)
         self$json_schema_path <- json_schema_path
         } else {

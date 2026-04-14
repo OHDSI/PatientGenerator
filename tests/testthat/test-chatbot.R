@@ -2,7 +2,7 @@ test_that("ellmer chat_structured output is loadable", {
   skip_if_no_openai()
   model <- pick_openai_model()
 
-  schema <- system.file("jsonSchemas", "cdm54schema-short.json", package = "patientGenerator")
+  schema <- system.file("jsonSchemas", "cdm54schema-short.json", package = "PatientGenerator")
   chat <- ellmer::chat_openai(model = model)
 
   response <- chat$chat_structured(

@@ -27,7 +27,7 @@ Optional concept list retrieval:
 
 ```r
 codelist <- readRDS(
-  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
+  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
 )
 
 generator <- patientChat$new(

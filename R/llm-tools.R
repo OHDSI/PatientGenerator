@@ -1,5 +1,5 @@
 retrieveCodelist <- function(concept_label = "Stage 1", domain = "Measurement") {
-  codelist <- readRDS(file = system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator"))
+  codelist <- readRDS(file = system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator"))
   checkmate::assertCharacter(concept_label)
   checkmate::assertCharacter(domain)
   domain_names <- codelist |>

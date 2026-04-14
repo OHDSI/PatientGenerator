@@ -9,7 +9,7 @@ vignette: >
 
 ## Overview
 
-This article documents an end-to-end workflow with `patientGenerator`:
+This article documents an end-to-end workflow with `PatientGenerator`:
 
 1. generate synthetic patients in OMOP CDM format with `patientChat`,
 2. inspect and curate those patients with `patientDesigner`,
@@ -44,7 +44,7 @@ If you provide a concept list (`concept_id`, `concept_name`, `domain_id`, etc.),
 
 ```r
 codelist <- readRDS(
-  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
+  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
 )
 
 generator <- patientChat$new(

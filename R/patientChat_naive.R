@@ -40,7 +40,7 @@ patientChatNaive <- function(prompt = "### Give me a sample of five patients",
   } else {
     jsonSchemaPath <- system.file("jsonSchemas",
                                   "cdm54schema-complete.json",
-                                  package = "patientGenerator")
+                                  package = "PatientGenerator")
     checkmate::assertFileExists(jsonSchemaPath)
   }
 
@@ -98,4 +98,3 @@ check_api_key <- function(apiKeyName = "OPENAI_API_KEY") {
     )
   }
 }
-

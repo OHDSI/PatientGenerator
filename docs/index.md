@@ -3,9 +3,9 @@ layout: default
 title: Home
 ---
 
-# patientGenerator
+# PatientGenerator
 
-`patientGenerator` helps you build OMOP CDM synthetic test sets in two complementary ways:
+`PatientGenerator` helps you build OMOP CDM synthetic test sets in two complementary ways:
 
 - `patientChat`: generate structured patient JSON with an LLM.
 - `patientDesigner`: review and edit those patients in a D3/Shiny interface.
@@ -15,7 +15,7 @@ title: Home
 
 ```r
 # install.packages("pak")
-pak::pak("mi-erasmusmc/patientGenerator")
+pak::pak("mi-erasmusmc/PatientGenerator")
 ```
 
 ## Quick Start
