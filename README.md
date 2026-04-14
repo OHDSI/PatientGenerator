@@ -1,29 +1,34 @@
+
 # patientGenerator
 
-`patientGenerator` helps you build OMOP CDM synthetic test sets in two complementary ways:
+`patientGenerator` helps you build OMOP CDM synthetic test sets in two
+complementary ways:
 
 - `patientChat`: generate structured patient JSON with an LLM.
-- `patientDesigner`: review and edit those patients in a D3/Shiny interface.
+- `patientDesigner`: review and edit those patients in a D3/Shiny
+  interface.
 
-It also includes Hecate-powered concept lookup support for selecting valid OMOP concept codes.
+It also includes Hecate-powered concept lookup support for selecting
+valid OMOP concept codes.
 
 ## Install
 
-```r
+``` r
 # install.packages("pak")
 pak::pak("mi-erasmusmc/patientGenerator")
 ```
 
 ## Workflow overview
 
-1. Generate a first synthetic cohort with `patientChat`.
-2. Save JSON test sets to disk.
-3. Open `patientDesigner()` to review and refine patients.
-4. Use built-in concept search (backed by `hecateSearch`) while editing tables.
+1.  Generate a first synthetic cohort with `patientChat`.
+2.  Save JSON test sets to disk.
+3.  Open `patientDesigner()` to review and refine patients.
+4.  Use built-in concept search (backed by `hecateSearch`) while editing
+    tables.
 
 ## Generate with patientChat
 
-```r
+``` r
 library(patientGenerator)
 
 # Requires OPENAI_API_KEY in your environment
@@ -36,25 +41,9 @@ generator$prompt(
 generator$save(name = "demo-cohort")
 ```
 
-### Optional: use your own concept list during generation
-
-```r
-codelist <- readRDS(
-  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
-)
-
-generator <- patientChat$new(
-  model = "gpt-5.2",
-  codelist_data = codelist,
-  echo = "none"
-)
-
-generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
-```
-
 ## Review and edit in patientDesigner
 
-```r
+``` r
 # Opens the D3/Shiny editor
 patientDesigner()
 ```
@@ -68,12 +57,13 @@ Inside the UI you can:
 
 ## Concept code search with Hecate in patientDesigner
 
-`patientDesigner` uses a concept search module that calls `hecateSearch()` under the hood.
-When editing concept ID fields, you can search and insert valid OMOP concept IDs.
+`patientDesigner` uses a concept search module that calls
+`hecateSearch()` under the hood. When editing concept ID fields, you can
+search and insert valid OMOP concept IDs.
 
 Configure Hecate globally with environment variables:
 
-```r
+``` r
 Sys.setenv(
   HECATE_BASE_URL = "https://your-hecate-server/api",
   HECATE_API_KEY = "your-api-key"
@@ -82,7 +72,7 @@ Sys.setenv(
 
 Or with package options:
 
-```r
+``` r
 options(patientgenerator.hecate = list(
   base_url = "https://your-hecate-server/api",
   timeout_ms = 15000,
@@ -92,11 +82,13 @@ options(patientgenerator.hecate = list(
 
 ## Learn more
 
-- Vignette: `vignette("synthetic-patient-workflow", package = "patientGenerator")`
-- Reference docs are available in the package website built with `pkgdown`.
+- Vignette:
+  `vignette("synthetic-patient-workflow", package = "patientGenerator")`
+- Reference docs are available in the package website built with
+  `pkgdown`.
 
 ## Build the website
 
-```r
+``` r
 pkgdown::build_site()
 ```
