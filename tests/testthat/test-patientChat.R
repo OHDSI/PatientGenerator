@@ -6,12 +6,12 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     patientGenerator <- patientChat$new(model = "gpt")
   })
   expect_no_error({
-    patientGenerator <- patientChat$new(model = "gpt-5.2-pro")
+    patientGenerator <- patientChat$new(model = "gpt-5.4-pro")
     patientGenerator <- patientChat$new(model = "gpt-5-nano")
     patientGenerator <- patientChat$new(model = "gpt-5-mini")
   })
   
-  patientGenerator <- patientChat$new(model = "gpt-5.2")
+  patientGenerator <- patientChat$new(model = "gpt-5.4")
   # patientGenerator$availableModels()
   
   # 1
@@ -25,7 +25,7 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     cdm <- TestGenerator::patientsCDM(testName = "patient-chat-test")
   })
   
-  cdm$person |>
+  icdm$person |>
     pull(person_id) |>
     length() |>
     expect_equal(5)
