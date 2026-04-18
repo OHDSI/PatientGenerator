@@ -3,10 +3,8 @@
 .Rapp.history
 .RData
 .Ruserdata
-
 # RStudio
 .Rproj.user/
-
 # Package build/check artifacts
 /*.tar.gz
 /*.Rcheck/
@@ -16,6 +14,6 @@
 renv/library/
 renv/staging/
 renv/python/
-
 # OS/editor noise
 .DS_Store
+AGENTS.md

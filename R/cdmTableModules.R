@@ -140,7 +140,8 @@ cdmTableServer <- function(
             choices = cdmTable[["person_id"]] %>% unique(),
             selected = cdmTable[["person_id"]] %>% unique()
           )
-          # When creating a new event the selected option is the last in the table
+          # When creating a new event the selected option is 
+          # the last in the table
           updateSelectInput(
             session,
             table_event_id,
