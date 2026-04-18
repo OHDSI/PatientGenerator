@@ -60,6 +60,8 @@ function endColor(type) {
   return "#999";
 }
 
+let currentTransform = d3.zoomIdentity;
+
 var domainStart = new Date(1980, 0, 1);
     domainEnd = new Date(2026, 0, 1);
 
@@ -103,7 +105,8 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .call(axisBottom)
 
   function zooming(event) {
-
+    
+    currentTransform = event.transform;
     const xScaleUpdated = event.transform.rescaleX(xScale)
 
     xAxisTop
@@ -440,5 +443,12 @@ r2d3.onRender(function(data, svg, width, height, options) {
 
   svg
     .call(zoom)
+    
+  svg
+  .call(
+    zoom.transform,
+    currentTransform
+    );
+
 
 });

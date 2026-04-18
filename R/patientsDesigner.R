@@ -494,9 +494,9 @@ patientDesigner <- function(path = NULL) {
       person_id <- update_data$person_id
       event_id <- update_data$event_id
       type <- update_data$type
-      # print("END DATA:")
-      # update_data$start_date %>% print()
-      # update_data$end_date %>% print()
+      print("END DATA:")
+      update_data$start_date %>% print()
+      update_data$end_date %>% print()
       cdm[[type]]$updateDates(
         person_id = person_id,
         event_id = event_id,
