@@ -160,7 +160,7 @@ Saves the JSON test set to disk.
 
 \item{\code{path}}{To save the file.
 If NULL, the package first tries \code{testthat::test_path("testCases")},
-then checks \code{options(patientGenerator.testSetDir = "...")}, and finally
+then checks \code{options(PatientGenerator.testSetDir = "...")}, and finally
 falls back to the package user data directory.}
 }
 \if{html}{\out{</div>}}

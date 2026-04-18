@@ -7,30 +7,22 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
 ## Overview
 
-This article shows an end-to-end workflow with `patientGenerator`:
+This article documents an end-to-end workflow with `PatientGenerator`:
 
 1. generate synthetic patients in OMOP CDM format with `patientChat`,
 2. inspect and curate those patients with `patientDesigner`,
 3. use Hecate concept search from the designer while editing concept IDs.
 
-```{r setup}
-library(patientGenerator)
-```
+All snippets below are usage examples for users to run locally.
+They are displayed in documentation only and are not executed during website builds.
 
 ## 1) Generate a synthetic cohort with patientChat
 
 `patientChat` is an R6 class that prompts an LLM and returns schema-constrained JSON.
 
-```{r chat-example, eval = FALSE}
+```r
 # OPENAI_API_KEY must be available in your environment
 generator <- patientChat$new(model = "gpt-5.2", echo = "none")
 
@@ -50,9 +42,9 @@ generator$save(name = "five-patients-demo")
 If you provide a concept list (`concept_id`, `concept_name`, `domain_id`, etc.),
 `patientChat` can use it via the internal retrieval tool during generation.
 
-```{r chat-codelist, eval = FALSE}
+```r
 codelist <- readRDS(
-  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
+  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
 )
 
 generator <- patientChat$new(
@@ -68,7 +60,7 @@ generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
 
 `patientDesigner()` starts a D3/Shiny application where you can load, review, and edit JSON test sets.
 
-```{r designer-open, eval = FALSE}
+```r
 patientDesigner()
 ```
 
@@ -81,7 +73,7 @@ Main capabilities in the app:
 
 You can also target a specific folder:
 
-```{r designer-path, eval = FALSE}
+```r
 patientDesigner(path = "/path/to/my/testsets")
 ```
 
@@ -92,7 +84,7 @@ This helps you find OMOP concept IDs while filling concept fields.
 
 ### Configure Hecate with environment variables
 
-```{r hecate-env, eval = FALSE}
+```r
 Sys.setenv(
   HECATE_BASE_URL = "https://your-hecate-server/api",
   HECATE_API_KEY = "your-api-key",
@@ -102,7 +94,7 @@ Sys.setenv(
 
 ### Or configure with package options
 
-```{r hecate-options, eval = FALSE}
+```r
 options(patientgenerator.hecate = list(
   base_url = "https://your-hecate-server/api",
   timeout_ms = 15000,
@@ -112,7 +104,7 @@ options(patientgenerator.hecate = list(
 
 ### Direct Hecate search example
 
-```{r hecate-search, eval = FALSE}
+```r
 res <- hecateSearch(
   query = "hypertension",
   domainId = "Condition",

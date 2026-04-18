@@ -13,3 +13,4 @@
 ^work/
 ^.*\.Rcheck$
 ^.*\.tar\.gz$
+^benchmarks$

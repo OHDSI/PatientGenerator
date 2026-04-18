@@ -6,12 +6,12 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     patientGenerator <- patientChat$new(model = "gpt")
   })
   expect_no_error({
-    patientGenerator <- patientChat$new(model = "gpt-5.2-pro")
+    patientGenerator <- patientChat$new(model = "gpt-5.4-pro")
     patientGenerator <- patientChat$new(model = "gpt-5-nano")
     patientGenerator <- patientChat$new(model = "gpt-5-mini")
   })
   
-  patientGenerator <- patientChat$new(model = "gpt-5.2")
+  patientGenerator <- patientChat$new(model = "gpt-5.4")
   # patientGenerator$availableModels()
   
   # 1
@@ -145,7 +145,7 @@ test_that("patientChat API flow creates loadable test set", {
 })
 
 test_that("patientChat with local codelist returns retrievable concepts", {
-  codelist_path <- system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
+  codelist_path <- system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
   codelist_data <- readRDS(codelist_path)
 
   skip_if_no_openai()

@@ -53,7 +53,7 @@ columnNames <- function(
       "emptycdm_",
       cdmVersion
       ),
-    package = "patientGenerator"
+    package = "PatientGenerator"
     )
 
   # supported_tables <- file.path(cdmSpecificationPath) |> 

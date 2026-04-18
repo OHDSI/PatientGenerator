@@ -1,0 +1,470 @@
+name: Sync project items and fields
+run-name: local_to_main
+
+on:
+  issues:
+    types: [opened, assigned, unassigned]
+  workflow_dispatch:
+
+jobs:
+  sync-membership:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      repository-projects: write
+    steps:
+      - name: Add or remove the issue from the target projects
+        uses: actions/github-script@v7
+        env:
+          USERNAME: "cebarboza"
+          PROJECT_IDS: "PVT_kwDOAG6ovc4BUuDD PVT_kwDOBxHDRs4BKuC8"
+        with:
+          github-token: ${{ secrets.MY_PROJECT_TOKEN || github.token }}
+          script: |
+            const username = process.env.USERNAME;
+            const assignee = context.payload.assignee?.login;
+            const projectIds = process.env.PROJECT_IDS.trim().split(/\s+/).filter(Boolean);
+            const issueNodeId = context.payload.issue.node_id;
+            const action = context.payload.action;
+
+            if (projectIds.length < 2) {
+              throw new Error(`Expected at least 2 project IDs, received ${projectIds.length}`);
+            }
+
+            const localProjectId = projectIds[0];
+            const mainProjectId = projectIds[1];
+
+            async function findItemId(projectId, contentId) {
+              let cursor = null;
+              while (true) {
+                const response = await github.graphql(
+                  `query($projectId: ID!, $cursor: String) {
+                    node(id: $projectId) {
+                      ... on ProjectV2 {
+                        items(first: 100, after: $cursor) {
+                          nodes {
+                            id
+                            content {
+                              ... on Issue {
+                                id
+                              }
+                            }
+                          }
+                          pageInfo {
+                            hasNextPage
+                            endCursor
+                          }
+                        }
+                      }
+                    }
+                  }`,
+                  { projectId, cursor }
+                );
+
+                const items = response.node.items.nodes;
+                const match = items.find((item) => item.content?.id === contentId);
+                if (match) {
+                  return match.id;
+                }
+
+                if (!response.node.items.pageInfo.hasNextPage) {
+                  return null;
+                }
+
+                cursor = response.node.items.pageInfo.endCursor;
+              }
+            }
+
+            async function addIssueToProject(projectId) {
+              core.info(`Adding issue to ${projectId}`);
+              try {
+                await github.graphql(
+                  `mutation($projectId: ID!, $contentId: ID!) {
+                    addProjectV2ItemById(input: {
+                      projectId: $projectId,
+                      contentId: $contentId
+                    }) {
+                      item {
+                        id
+                      }
+                    }
+                  }`,
+                  { projectId, contentId: issueNodeId }
+                );
+              } catch (error) {
+                if (String(error.message).includes("already exists")) {
+                  core.info(`Issue is already present in ${projectId}`);
+                  return;
+                }
+                throw error;
+              }
+            }
+
+            async function removeIssueFromProject(projectId) {
+              core.info(`Removing issue from ${projectId}`);
+              const itemId = await findItemId(projectId, issueNodeId);
+
+              if (!itemId) {
+                core.info(`Issue not found in ${projectId}`);
+                return;
+              }
+
+              await github.graphql(
+                `mutation($projectId: ID!, $itemId: ID!) {
+                  deleteProjectV2Item(input: {
+                    projectId: $projectId,
+                    itemId: $itemId
+                  }) {
+                    deletedItemId
+                  }
+                }`,
+                { projectId, itemId }
+              );
+            }
+
+            if (action === "opened") {
+              await addIssueToProject(localProjectId);
+              return;
+            }
+
+            if (assignee !== username) {
+              core.info("Not target user, skipping");
+              return;
+            }
+
+            if (action === "assigned") {
+              await addIssueToProject(localProjectId);
+              await addIssueToProject(mainProjectId);
+              return;
+            }
+
+            if (action === "unassigned") {
+              await removeIssueFromProject(mainProjectId);
+            }
+
+  mirror-fields:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      repository-projects: write
+    steps:
+      - name: Mirror tracked fields across both projects
+        uses: actions/github-script@v7
+        env:
+          PROJECT_IDS: "PVT_kwDOBxHDRs4BR6dr PVT_kwDOBxHDRs4BKuC8"
+        with:
+          github-token: ${{ secrets.MY_PROJECT_TOKEN || github.token }}
+          script: |
+            const trackedFields = [
+              "Status",
+              "Priority",
+              "Size",
+              "Estimate",
+              "Start date",
+              "End date",
+            ];
+            const trackedFieldSet = new Set(trackedFields);
+            const projectIds = process.env.PROJECT_IDS.trim().split(/\s+/).filter(Boolean);
+
+            if (projectIds.length !== 2) {
+              throw new Error(`Expected exactly 2 project IDs, received ${projectIds.length}`);
+            }
+
+            async function fetchProjectMetadata(projectId) {
+              const response = await github.graphql(
+                `query($projectId: ID!) {
+                  node(id: $projectId) {
+                    ... on ProjectV2 {
+                      id
+                      title
+                      fields(first: 50) {
+                        nodes {
+                          __typename
+                          ... on ProjectV2FieldCommon {
+                            id
+                            name
+                          }
+                          ... on ProjectV2SingleSelectField {
+                            options {
+                              id
+                              name
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }`,
+                { projectId }
+              );
+
+              const project = response.node;
+              const fieldsByName = {};
+
+              for (const field of project.fields.nodes) {
+                if (!trackedFieldSet.has(field.name)) {
+                  continue;
+                }
+
+                const entry = {
+                  id: field.id,
+                  name: field.name,
+                  kind: field.__typename,
+                  optionsByName: {},
+                };
+
+                if (field.__typename === "ProjectV2SingleSelectField") {
+                  for (const option of field.options) {
+                    entry.optionsByName[option.name] = option.id;
+                  }
+                }
+
+                fieldsByName[field.name] = entry;
+              }
+
+              return {
+                id: project.id,
+                title: project.title,
+                fieldsByName,
+              };
+            }
+
+            function normalizeFieldValue(node) {
+              const fieldName = node.field?.name;
+              if (!trackedFieldSet.has(fieldName)) {
+                return null;
+              }
+
+              if (node.__typename === "ProjectV2ItemFieldSingleSelectValue") {
+                return {
+                  fieldName,
+                  kind: "single_select",
+                  value: node.name,
+                  updatedAt: node.updatedAt,
+                };
+              }
+
+              if (node.__typename === "ProjectV2ItemFieldNumberValue") {
+                return {
+                  fieldName,
+                  kind: "number",
+                  value: node.number,
+                  updatedAt: node.updatedAt,
+                };
+              }
+
+              if (node.__typename === "ProjectV2ItemFieldDateValue") {
+                return {
+                  fieldName,
+                  kind: "date",
+                  value: node.date,
+                  updatedAt: node.updatedAt,
+                };
+              }
+
+              return null;
+            }
+
+            function serializeValue(fieldValue) {
+              if (!fieldValue) {
+                return null;
+              }
+
+              return JSON.stringify(fieldValue.value);
+            }
+
+            async function fetchProjectItems(projectId) {
+              const itemsByIssueId = new Map();
+              let cursor = null;
+
+              while (true) {
+                const response = await github.graphql(
+                  `query($projectId: ID!, $cursor: String) {
+                    node(id: $projectId) {
+                      ... on ProjectV2 {
+                        items(first: 100, after: $cursor) {
+                          nodes {
+                            id
+                            content {
+                              __typename
+                              ... on Issue {
+                                id
+                                number
+                                title
+                              }
+                            }
+                            fieldValues(first: 50) {
+                              nodes {
+                                __typename
+                                ... on ProjectV2ItemFieldSingleSelectValue {
+                                  updatedAt
+                                  name
+                                  field {
+                                    ... on ProjectV2FieldCommon {
+                                      id
+                                      name
+                                    }
+                                  }
+                                }
+                                ... on ProjectV2ItemFieldNumberValue {
+                                  updatedAt
+                                  number
+                                  field {
+                                    ... on ProjectV2FieldCommon {
+                                      id
+                                      name
+                                    }
+                                  }
+                                }
+                                ... on ProjectV2ItemFieldDateValue {
+                                  updatedAt
+                                  date
+                                  field {
+                                    ... on ProjectV2FieldCommon {
+                                      id
+                                      name
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                          pageInfo {
+                            hasNextPage
+                            endCursor
+                          }
+                        }
+                      }
+                    }
+                  }`,
+                  { projectId, cursor }
+                );
+
+                const page = response.node.items;
+                for (const item of page.nodes) {
+                  if (item.content?.__typename !== "Issue") {
+                    continue;
+                  }
+
+                  const valuesByField = {};
+                  for (const fieldValueNode of item.fieldValues.nodes) {
+                    const normalized = normalizeFieldValue(fieldValueNode);
+                    if (!normalized) {
+                      continue;
+                    }
+                    valuesByField[normalized.fieldName] = normalized;
+                  }
+
+                  itemsByIssueId.set(item.content.id, {
+                    itemId: item.id,
+                    issueId: item.content.id,
+                    issueNumber: item.content.number,
+                    title: item.content.title,
+                    valuesByField,
+                  });
+                }
+
+                if (!page.pageInfo.hasNextPage) {
+                  break;
+                }
+
+                cursor = page.pageInfo.endCursor;
+              }
+
+              return itemsByIssueId;
+            }
+
+            function buildMutationValue(targetField, sourceValue) {
+              if (sourceValue.kind === "single_select") {
+                const optionId = targetField.optionsByName[sourceValue.value];
+                if (!optionId) {
+                  throw new Error(
+                    `Option "${sourceValue.value}" is missing from field "${targetField.name}"`
+                  );
+                }
+                return { singleSelectOptionId: optionId };
+              }
+
+              if (sourceValue.kind === "number") {
+                return { number: sourceValue.value };
+              }
+
+              if (sourceValue.kind === "date") {
+                return { date: sourceValue.value };
+              }
+
+              throw new Error(`Unsupported field kind: ${sourceValue.kind}`);
+            }
+
+            async function updateFieldValue(project, item, fieldName, sourceValue) {
+              const targetField = project.fieldsByName[fieldName];
+              if (!targetField) {
+                throw new Error(`Field "${fieldName}" was not found in project "${project.title}"`);
+              }
+
+              const value = buildMutationValue(targetField, sourceValue);
+              await github.graphql(
+                `mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: $projectId,
+                    itemId: $itemId,
+                    fieldId: $fieldId,
+                    value: $value
+                  }) {
+                    projectV2Item {
+                      id
+                    }
+                  }
+                }`,
+                {
+                  projectId: project.id,
+                  itemId: item.itemId,
+                  fieldId: targetField.id,
+                  value,
+                }
+              );
+            }
+
+            const [leftProject, rightProject] = await Promise.all(
+              projectIds.map((projectId) => fetchProjectMetadata(projectId))
+            );
+            const [leftItems, rightItems] = await Promise.all(
+              projectIds.map((projectId) => fetchProjectItems(projectId))
+            );
+
+            core.info(
+              `Running manual field sync from "${leftProject.title}" to "${rightProject.title}"`
+            );
+
+            let updates = 0;
+            const issueIds = [...leftItems.keys()].filter((issueId) => rightItems.has(issueId));
+
+            for (const issueId of issueIds) {
+              const leftItem = leftItems.get(issueId);
+              const rightItem = rightItems.get(issueId);
+
+              for (const fieldName of trackedFields) {
+                const leftValue = leftItem.valuesByField[fieldName];
+                const rightValue = rightItem.valuesByField[fieldName];
+                if (!leftValue) {
+                  continue;
+                }
+
+                if (serializeValue(leftValue) === serializeValue(rightValue)) {
+                  continue;
+                }
+
+                await updateFieldValue(rightProject, rightItem, fieldName, leftValue);
+                updates += 1;
+
+                core.info(
+                  `Mirrored ${fieldName} for issue #${leftItem.issueNumber} from "${leftProject.title}" to "${rightProject.title}"`
+                );
+              }
+            }
+
+            core.info(`Finished field sync. Updated ${updates} field value(s).`);

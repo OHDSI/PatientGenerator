@@ -1,62 +1,100 @@
-# patientGenerator
 
-`patientGenerator` helps you build OMOP CDM synthetic test sets in two complementary ways:
+# PatientGenerator
+
+`PatientGenerator` helps you build OMOP CDM synthetic test sets in two
+complementary ways:
 
 - `patientChat`: generate structured patient JSON with an LLM.
-- `patientDesigner`: review and edit those patients in a D3/Shiny interface.
+- `patientDesigner`: review and edit those patients in a D3/Shiny
+  interface.
 
-It also includes Hecate-powered concept lookup support for selecting valid OMOP concept codes.
+It also includes Hecate-powered concept look up support for selecting
+valid OMOP concept codes.
 
-## Install
+### Install
 
-```r
-# install.packages("pak")
-pak::pak("mi-erasmusmc/patientGenerator")
+``` r
+# install.packages("remotes")
+remotes::install_github("mi-erasmusmc/PatientGenerator")
 ```
 
-## Workflow overview
+### Workflow overview
 
-1. Generate a first synthetic cohort with `patientChat`.
-2. Save JSON test sets to disk.
-3. Open `patientDesigner()` to review and refine patients.
-4. Use built-in concept search (backed by `hecateSearch`) while editing tables.
+1.  Generate a first synthetic cohort with `patientChat`.
+2.  Save JSON test sets to disk.
+3.  Open `patientDesigner()` to review and refine patients.
 
-## Generate with patientChat
+- Use built-in concept search (backed by `hecateSearch`) while editing
+  tables.
 
-```r
-library(patientGenerator)
+### Generate test data with patientChat
 
-# Requires OPENAI_API_KEY in your environment
-generator <- patientChat$new(model = "gpt-5.2", echo = "none")
-generator$prompt(
-  "Generate 5 synthetic OMOP CDM v5.4 patients with one observation period each."
+``` r
+library(PatientGenerator)
+
+# Provided your own OPENAI_API_KEY in the environment
+
+patientGenerator <- PatientGenerator::patientChat$new(
+    model = "gpt-5.3",
+    echo = "none"
+    )
+    
+    
+# Write a prompt to generate the patients
+    
+patientGenerator$prompt(
+   "Population (person table):
+     - 10 adult patients
+     - 5 female
+     - 5 male
+  
+    Observation Period:
+     - Start date between date of birth each person and end of observation 2025-12-31
+  
+    Condition Occurrence:
+      - All patients must have Diabetes (condition_concept_id: 201826)
+      - Condition start date between 2015-01-01 and 2020-12-31
+  
+    Drug Exposure:
+      - All patients must have Semaglutide (drug_concept_id: 19079450)
+      - Drug exposure in a window of 0 to 30 days after index date
+  
+    Measurement:
+      - All patients must have Fasting glucose (measurement_concept_id: 3018251)
+  
+    Procedure cccurrence:
+      - 50% of patients (5 patients) must have Amputation of toe (procedure_concept_id: 4159766)
+  
+    Output Requirements:
+     - Fill only specified tables in this prompt"
 )
-
-# Save in the package-managed test set directory
-generator$save(name = "demo-cohort")
 ```
 
-### Optional: use your own concept list during generation
+### Integration with testthat: save the test set as a JSON file in the testthat folder.
 
-```r
-codelist <- readRDS(
-  system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "patientGenerator")
-)
+``` r
 
-generator <- patientChat$new(
-  model = "gpt-5.2",
-  codelist_data = codelist,
-  echo = "none"
-)
-
-generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
+patientGenerator$save(
+  name = "diabetes-patients"
+  )
 ```
 
-## Review and edit in patientDesigner
+### Review and edit tests patientDesigner()
 
-```r
-# Opens the D3/Shiny editor
-patientDesigner()
+``` r
+
+# D3/Shiny editor
+
+PatientGenerator::patientDesigner()
+```
+
+### Use TestGenerator to load the patients
+
+``` r
+
+cdm <- TestGenerator::patientsCDM(
+  testName = "diabetes-patients"
+  )
 ```
 
 Inside the UI you can:
@@ -66,14 +104,15 @@ Inside the UI you can:
 - inspect timeline and table previews,
 - save updated test sets.
 
-## Concept code search with Hecate in patientDesigner
+### Concept code search with Hecate in patientDesigner
 
-`patientDesigner` uses a concept search module that calls `hecateSearch()` under the hood.
-When editing concept ID fields, you can search and insert valid OMOP concept IDs.
+`patientDesigner` uses a concept search module that calls
+`hecateSearch()` under the hood. When editing concept ID fields, you can
+search and insert valid OMOP concept IDs.
 
 Configure Hecate globally with environment variables:
 
-```r
+``` r
 Sys.setenv(
   HECATE_BASE_URL = "https://your-hecate-server/api",
   HECATE_API_KEY = "your-api-key"
@@ -82,7 +121,7 @@ Sys.setenv(
 
 Or with package options:
 
-```r
+``` r
 options(patientgenerator.hecate = list(
   base_url = "https://your-hecate-server/api",
   timeout_ms = 15000,
@@ -90,13 +129,9 @@ options(patientgenerator.hecate = list(
 ))
 ```
 
-## Learn more
+### Learn more
 
-- Vignette: `vignette("synthetic-patient-workflow", package = "patientGenerator")`
-- Reference docs are available in the package website built with `pkgdown`.
-
-## Build the website
-
-```r
-pkgdown::build_site()
-```
+- Vignette:
+  `vignette("synthetic-patient-workflow", package = "PatientGenerator")`
+- Reference docs and benchmark results are published in the GitHub Pages
+  documentation site.

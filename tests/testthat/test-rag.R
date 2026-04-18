@@ -1,6 +1,6 @@
 test_that("retrieveCodelist helper and tool object are available", {
-  retrieve_fn <- getFromNamespace("retrieveCodelist", "patientGenerator")
-  tool_obj <- getFromNamespace("retrieveCodelistTool", "patientGenerator")
+  retrieve_fn <- getFromNamespace("retrieveCodelist", "PatientGenerator")
+  tool_obj <- getFromNamespace("retrieveCodelistTool", "PatientGenerator")
 
   result <- retrieve_fn(concept_label = "ovarian", domain = "Condition")
   parsed <- jsonlite::fromJSON(result)
