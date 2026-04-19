@@ -3,8 +3,8 @@ Type: Package
 Title: A Generator of Patient Synthetic Data for the OMOP-CDM
 Version: 0.1.2
 Authors@R: c(
-    person("Cesar", "Barboza", , "c.barboza@darwin-eu.org", role = "aut", comment = c(ORCID = "0009-0002-4453-3071")),
-    person("Ger", "Inberg", , "g.inberg@erasmusmc.nl", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-8993-8748")),
+    person("Cesar", "Barboza", , "c.barboza@darwin-eu.org", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-4453-3071")),
+    person("Ger", "Inberg", , "g.inberg@erasmusmc.nl", role = "aut", comment = c(ORCID = "0000-0001-8993-8748")),
     person("Adam", "Black", , "black@ohdsi.org", role = "aut", comment = c(ORCID = "0000-0001-5576-8701"))
   )
 Description: A set of tools to generate synthetic patient-level test datasets in the OMOP Common Data Model (CDM). It includes a chat-driven generator backed by large language models and an interactive Shiny designer for editing CDM test sets. Small factor test data for OMOP-CDM unit testing.
