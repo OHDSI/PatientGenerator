@@ -1,116 +1,148 @@
 
 # PatientGenerator
 
-`PatientGenerator` helps you build OMOP CDM synthetic test sets in two
-complementary ways:
+`PatientGenerator` facilitates the creation of synthetic test datasets
+for the OMOP Common Data Model (CDM) using two complementary approaches:
 
-- `patientChat`: generate structured patient JSON with an LLM.
-- `patientDesigner`: review and edit those patients in a D3/Shiny
-  interface.
+- **`patientChat`**: Generates structured patient JSON files using Large
+  Language Models (LLMs).
+- **`patientDesigner`**: Provides a D3-based Shiny interface for
+  reviewing and editing CDM test sets.
 
-It also includes Hecate-powered concept look up support for selecting
-valid OMOP concept codes.
+The package also includes support for Hecate-powered concept lookups to
+ensure valid OMOP concept codes.
 
-### Install
+### Installation
 
 ``` r
 # install.packages("remotes")
 remotes::install_github("mi-erasmusmc/PatientGenerator")
 ```
 
-### Workflow overview
+### Workflow Overview
 
-1.  Generate a first synthetic cohort with `patientChat`.
-2.  Save JSON test sets to disk.
-3.  Open `patientDesigner()` to review and refine patients.
+1.  **Generate** an initial synthetic cohort using `patientChat`.
+2.  **Save** JSON test sets to the local filesystem.
+3.  **Refine** patients using `patientDesigner()`.
+    - Utilize built-in concept search (powered by `hecateSearch`) during
+      table editing.
 
-- Use built-in concept search (backed by `hecateSearch`) while editing
-  tables.
+### Synthetic Patient Generation with `patientChat`
 
-### Generate test data with patientChat
+Set an `OPENAI_API_KEY` environment variable (e.g., via
+`usethis::edit_r_environ()`) to enable LLM access.
+
+Available models can be listed using
+`PatientGenerator::availableModels()`.
 
 ``` r
 library(PatientGenerator)
 
-# Provided your own OPENAI_API_KEY in the environment
+patientGenerator <- patientChat$new(
+  model = "gpt-5.4",
+  echo = "none"
+)
+```
 
-patientGenerator <- PatientGenerator::patientChat$new(
-    model = "gpt-5.3",
-    echo = "none"
-    )
-    
-    
-# Write a prompt to generate the patients
-    
+### Generating Patients via Natural Language Prompts
+
+Provide detailed prompts, including specific concept sets, for optimal
+results.
+
+``` r
 patientGenerator$prompt(
-   "Population (person table):
+  "Population (person table):
      - 10 adult patients
      - 5 female
      - 5 male
   
-    Observation Period:
-     - Start date between date of birth each person and end of observation 2025-12-31
+   Observation Period:
+     - Start date between date of birth and 2025-12-31
   
-    Condition Occurrence:
-      - All patients must have Diabetes (condition_concept_id: 201826)
-      - Condition start date between 2015-01-01 and 2020-12-31
+   Condition Occurrence:
+     - All patients must have Diabetes (condition_concept_id: 201826)
+     - Start date between 2015-01-01 and 2020-12-31
   
-    Drug Exposure:
-      - All patients must have Semaglutide (drug_concept_id: 19079450)
-      - Drug exposure in a window of 0 to 30 days after index date
+   Drug Exposure:
+     - All patients must have Semaglutide (drug_concept_id: 19079450)
+     - Exposure within 30 days post-index date
   
-    Measurement:
-      - All patients must have Fasting glucose (measurement_concept_id: 3018251)
+   Measurement:
+     - All patients must have Fasting glucose (measurement_concept_id: 3018251)
   
-    Procedure cccurrence:
-      - 50% of patients (5 patients) must have Amputation of toe (procedure_concept_id: 4159766)
+   Procedure Occurrence:
+     - 50% of patients must have Amputation of toe (procedure_concept_id: 4159766)
   
-    Output Requirements:
-     - Fill only specified tables in this prompt"
+   Output Requirements:
+     - Populate only the tables specified in this prompt"
 )
 ```
 
-### Integration with testthat: save the test set as a JSON file in the testthat folder.
+### Integration with `testthat`
+
+Save the generated dataset as a JSON file and utilize
+`TestGenerator::patientsCDM` to instantiate a CDM reference.
 
 ``` r
+patientGenerator$save(name = "diabetes-patients")
 
-patientGenerator$save(
-  name = "diabetes-patients"
-  )
+cdm <- TestGenerator::patientsCDM(
+  testName = "diabetes-patients",
+  cdmVersion = "5.4"
+)
+
+cdm$person |> 
+  collect() |> 
+  print()
 ```
 
-### Review and edit tests patientDesigner()
+    #> cdm$person |> collect() |> head(5)
+    #>    person_id gender_concept_id year_of_birth person_source_value
+    #>        <int>             <int>         <int>              <char>
+    #> 1:         1              8507          1972                P001
+    #> 2:         2              8532          1980                P002
+    #> 3:         3              8507          1965                P003
+    #> 4:         4              8532          1978                P004
+    #> 5:         5              8507          1986                P005
+
+### Iterative Refinement
+
+The LLM can be instructed to modify the current test set within the same
+`patientChat` instance.
 
 ``` r
+patientGenerator$prompt("Remove all male patients")
+```
 
-# D3/Shiny editor
+    #> cdm$person |> collect() |> head(5)
+    #>    person_id gender_concept_id year_of_birth person_source_value
+    #>        <int>             <int>         <int>              <char>
+    #> 1:         2              8532          1980                P002
+    #> 2:         4              8532          1978                P004
+    #> 3:         6              8532          1970                P006
+    #> 4:         8              8532          1982                P008
+    #> 5:        10              8532          1967                P010
 
+### Visual Review and Editing with `patientDesigner()`
+
+Launch the interactive editor to review and refine datasets:
+
+``` r
 PatientGenerator::patientDesigner()
 ```
 
-### Use TestGenerator to load the patients
+The interface supports: - Loading existing JSON test sets. - Interactive
+CRUD operations (Create, Read, Update, Delete) on CDM tables. - Visual
+timeline inspection and table previews. - Exporting updated test sets to
+JSON.
 
-``` r
+### Concept Search with Hecate
 
-cdm <- TestGenerator::patientsCDM(
-  testName = "diabetes-patients"
-  )
-```
+`patientDesigner` integrates a concept search module powered by
+`hecateSearch()`. This allows users to search for and insert valid OMOP
+concept IDs directly into the CDM tables.
 
-Inside the UI you can:
-
-- load existing JSON test sets,
-- add/update/delete rows in OMOP tables,
-- inspect timeline and table previews,
-- save updated test sets.
-
-### Concept code search with Hecate in patientDesigner
-
-`patientDesigner` uses a concept search module that calls
-`hecateSearch()` under the hood. When editing concept ID fields, you can
-search and insert valid OMOP concept IDs.
-
-Configure Hecate globally with environment variables:
+Configure Hecate globally via environment variables:
 
 ``` r
 Sys.setenv(
@@ -119,19 +151,19 @@ Sys.setenv(
 )
 ```
 
-Or with package options:
+Or via package options:
 
 ``` r
-options(patientgenerator.hecate = list(
+options(PatientGenerator.hecate = list(
   base_url = "https://your-hecate-server/api",
   timeout_ms = 15000,
   api_key = "your-api-key"
 ))
 ```
 
-### Learn more
+### Further Documentation
 
-- Vignette:
-  `vignette("synthetic-patient-workflow", package = "PatientGenerator")`
-- Reference docs and benchmark results are published in the GitHub Pages
-  documentation site.
+- **Vignette**:
+  `vignette("shiny-integration", package = "PatientGenerator")`
+- **Reference**: Detailed API documentation and benchmarks are available
+  on the GitHub Pages site.

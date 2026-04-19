@@ -1,0 +1,72 @@
+---
+title: "Interactive Patient Designer & Test Integration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Interactive Patient Designer & Test Integration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(PatientGenerator)
+library(shiny)
+library(testthat)
+```
+
+# Introduction
+
+The `PatientGenerator` package provides an interactive Shiny application, `patientDesigner()`, to visually construct and edit synthetic patient datasets for the OMOP Common Data Model (CDM). This vignette demonstrates how to utilize the application to generate test data and integrate these datasets into a `testthat` suite.
+
+# Operating the Patient Designer
+
+To launch the interactive designer, execute the following command in the R console:
+
+```r
+patientDesigner()
+```
+
+The application features:
+
+- **Person Table:** Manage individual patient records (e.g., gender, birth year).
+- **CDM Tables:** Add and edit clinical events such as `Observation Period`, `Condition Occurrence`, `Drug Exposure`, `Measurement`, and `Procedure Occurrence`.
+- **D3 Timeline:** A visual, drag-and-drop timeline for adjusting event dates.
+- **Persistence:** Export constructed datasets as JSON files.
+
+## Saving Test Sets for `testthat` Integration
+
+By default, `patientDesigner()` searches for a `tests/testthat/testCases` directory within the current project. Clicking **"Save Test Set"** in the sidebar saves the JSON file directly to this location.
+
+This facilitates a seamless development workflow:
+1.  Launch the application from the package root.
+2.  Visually design the test case.
+3.  Save the file (e.g., `my_test_case.json`).
+4.  The dataset is immediately available for unit testing.
+
+# Integrating with `testthat`
+
+Saved test sets can be integrated into unit tests by loading them using the CDM constructor.
+
+```r
+test_that("Custom test case behavior is correct", {
+  # Locate the test case file relative to the tests/testthat directory
+  test_file <- testthat::test_path("testCases", "my_test_case.json")
+  
+  # Instantiate the CDM constructor and load the JSON test set
+  # Note: cdmConstructor is internal to PatientGenerator
+  cdm <- PatientGenerator:::cdmConstructor$new()
+  cdm$loadJsonTestSet(test_file)
+  
+  # Execute package logic using the synthetic data
+  person_data <- cdm$person$data()
+  
+  expect_gt(nrow(person_data), 0)
+  expect_equal(person_data$gender_concept_id[1], 8532) # Female
+})
+```
