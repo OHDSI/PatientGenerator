@@ -23,7 +23,6 @@ cdmConstructor <- R6::R6Class(
       }
     },
     add = function(person_id) {
-      # browser()
       checkmate::assertInteger(person_id)
       name_event_id <- paste(
         private$.tableName,
@@ -40,7 +39,6 @@ cdmConstructor <- R6::R6Class(
           as.integer() + 
           1L
       }
-      # browser()
       new_person_data <- private$.defaultPersonData()
       new_row <- private$.constructNewRow(
         name_event_id,
@@ -49,7 +47,6 @@ cdmConstructor <- R6::R6Class(
           new_person_data
           )
         )
-      # browser()
       private$.data <- rbindlist(
         list(
           private$.data,
@@ -124,7 +121,6 @@ cdmConstructor <- R6::R6Class(
     # Add data from json test set
     loadJsonTestSet = function(path) {
       self$reset()
-      # browser()
       # cdm_schema <- jsonvalidate::json_validator(
       #   system.file("jsonSchemas",
       #               "cdm54schema-complete.json",
@@ -145,9 +141,6 @@ cdmConstructor <- R6::R6Class(
                              "drug_exposure",
                              "measurement",
                              "procedure_occurrence")) {
-          # if (tableName == "condition_occurrence") {
-          #   browser()
-          # }
           classTable <- class(jsonData[[tableName]])
           table_data <- jsonData[[tableName]] |> as.data.table()
           if (classTable == "data.frame") {
@@ -167,6 +160,7 @@ cdmConstructor <- R6::R6Class(
       self$drug_exposure$reset()
       self$condition_occurrence$reset()
       self$measurement$reset()
+      self$procedure_occurrence$reset()
     },
 
     # Delete person or event
@@ -219,7 +213,9 @@ cdmConstructor <- R6::R6Class(
         person = self$person$data(),
         observation_period = self$observation_period$data(),
         drug_exposure = self$drug_exposure$data(),
-        condition_occurrence = self$condition_occurrence$data())
+        condition_occurrence = self$condition_occurrence$data(),
+        procedure_occurrence = self$procedure_occurrence$data()
+        )
 
         cdm_data_json <- jsonlite::toJSON(
           cdm_data,

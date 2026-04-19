@@ -11,7 +11,13 @@ pick_openai_model <- function() {
     PatientGenerator::availableModels(),
     error = function(e) testthat::skip(paste("Cannot list models:", conditionMessage(e)))
   )
-  preferred <- c("gpt-5.2", "gpt-5", "gpt-4.1", "gpt-4o")
+  preferred <- c(
+    "gpt-5.4",
+    "gpt-5.2",
+    "gpt-5",
+    "gpt-4.1",
+    "gpt-4o"
+    )
   model <- preferred[preferred %in% models][1]
   if (is.na(model) || is.null(model)) {
     model <- models[1]

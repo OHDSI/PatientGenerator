@@ -13,8 +13,9 @@
 #' This class allows testing patient sets created by the LLM, prompt engineering,
 #' integration of search tools and functionality, and creating a set of patients
 #' to test analytical packages.
-#
-#' @returns A JSON response that includes: the natural language answer from the LLM and a JSON with test set patients in accordance to the provided schema.
+#' @returns 
+#' A JSON response that includes: the natural language answer from the LLM and
+#' a JSON with test set patients in accordance to the provided schema.
 #' @importFrom ellmer chat_openai
 #' @importFrom ellmer type_from_schema
 #' @importFrom jsonlite fromJSON
@@ -48,14 +49,14 @@ patientChat <- R6::R6Class(
     #' @description
     #' Create a new chat to create JSON test sets for OMOP-CDM.
     #' @param system_prompt Initial system prompt to impose behaviour to the LLM
-    #' @param model Such as "gpt-5.2". For a complete list, call patientChat$availableModels()
+    #' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels()
     #' @param jsonSchemaPath The JSON schema to structure output from LLM
     #' @param echo How the output will be displayed in the console
     #' @param codelist_data A codelist with details to search for concepts ids
     #'
     #' @return A new `Person` object.
     initialize = function(system_prompt = NULL,
-                          model = "gpt-5.2",
+                          model = "gpt-5.4",
                           jsonSchemaPath = NULL,
                           echo = c("none", "output", "all"),
                           codelist_data = NULL) {
