@@ -47,15 +47,15 @@ function dragColor(type) {
 
 function endColor(type) {
   if (type == "observation_period") {
-    return "#B8860B";
+    return "#E1B12C";
   } else if (type == "drug_exposure") {
-    return "#00796B";
+    return "#00B894";
   } else if (type == "condition_occurrence") {
-    return "#8E0038";
+    return "#D81B60";
   } else if (type == "measurement") {
-    return "#B71C1C";
+    return "#E53935";
   } else if (type == "procedure_occurrence") {
-    return "#0D47A1";
+    return "#1E88E5";
   }
   return "#999";
 }
@@ -246,6 +246,8 @@ r2d3.onRender(function(data, svg, width, height, options) {
 
     if (d.type == "condition_occurrence") {
         name_end_date = "#condition_occurrence-condition_end_date input";
+    } else if (d.type == "procedure_occurrence") {
+        name_end_date = "#procedure_occurrence-procedure_end_date input";
     } else {
         name_end_date = "#" + d.type + "-" + d.type + "_end_date input";
     }
