@@ -8,7 +8,7 @@ Authors@R: c(
     person("Adam", "Black", , "black@ohdsi.org", role = "aut", comment = c(ORCID = "0000-0001-5576-8701"))
   )
 Description: A set of tools to generate synthetic patient-level test datasets in the OMOP Common Data Model (CDM). It includes a chat-driven generator backed by large language models and an interactive Shiny designer for editing CDM test sets. Small factor test data for OMOP-CDM unit testing.
-URL: https://github.com/mi-erasmusmc/PatientGenerator
+URL: https://github.com/mi-erasmusmc/PatientGenerator, https://mi-erasmusmc.github.io/PatientGenerator/
 BugReports: https://github.com/mi-erasmusmc/PatientGenerator/issues
 License: Apache License (>= 2)
 Encoding: UTF-8
