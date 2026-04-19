@@ -1,32 +1,145 @@
----
-layout: default
-title: Home
----
-
 # PatientGenerator
 
-`PatientGenerator` helps you build OMOP CDM synthetic test sets in two complementary ways:
+`PatientGenerator` helps you build OMOP CDM synthetic test sets in two
+complementary ways:
 
 - `patientChat`: generate structured patient JSON with an LLM.
-- `patientDesigner`: review and edit those patients in a D3/Shiny interface.
-- Hecate-backed concept search: find OMOP concept codes while curating patients.
+- `patientDesigner`: review and edit those patients in a D3/Shiny
+  interface.
 
-## Install
+It also includes Hecate-powered concept look up support for selecting
+valid OMOP concept codes.
 
-```r
-# install.packages("pak")
-pak::pak("mi-erasmusmc/PatientGenerator")
+### Install
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("mi-erasmusmc/PatientGenerator")
 ```
 
-## Quick Start
+### Workflow overview
 
-1. Generate a cohort with `patientChat`.
-2. Save it to JSON.
-3. Open `patientDesigner()` to review and edit.
-4. Use Hecate search to resolve concept IDs.
+1.  Generate a first synthetic cohort with `patientChat`.
+2.  Save JSON test sets to disk.
+3.  Open [`patientDesigner()`](reference/patientDesigner.md) to review
+    and refine patients.
 
-## Documentation
+- Use built-in concept search (backed by `hecateSearch`) while editing
+  tables.
 
-- [Reference](reference)
-- [Generate and Review Synthetic OMOP Patients](articles/synthetic-patient-workflow)
-- [patientChat Model Benchmark Results](articles/patientchat-model-benchmark-results)
+### Generate test data with patientChat
+
+``` r
+
+library(PatientGenerator)
+
+# Provided your own OPENAI_API_KEY in the environment
+
+patientGenerator <- PatientGenerator::patientChat$new(
+    model = "gpt-5.3",
+    echo = "none"
+    )
+    
+    
+# Write a prompt to generate the patients
+    
+patientGenerator$prompt(
+   "Population (person table):
+     - 10 adult patients
+     - 5 female
+     - 5 male
+  
+    Observation Period:
+     - Start date between date of birth each person and end of observation 2025-12-31
+  
+    Condition Occurrence:
+      - All patients must have Diabetes (condition_concept_id: 201826)
+      - Condition start date between 2015-01-01 and 2020-12-31
+  
+    Drug Exposure:
+      - All patients must have Semaglutide (drug_concept_id: 19079450)
+      - Drug exposure in a window of 0 to 30 days after index date
+  
+    Measurement:
+      - All patients must have Fasting glucose (measurement_concept_id: 3018251)
+  
+    Procedure cccurrence:
+      - 50% of patients (5 patients) must have Amputation of toe (procedure_concept_id: 4159766)
+  
+    Output Requirements:
+     - Fill only specified tables in this prompt"
+)
+```
+
+### Integration with testthat: save the test set as a JSON file in the testthat folder.
+
+``` r
+
+
+patientGenerator$save(
+  name = "diabetes-patients"
+  )
+```
+
+### Review and edit tests patientDesigner()
+
+``` r
+
+
+# D3/Shiny editor
+
+PatientGenerator::patientDesigner()
+```
+
+### Use TestGenerator to load the patients
+
+``` r
+
+
+cdm <- TestGenerator::patientsCDM(
+  testName = "diabetes-patients"
+  )
+```
+
+Inside the UI you can:
+
+- load existing JSON test sets,
+- add/update/delete rows in OMOP tables,
+- inspect timeline and table previews,
+- save updated test sets.
+
+### Concept code search with Hecate in patientDesigner
+
+`patientDesigner` uses a concept search module that calls
+[`hecateSearch()`](reference/hecateSearch.md) under the hood. When
+editing concept ID fields, you can search and insert valid OMOP concept
+IDs.
+
+Configure Hecate globally with environment variables:
+
+``` r
+
+Sys.setenv(
+  HECATE_BASE_URL = "https://your-hecate-server/api",
+  HECATE_API_KEY = "your-api-key"
+)
+```
+
+Or with package options:
+
+``` r
+
+options(patientgenerator.hecate = list(
+  base_url = "https://your-hecate-server/api",
+  timeout_ms = 15000,
+  api_key = "your-api-key"
+))
+```
+
+### Learn more
+
+- Vignette:
+  `vignette("synthetic-patient-workflow", package = "PatientGenerator")`
+- Reference docs and benchmark results are published in the GitHub Pages
+  documentation site.
