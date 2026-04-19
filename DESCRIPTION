@@ -32,12 +32,12 @@ Imports:
     R6,
     shiny,
     stringr,
-    testthat,
-    TestGenerator
+    testthat
 Suggests:
     knitr,
     rmarkdown,
-    ggplot2
+    ggplot2,
+    TestGenerator
 VignetteBuilder: knitr
 Config/Needs/website: pkgdown
 Config/testthat/edition: 3
