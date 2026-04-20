@@ -1,7 +1,7 @@
 Package: PatientGenerator
 Type: Package
 Title: A Generator of Patient Synthetic Data for the OMOP-CDM
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
     person("Cesar", "Barboza", , "c.barboza@darwin-eu.org", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-4453-3071")),
     person("Ger", "Inberg", , "g.inberg@erasmusmc.nl", role = "aut", comment = c(ORCID = "0000-0001-8993-8748")),
