@@ -99,11 +99,11 @@ cdm$person |>
     #> cdm$person |> collect() |> head(5)
     #>    person_id gender_concept_id year_of_birth person_source_value
     #>        <int>             <int>         <int>              <char>
-    #> 1:         1              8507          1972                P001
-    #> 2:         2              8532          1980                P002
-    #> 3:         3              8507          1965                P003
-    #> 4:         4              8532          1978                P004
-    #> 5:         5              8507          1986                P005
+    #> 1:         1              8532          1965                  P1
+    #> 2:         2              8532          1970                  P2
+    #> 3:         3              8532          1982                  P3
+    #> 4:         4              8532          1958                  P4
+    #> 5:         5              8532          1991                  P5
 
 ### Iterative Refinement
 
@@ -117,11 +117,11 @@ patientGenerator$prompt("Remove all male patients")
     #> cdm$person |> collect() |> head(5)
     #>    person_id gender_concept_id year_of_birth person_source_value
     #>        <int>             <int>         <int>              <char>
-    #> 1:         2              8532          1980                P002
-    #> 2:         4              8532          1978                P004
-    #> 3:         6              8532          1970                P006
-    #> 4:         8              8532          1982                P008
-    #> 5:        10              8532          1967                P010
+    #> 1:         1              8532          1965                  P1
+    #> 2:         2              8532          1970                  P2
+    #> 3:         3              8532          1982                  P3
+    #> 4:         4              8532          1958                  P4
+    #> 5:         5              8532          1991                  P5
 
 ### Visual Review and Editing with `patientDesigner()`
 
@@ -131,10 +131,13 @@ Launch the interactive editor to review and refine datasets:
 PatientGenerator::patientDesigner()
 ```
 
-The interface supports: - Loading existing JSON test sets. - Interactive
-CRUD operations (Create, Read, Update, Delete) on CDM tables. - Visual
-timeline inspection and table previews. - Exporting updated test sets to
-JSON.
+The interface supports:
+
+- Loading existing JSON test sets.
+- Interactive CRUD operations (Create, Read, Update, Delete) on CDM
+  tables.
+- Visual timeline inspection and table previews.
+- Exporting updated test sets to JSON.
 
 ### Concept Search with Hecate
 

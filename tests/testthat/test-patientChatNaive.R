@@ -12,7 +12,7 @@ test_that("patientChatNaive API output can be loaded by cdmConstructor", {
   skip_if_no_openai()
   model <- pick_openai_model()
 
-  schema <- system.file("jsonSchemas", "cdm54schema-short.json", package = "PatientGenerator")
+  schema <- system.file("jsonSchemas", "cdm54schema-complete.json", package = "PatientGenerator")
   response <- patientChatNaive(
     prompt = "Generate exactly 1 patient in OMOP-CDM v5.4.",
     model = model,

@@ -16,3 +16,6 @@
 ^benchmarks$
 ^AGENTS\.md$
 ^extras$
+^LICENSE\.md$
+^\.positai$
+^\.claude$
