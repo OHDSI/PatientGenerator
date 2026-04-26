@@ -55,6 +55,8 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="patientgenerator">PatientGenerator<a class="anchor" aria-label="anchor" href="#patientgenerator"></a>
 </h1></div>
+<!-- badges: start -->
+
 <p><code>PatientGenerator</code> facilitates the creation of synthetic test datasets for the OMOP Common Data Model (CDM) using two complementary approaches:</p>
 <ul>
 <li>
@@ -151,11 +153,11 @@
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8507          1972                P001</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1980                P002</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8507          1965                P003</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1978                P004</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8507          1986                P005</span></span></code></pre></div>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1965              SYN001</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1972              SYN002</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958              SYN003</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981              SYN004</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1949              SYN005</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="iterative-refinement">Iterative Refinement<a class="anchor" aria-label="anchor" href="#iterative-refinement"></a>
@@ -166,11 +168,11 @@
 <div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 1:         2              8532          1980                P002</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 2:         4              8532          1978                P004</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 3:         6              8532          1970                P006</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 4:         8              8532          1982                P008</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 5:        10              8532          1967                P010</span></span></code></pre></div>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1965              SYN001</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1972              SYN002</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958              SYN003</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981              SYN004</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1949              SYN005</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visual-review-and-editing-with-patientdesigner">Visual Review and Editing with <code>patientDesigner()</code>
@@ -179,7 +181,13 @@
 <p>Launch the interactive editor to review and refine datasets:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">PatientGenerator</span><span class="fu">::</span><span class="fu"><a href="reference/patientDesigner.html">patientDesigner</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>The interface supports: - Loading existing JSON test sets. - Interactive CRUD operations (Create, Read, Update, Delete) on CDM tables. - Visual timeline inspection and table previews. - Exporting updated test sets to JSON.</p>
+<p>The interface supports:</p>
+<ul>
+<li>Loading existing JSON test sets.</li>
+<li>Interactive CRUD operations (Create, Read, Update, Delete) on CDM tables.</li>
+<li>Visual timeline inspection and table previews.</li>
+<li>Exporting updated test sets to JSON.</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="concept-search-with-hecate">Concept Search with Hecate<a class="anchor" aria-label="anchor" href="#concept-search-with-hecate"></a>
@@ -222,7 +230,8 @@
 <div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li>Apache License (&gt;= 2)</li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small>Apache License (&gt;= 2)</small></li>
 </ul>
 </div>
 
@@ -243,7 +252,14 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator" class="external-link"><img src="https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
