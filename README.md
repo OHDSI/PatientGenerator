@@ -1,6 +1,15 @@
 
 # PatientGenerator
 
+<!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
+<!-- badges: end -->
+
 `PatientGenerator` facilitates the creation of synthetic test datasets
 for the OMOP Common Data Model (CDM) using two complementary approaches:
 
@@ -99,11 +108,11 @@ cdm$person |>
     #> cdm$person |> collect() |> head(5)
     #>    person_id gender_concept_id year_of_birth person_source_value
     #>        <int>             <int>         <int>              <char>
-    #> 1:         1              8532          1965                  P1
-    #> 2:         2              8532          1970                  P2
-    #> 3:         3              8532          1982                  P3
-    #> 4:         4              8532          1958                  P4
-    #> 5:         5              8532          1991                  P5
+    #> 1:         1              8532          1965              SYN001
+    #> 2:         2              8532          1972              SYN002
+    #> 3:         3              8532          1958              SYN003
+    #> 4:         4              8532          1981              SYN004
+    #> 5:         5              8532          1949              SYN005
 
 ### Iterative Refinement
 
@@ -117,11 +126,11 @@ patientGenerator$prompt("Remove all male patients")
     #> cdm$person |> collect() |> head(5)
     #>    person_id gender_concept_id year_of_birth person_source_value
     #>        <int>             <int>         <int>              <char>
-    #> 1:         1              8532          1965                  P1
-    #> 2:         2              8532          1970                  P2
-    #> 3:         3              8532          1982                  P3
-    #> 4:         4              8532          1958                  P4
-    #> 5:         5              8532          1991                  P5
+    #> 1:         1              8532          1965              SYN001
+    #> 2:         2              8532          1972              SYN002
+    #> 3:         3              8532          1958              SYN003
+    #> 4:         4              8532          1981              SYN004
+    #> 5:         5              8532          1949              SYN005
 
 ### Visual Review and Editing with `patientDesigner()`
 

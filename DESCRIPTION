@@ -34,6 +34,7 @@ Imports:
     stringr,
     testthat
 Suggests:
+    covr,
     knitr,
     rmarkdown,
     ggplot2,
