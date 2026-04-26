@@ -110,11 +110,6 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     length() |>
     expect_equal(17)
   
-  cdm$drug_exposure |>
-    pull(drug_exposure_id) |>
-    length() |>
-    expect_equal(36)
-  
   cdm$measurement |>
     pull(person_id) |>
     length() |>

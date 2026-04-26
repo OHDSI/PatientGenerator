@@ -81,12 +81,25 @@ patientChat <- R6::R6Class(
       # Codelist ---------------------------------------------
       if (!is.null(codelist_data)) {
         checkmate::assertDataFrame(codelist_data)
-        if (all(c("concept_id", "concept_name", "domain_id", "vocabulary_id", "standard_concept") %in% codelist_data |> names())) {
+        if (all(c(
+          "concept_id",
+          "concept_name",
+          "domain_id",
+          "vocabulary_id",
+          "standard_concept"
+          ) %in% codelist_data |> 
+          names()
+          )
+          ) {
           self$codelist <- codelist_data
-          self$chat$register_tool(private$.register_codelist_tool())
+          self$chat$register_tool(
+            private$.register_codelist_tool()
+            )
           message("Codelist tool added")
         } else {
-          stop("Dataframe has missing columns: 'concept_id', 'concept_name', 'domain_id', 'vocabulary_id', 'standard_concept'")
+          stop(
+            "Dataframe has missing columns: 'concept_id', 'concept_name', 'domain_id', 'vocabulary_id', 'standard_concept'"
+            )
         }
       }
 
@@ -109,12 +122,14 @@ patientChat <- R6::R6Class(
     #' @description
     #' Output in JSON format
     json_response = function() {
-      jsonlite::toJSON(self$response,
-                       dataframe = "rows",
-                       pretty = TRUE,
-                       null = "null",
-                       na = "null",
-                       auto_unbox = TRUE)
+      jsonlite::toJSON(
+        self$response,
+        dataframe = "rows",
+        pretty = TRUE,
+        null = "null",
+        na = "null",
+        auto_unbox = TRUE
+        )
     },
 
     #' @description
@@ -137,10 +152,19 @@ patientChat <- R6::R6Class(
         warning("domain not found in codelist")
       }
       result <- self$codelist %>%
-        filter(stringr::str_detect(concept_name, stringr::regex(concept_label, ignore_case = TRUE))) |>
+        filter(stringr::str_detect(
+          concept_name,
+          stringr::regex(
+            concept_label,
+            ignore_case = TRUE
+            )
+          )
+          ) |>
         dplyr::filter(domain_id == domain) |>
-        jsonlite::toJSON(dataframe = "rows",
-                         auto_unbox = TRUE)
+        jsonlite::toJSON(
+          dataframe = "rows",
+          auto_unbox = TRUE
+          )
       return(result)
     },
 
@@ -160,8 +184,17 @@ patientChat <- R6::R6Class(
         checkmate::assertDirectoryExists(path)
       }
       name <- tools::file_path_sans_ext(name)
-      test_file_path <- file.path(path, paste0(name, ".json"))
-      write(self$json_response(), file = test_file_path)
+      test_file_path <- file.path(
+        path,
+        paste0(
+          name,
+          ".json"
+          )
+        )
+      write(
+        self$json_response(),
+        file = test_file_path
+        )
     },
 
     #' @description
@@ -171,7 +204,10 @@ patientChat <- R6::R6Class(
       # Retrieve and check available models
       response <- httr2::request("https://api.openai.com/v1/models") |>
         httr2::req_headers(
-          Authorization = paste("Bearer", Sys.getenv("OPENAI_API_KEY"))
+          Authorization = paste(
+            "Bearer",
+            Sys.getenv("OPENAI_API_KEY")
+            )
         ) |>
         httr2::req_perform()
       models <- httr2::resp_body_json(response)
@@ -200,9 +236,11 @@ patientChat <- R6::R6Class(
 
     .json_schema_check = function(jsonSchemaPath) {
       if (is.null(jsonSchemaPath)) {
-        json_schema_path <- system.file("jsonSchemas",
-                                        "cdm54schema-complete.json",
-                                        package = "PatientGenerator")
+        json_schema_path <- system.file(
+          "jsonSchemas",
+          "cdm54schema-complete.json",
+          package = "PatientGenerator"
+          )
         checkmate::assertFileExists(json_schema_path)
         self$json_schema_path <- json_schema_path
         } else {
@@ -236,8 +274,12 @@ patientChat <- R6::R6Class(
         description = "Retrieves data for concept_id search by concept_name and domain_id",
         name = "retrieveCodelist",
         arguments = list(
-          concept_label = ellmer::type_string(description = "A regex to look up for a concept_name; the function uses stringr::regex to filter the concept_name"),
-          domain = ellmer::type_string(description = "One word typically a domain from the OMOP-CDM, currently only available now: 'Drug', 'Condition', 'Measurement', 'Observation', 'Procedure'")
+          concept_label = ellmer::type_string(
+            description = "A regex to look up for a concept_name; the function uses stringr::regex to filter the concept_name"
+            ),
+          domain = ellmer::type_string(
+            description = "One word typically a domain from the OMOP-CDM, currently only available now: 'Drug', 'Condition', 'Measurement', 'Observation', 'Procedure'"
+            )
         )
       )
     }

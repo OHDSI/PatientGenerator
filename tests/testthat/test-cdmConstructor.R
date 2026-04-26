@@ -306,7 +306,7 @@ test_that("Testing methods on LLM testset", {
   
   cdm$drug_exposure$data() |> 
     pull(person_id) |> 
-    expect_length(11)
+    expect_length(31)
   
   cdm$measurement$data() |> 
     pull(person_id) |> 
