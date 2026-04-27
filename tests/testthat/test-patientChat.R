@@ -1,5 +1,5 @@
 test_that("Chaining LLM thought for synthetic patient generation", {
-  skip_if(is.null(Sys.getenv("OPENAI_API_KEY")))
+  skip_if_no_openai()
   
   # Instantiate patientGenerator
   expect_error({
