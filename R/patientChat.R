@@ -23,6 +23,7 @@
 #' @importFrom checkmate assertCharacter assertFileExists assertDirectoryExists
 #' @importFrom tools file_path_sans_ext
 #' @importFrom R6 R6Class
+#' @importFrom cli cli_progress_step
 #' @export
 #' @examples
 #' \dontrun{
@@ -69,14 +70,19 @@ patientChat <- R6::R6Class(
 
       # System propmpt ---------------------------------------
       if (is.null(system_prompt)) {
-        system_prompt <- "You are an automatic generator of synthetic patients data using exclysively the OMOP-CDM v5.4 format"
+        system_prompt <- "You are an expert generator of synthetic patient data.
+                          Your output must strictly adhere to the provided JSON schema. 
+                          All generated data, structure, tables, features and data types 
+                          must exclusively conform to the OMOP-CDM v5.4 standard"
       }
 
       # Create chat ------------------------------------------
-      self$chat <- ellmer::chat_openai(system_prompt = system_prompt,
-                                       model = model,
-                                       echo = echo)
-      message("Chat created")
+      self$chat <- ellmer::chat_openai(
+        system_prompt = system_prompt,
+        model = model,
+        echo = echo
+        )
+      cli::cli_alert_success("Chat created")
 
       # Codelist ---------------------------------------------
       if (!is.null(codelist_data)) {
@@ -110,6 +116,11 @@ patientChat <- R6::R6Class(
     #' @param prompt A query in character.
     prompt = function(prompt) {
       checkmate::assertCharacter(prompt)
+      cli::cli_progress_step(
+        msg = "Generating test patients",
+        msg_done = "Test set created successfully",
+        msg_failed = "Error or connection lost"
+        )
       api_respose <- self$chat$chat_structured(
         prompt,
         type = ellmer::type_from_schema(
@@ -195,6 +206,7 @@ patientChat <- R6::R6Class(
         self$json_response(),
         file = test_file_path
         )
+      cli::cli_alert_success("Test set saved to {.path {test_file_path} }")
     },
 
     #' @description
