@@ -225,6 +225,7 @@ test_that("loadJsonTestSet loads source test fixtures", {
 })
 
 test_that("Testing methods on LLM testset", {
+  testthat::skip_on_cran()
   
   # # An LLM testset for this test
   # model <- pick_openai_model()
@@ -319,6 +320,7 @@ test_that("Testing methods on LLM testset", {
 })
 
 test_that("Testing modified test from LLM can be inserted back to TestGenerator", {
+  testthat::skip_on_cran()
   
   # Using the same diabetes test from previous test
   path <- testthat::test_path(
