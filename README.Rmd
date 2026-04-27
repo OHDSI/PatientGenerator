@@ -12,9 +12,10 @@ knitr::opts_chunk$set(
 # PatientGenerator
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/PatientGenerator)](https://CRAN.R-project.org/package=PatientGenerator)
 [![R-CMD-check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
+[![codecov](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 `PatientGenerator` facilitates the creation of synthetic test datasets for the OMOP Common Data Model (CDM) using two complementary approaches:

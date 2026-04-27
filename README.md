@@ -3,11 +3,12 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/PatientGenerator)](https://CRAN.R-project.org/package=PatientGenerator)
+[![R-CMD-check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
 <!-- badges: end -->
 
 `PatientGenerator` facilitates the creation of synthetic test datasets
