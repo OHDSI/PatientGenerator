@@ -1,5 +1,18 @@
 # Changelog
 
+## PatientGenerator 0.1.4
+
+- Prepared the package for CRAN submission.
+
+- Updated package title and description to follow CRAN metadata style.
+
+- Added `cran-comments.md` documenting local CRAN check results.
+
+- Excluded local session and operating-system artifacts from source
+  builds.
+
+- Skipped network-dependent `TestGenerator` checks on CRAN.
+
 ## PatientGenerator 0.1.3
 
 - Bug fixes for PatientDesigner.
