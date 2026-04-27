@@ -23,7 +23,7 @@
 #' @importFrom checkmate assertCharacter assertFileExists assertDirectoryExists
 #' @importFrom tools file_path_sans_ext
 #' @importFrom R6 R6Class
-#' @importFrom cli cli_progress_step
+#' @importFrom cli cli_alert_success cli_progress_step
 #' @export
 #' @examples
 #' \dontrun{
