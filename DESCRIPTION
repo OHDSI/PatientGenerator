@@ -35,7 +35,8 @@ Imports:
     R6,
     shiny,
     stringr,
-    testthat
+    testthat,
+    cli
 Suggests:
     CDMConnector,
     CohortCharacteristics,
