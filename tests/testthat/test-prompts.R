@@ -149,6 +149,7 @@ test_that("Diabetes workflow prompt", {
 })
 
 test_that("Ovarian cancer stages", {
+  skip_if_no_openai()
   
   patientGenerator <- PatientGenerator::patientChat$new()
   
