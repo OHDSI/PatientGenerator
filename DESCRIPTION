@@ -1,13 +1,16 @@
 Package: PatientGenerator
 Type: Package
-Title: A Generator of Patient Synthetic Data for the OMOP-CDM
-Version: 0.1.3
+Title: Generator of Synthetic Patient Data for the OMOP Common Data Model
+Version: 0.1.4
 Authors@R: c(
     person("Cesar", "Barboza", , "c.barboza@darwin-eu.org", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-4453-3071")),
     person("Ger", "Inberg", , "g.inberg@erasmusmc.nl", role = "aut", comment = c(ORCID = "0000-0001-8993-8748")),
     person("Adam", "Black", , "black@ohdsi.org", role = "aut", comment = c(ORCID = "0000-0001-5576-8701"))
   )
-Description: A set of tools to generate synthetic patient-level test datasets in the OMOP Common Data Model (CDM). It includes a chat-driven generator backed by large language models and an interactive Shiny designer for editing CDM test sets. Small factor test data for OMOP-CDM unit testing.
+Description: Tools to generate synthetic patient-level test datasets in the
+    Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM).
+    Includes a chat-driven generator backed by large language models and an
+    interactive 'shiny' designer for editing CDM test sets.
 URL: https://github.com/mi-erasmusmc/PatientGenerator, https://mi-erasmusmc.github.io/PatientGenerator/
 BugReports: https://github.com/mi-erasmusmc/PatientGenerator/issues
 License: Apache License (>= 2)
