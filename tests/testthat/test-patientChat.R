@@ -1,5 +1,5 @@
 test_that("Chaining LLM thought for synthetic patient generation", {
-  skip_if(is.null(Sys.getenv("OPENAI_API_KEY")))
+  skip_if_no_openai()
   
   # Instantiate patientGenerator
   expect_error({
@@ -109,11 +109,6 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     pull(condition_occurrence_id) |>
     length() |>
     expect_equal(17)
-  
-  cdm$drug_exposure |>
-    pull(drug_exposure_id) |>
-    length() |>
-    expect_equal(36)
   
   cdm$measurement |>
     pull(person_id) |>

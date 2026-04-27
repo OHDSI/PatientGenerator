@@ -4,7 +4,8 @@
 \alias{patientChat}
 \title{\code{patientChat()} generates synthetic patients in the OMOP-CDM using an LLM API.}
 \value{
-A JSON response that includes: the natural language answer from the LLM and a JSON with test set patients in accordance to the provided schema.
+A JSON response that includes: the natural language answer from the LLM and
+a JSON with test set patients in accordance to the provided schema.
 }
 \description{
 Requires an OPEN_AI_KEY in ~/.Renviron.
@@ -62,7 +63,7 @@ Create a new chat to create JSON test sets for OMOP-CDM.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{patientChat$new(
   system_prompt = NULL,
-  model = "gpt-5.2",
+  model = "gpt-5.4",
   jsonSchemaPath = NULL,
   echo = c("none", "output", "all"),
   codelist_data = NULL
@@ -74,7 +75,7 @@ Create a new chat to create JSON test sets for OMOP-CDM.
 \describe{
 \item{\code{system_prompt}}{Initial system prompt to impose behaviour to the LLM}
 
-\item{\code{model}}{Such as "gpt-5.2". For a complete list, call patientChat$availableModels()}
+\item{\code{model}}{Such as "gpt-5.3". For a complete list, call patientChat$availableModels()}
 
 \item{\code{jsonSchemaPath}}{The JSON schema to structure output from LLM}
 

@@ -1,0 +1,76 @@
+{
+  "person": [
+    {
+      "person_id": 1,
+      "gender_concept_id": 8507,
+      "year_of_birth": 1938,
+      "month_of_birth": 3,
+      "day_of_birth": 8,
+      "race_concept_id": null,
+      "ethnicity_concept_id": null,
+      "location_id": null,
+      "provider_id": null,
+      "care_site_id": null,
+      "person_source_value": null,
+      "gender_source_value": null,
+      "gender_source_concept_id": null,
+      "race_source_value": null,
+      "race_source_concept_id": null,
+      "ethnicity_source_value": null,
+      "ethnicity_source_concept_id": null
+    }
+  ],
+  "observation_period": [
+    {
+      "observation_period_id": 1,
+      "person_id": 1,
+      "observation_period_start_date": "2010-02-28",
+      "observation_period_end_date": "2019-08-29",
+      "period_type_concept_id": 44191562
+    }
+  ],
+  "drug_exposure": [
+    {
+      "drug_exposure_id": 1,
+      "person_id": 1,
+      "drug_concept_id": 1503297,
+      "drug_exposure_start_date": "2010-03-06",
+      "drug_exposure_end_date": "2015-03-06",
+      "verbatim_end_date": null,
+      "drug_type_concept_id": null,
+      "stop_reason": "",
+      "refills": null,
+      "quantity": null,
+      "days_supply": null,
+      "sig": "",
+      "route_concept_id": null,
+      "lot_number": "",
+      "provider_id": null,
+      "visit_occurrence_id": null,
+      "visit_detail_id": null,
+      "drug_source_value": "",
+      "drug_source_concept_id": null,
+      "route_source_value": "",
+      "dose_unit_source_value": ""
+    }
+  ],
+  "condition_occurrence": [
+    {
+      "condition_occurrence_id": 1,
+      "person_id": 1,
+      "condition_concept_id": 45877606,
+      "condition_start_date": "2010-02-28",
+      "condition_end_date": "2016-02-28",
+      "condition_type_concept_id": null,
+      "condition_status_concept_id": null,
+      "stop_reason": "",
+      "provider_id": null,
+      "visit_occurrence_id": null,
+      "visit_detail_id": null,
+      "condition_source_value": "",
+      "condition_source_concept_id": null,
+      "condition_status_source_value": ""
+    }
+  ],
+  "procedure_occurrence": []
+}

@@ -1,3 +1,9 @@
+# PatientGenerator 0.1.3
+
+* Bug fixes for PatientDesigner.
+
+* Documentation and site update.
+
 # PatientGenerator 0.1.2
 
 * Added .github actions for check-standard and sync-to-projects

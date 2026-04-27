@@ -17,7 +17,8 @@ test_that("Initialize correctly tables defined in the parameter", {
     "observation_period",
     "drug_exposure",
     "condition_occurrence",
-    "measurement"
+    "measurement",
+    "procedure_occurrence"
     )
   
   cdm <- cdmConstructor$new(tables = tables)
@@ -32,72 +33,158 @@ test_that("Initialize correctly tables defined in the parameter", {
 })
 
 test_that("cdmConstructor reset empties core tables", {
+  
   cdm <- new_cdm()
-  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
-  cdm$observation_period$add(person_id = 1L)
-  cdm$drug_exposure$add(person_id = 1L)
-
+  
+  cdm$person$add(
+    gender_concept_id = 8532L,
+    year_of_birth = 1967L
+    )
+  
+  # Add 1 person to all data tables
+  cdm_tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+  )
+  
+  for (i in seq_along(cdm_tables)) {
+    expect_no_error({
+      cdm[[cdm_tables[i]]]$add(
+        person_id = 1L
+        )
+    })
+  }
+  
+  # Check info was added to all tables
+  for (i in seq_along(cdm_tables)) {
+    cdm[[cdm_tables[i]]]$data() |> 
+      pull(person_id) |> 
+      length() |> 
+      expect_equal(1)
+  }
+  
+  ###
   cdm$reset()
-  empty_cdm <- jsonlite::fromJSON(cdm$getCdmData())
+  
+  # Empty data after reset
+  # Check info was added to all tables
+  for (i in seq_along(cdm_tables)) {
+    cdm[[cdm_tables[i]]]$data() |> 
+      pull(person_id) |> 
+      length() |> 
+      expect_equal(0)
+  }
 
-  expect_length(empty_cdm$person, 0)
-  expect_length(empty_cdm$observation_period, 0)
-  expect_length(empty_cdm$drug_exposure, 0)
 })
 
 test_that("person table add/update/delete behaves as expected", {
+  
   cdm <- new_cdm()
-  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
-  cdm$person$add(gender_concept_id = 8507L, year_of_birth = 1988L)
+  
+  # ADD
+  cdm$person$add(
+    gender_concept_id = 8532L,
+    year_of_birth = 1967L
+    )
+  cdm$person$add(
+    gender_concept_id = 8507L,
+    year_of_birth = 1988L
+    )
+  
+  # UPDATE
+  cdm$person$update(
+    person_id = 1L,
+    gender_concept_id = 8507L,
+    year_of_birth = 1977L
+    )
 
-  cdm$person$update(person_id = 1L, gender_concept_id = 8507L, year_of_birth = 1977L)
+  # TEST
   person_table <- cdm$person$data()
-
   expect_equal(person_table$person_id, c(1L, 2L))
   expect_equal(person_table$gender_concept_id, c(8507L, 8507L))
   expect_equal(person_table$year_of_birth, c(1977L, 1988L))
 
+  # DELETE
   cdm$person$delete(person_id = 2L)
   person_table <- cdm$person$data()
   expect_equal(person_table$person_id, 1L)
 })
 
-test_that("observation/condition/drug dates can be updated", {
+test_that("observation/condition/drug/measurement/procedure_occurrence update dates", {
   cdm <- new_cdm()
   cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
-  cdm$observation_period$add(person_id = 1L)
-  cdm$condition_occurrence$add(person_id = 1L)
-  cdm$drug_exposure$add(person_id = 1L)
+  
+  cdm_tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+  )
+  
+  # Add 1 person to all data tables
+  for (i in seq_along(cdm_tables)) {
+    expect_no_error({
+      cdm[[cdm_tables[i]]]$add(
+        person_id = 1L
+      )
+    })
+  }
+  
+  # Default dates
+  for (i in seq_along(cdm_tables)) {
 
-  cdm$observation_period$updateDates(
-    person_id = 1L, event_id = 1L,
-    start_date = as.Date("1997-10-29"), end_date = as.Date("1999-10-29")
-  )
-  cdm$condition_occurrence$updateDates(
-    person_id = 1L, event_id = 1L,
-    start_date = as.Date("1998-01-01"), end_date = as.Date("1998-12-31")
-  )
-  cdm$drug_exposure$updateDates(
-    person_id = 1L, event_id = 1L,
-    start_date = as.Date("2001-02-03"), end_date = as.Date("2001-03-04")
-  )
-
-  expect_equal(cdm$observation_period$data()$observation_period_start_date[[1]], as.Date("1997-10-29"))
-  expect_equal(cdm$condition_occurrence$data()$condition_start_date[[1]], as.Date("1998-01-01"))
-  expect_equal(cdm$drug_exposure$data()$drug_exposure_start_date[[1]], as.Date("2001-02-03"))
+    # Check default start date
+    cdm[[cdm_tables[i]]]$data()[,.SD, .SDcols = patterns("date")] |> 
+      select(1) |> 
+      pull() |>
+      as.character() |> 
+      expect_equal("2010-02-28")
+    
+    # Update dates
+    expect_no_error({  
+      cdm[[cdm_tables[i]]]$updateDates(
+        person_id = 1L,
+        event_id = 1L,
+        start_date = as.Date("1997-10-29"),
+        end_date = as.Date("1999-10-29")
+      )
+    })
+      
+      # Check new date
+    cdm[[cdm_tables[i]]]$data()[,.SD, .SDcols = patterns("date")] |> 
+      select(1) |> 
+      pull() |>
+      as.character() |> 
+      expect_equal("1997-10-29")
+    
+  }
+      
 })
 
 test_that("getCdmData and getCdmDataTimeline return valid structures", {
   cdm <- new_cdm()
-  cdm$person$add(
-    gender_concept_id = 8532L,
-    year_of_birth = 1967L
-    )
-  cdm$observation_period$add(person_id = 1L)
-  cdm$condition_occurrence$add(person_id = 1L)
-  cdm$drug_exposure$add(person_id = 1L)
-  cdm$measurement$add(person_id = 1L)
-  cdm$procedure_occurrence$add(person_id = 1L)
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
+  
+  cdm_tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+  )
+  
+  # Add 1 person to all data tables
+  for (i in seq_along(cdm_tables)) {
+    expect_no_error({
+      cdm[[cdm_tables[i]]]$add(
+        person_id = 1L
+      )
+    })
+  }
 
   cdm_json <- cdm$getCdmData()
   expect_true(
@@ -139,11 +226,11 @@ test_that("loadJsonTestSet loads source test fixtures", {
 
 test_that("Testing methods on LLM testset", {
   
-  # An LLM testset for this test
+  # # An LLM testset for this test
   # model <- pick_openai_model()
-  # patientGenerator <- patientChat$new(model)
-
-  ### Test set description for this test:
+  # patientGenerator <- patientChat$new(model = "gpt-5.4-mini")
+  # 
+  # ### Test set description for this test:
   # patientGenerator$prompt(
   # "Population (person table):
   #   - 10 adult patients
@@ -171,34 +258,46 @@ test_that("Testing methods on LLM testset", {
   #   - Fill only specified tables in this prompt"
   #   )
   # patientGenerator$save("test_diabetes_patients")
-  
+
   ### Check testset
-  # cdm <- TestGenerator::patientsCDM(
-  #   testName = "test_diabetes_patients"
-  #   )
-  # 
-  # cdm$person |> 
-  #   collect() |> 
-  #   nrow() |> 
-  #   expect_equal(10)
-  # 
-  # cdm$procedure_occurrence |> 
-  #   collect() |> 
-  #   nrow() |> 
-  #   expect_equal(5)
+  cdm <- TestGenerator::patientsCDM(
+    testName = "test_diabetes_patients",
+    cdmVersion = "5.4"
+    )
+
+  cdm$person |>
+    collect() |>
+    nrow() |>
+    expect_equal(10)
+  
+  cdm$procedure_occurrence |>
+    collect() |>
+    nrow() |>
+    expect_equal(5)
   
   path <- testthat::test_path(
     "testCases",
     "test_diabetes_patients.json"
     )
   
+  cdm_tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+  )
+  
   expect_no_error({
     cdm <- new_cdm()
-    timeline_data <- cdm$loadJsonTestSet(path)
-    cdm$condition_occurrence$add(person_id = 1L)
-    cdm$drug_exposure$add(person_id = 1L)
-    cdm$measurement$add(person_id = 1L)
-    cdm$procedure_occurrence$add(person_id = 1L)
+    cdm$loadJsonTestSet(path)
+    for (i in seq_along(cdm_tables)) {
+      expect_no_error({
+        cdm[[cdm_tables[i]]]$add(
+          person_id = 1L
+        )
+      })
+    }
   })
   
   cdm$condition_occurrence$data() |> 
@@ -207,7 +306,7 @@ test_that("Testing methods on LLM testset", {
   
   cdm$drug_exposure$data() |> 
     pull(person_id) |> 
-    expect_length(11)
+    expect_length(31)
   
   cdm$measurement$data() |> 
     pull(person_id) |> 
@@ -219,6 +318,74 @@ test_that("Testing methods on LLM testset", {
   
 })
 
+test_that("Testing modified test from LLM can be inserted back to TestGenerator", {
+  
+  # Using the same diabetes test from previous test
+  path <- testthat::test_path(
+    "testCases",
+    "test_diabetes_patients.json"
+  )
+
+  cdm_tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+  )  
+  # Load into memory and modify all fields
+  expect_no_error({
+    cdm <- new_cdm()
+    cdm$loadJsonTestSet(path)
+  
+    for (i in seq_along(cdm_tables)) {
+      expect_no_error({
+        cdm[[cdm_tables[i]]]$add(
+          person_id = 1L
+        )
+      })
+    }
+    
+    # Update dates
+    cdm[[cdm_tables[i]]]$updateDates(
+      person_id = 1L,
+      event_id = 1L,
+      start_date = as.Date("1997-10-29"),
+      end_date = as.Date("1999-10-29")
+    )
+  })
+  
+  mod_test_file <- testthat::test_path(
+    "testCases",
+    "mod_test_file.json"
+  )
+  
+  write(
+    cdm$getCdmData(),
+    file = mod_test_file
+  )
+  
+  expect_no_error({
+    cdm <- TestGenerator::patientsCDM(
+      testName = "mod_test_file",
+      cdmVersion = "5.4"
+      )
+
+    cdm$person |>
+      collect() |>
+      nrow() |>
+      expect_equal(10)
+
+    cdm$procedure_occurrence |>
+      collect() |>
+      nrow() |>
+      expect_equal(6)
+  })
+  
+  unlink(mod_test_file, recursive = TRUE)
+
+})
+
 test_that("Testing methods on LLM testset 'objective_1_patient'", {
   
   path <- testthat::test_path(
@@ -226,13 +393,24 @@ test_that("Testing methods on LLM testset 'objective_1_patient'", {
     "objective_1_patients.json"
   )
   
+  cdm_tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence"
+  )
+  
   expect_no_error({
     cdm <- new_cdm()
-    timeline_data <- cdm$loadJsonTestSet(path)
-    cdm$condition_occurrence$add(person_id = 1L)
-    cdm$drug_exposure$add(person_id = 1L)
-    cdm$measurement$add(person_id = 1L)
-    cdm$procedure_occurrence$add(person_id = 1L)
+    cdm$loadJsonTestSet(path)
+    for (i in seq_along(cdm_tables)) {
+      expect_no_error({
+        cdm[[cdm_tables[i]]]$add(
+          person_id = 1L
+        )
+      })
+    }
   })
   
   cdm$condition_occurrence$data() |> 

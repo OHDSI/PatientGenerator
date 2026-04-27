@@ -3,19 +3,20 @@
 .Rapp.history
 .RData
 .Ruserdata
-
 # RStudio
 .Rproj.user/
-
 # Package build/check artifacts
 /*.tar.gz
 /*.Rcheck/
 /benchmarks/
-
 # renv local state (keep renv.lock tracked)
 renv/library/
 renv/staging/
 renv/python/
-
 # OS/editor noise
 .DS_Store
+AGENTS.md
+# testCases
+mod_test_file_updated.json
+docs
+.positai
