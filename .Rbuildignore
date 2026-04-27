@@ -1,5 +1,9 @@
 ^renv$
 ^renv\.lock$
+^\.DS_Store$
+^.*\.DS_Store$
+^\.Rhistory$
+^\.Rprofile$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
