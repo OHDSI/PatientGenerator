@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/mi-erasmusmc/PatientGenerator/blob/develop/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/mi-erasmusmc/PatientGenerator/blob/main/DESCRIPTION)
 
 Barboza C, Inberg G, Black A (2026). *PatientGenerator: A Generator of
 Patient Synthetic Data for the OMOP-CDM*. R package version 0.1.3,
