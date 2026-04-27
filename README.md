@@ -1,8 +1,6 @@
 
 # PatientGenerator
 
-<img src="man/figures/logo.png" align="right" height="139" alt="PatientGenerator logo" />
-
 <!-- badges: start -->
 
 [![CRAN
