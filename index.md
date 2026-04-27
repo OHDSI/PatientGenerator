@@ -1,5 +1,7 @@
 # PatientGenerator
 
+![PatientGenerator logo](reference/figures/logo.png)
+
 `PatientGenerator` facilitates the creation of synthetic test datasets
 for the OMOP Common Data Model (CDM) using two complementary approaches:
 
