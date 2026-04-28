@@ -199,8 +199,7 @@ cdmTableServer <- function(
       # UPDATE all other fields
       observeEvent(observeOtherFields(), {
         table_inputs <- observeOtherFields()
-        print(paste("in cdmTable observeEvent:", id))
-        print(paste("in cdmTable observeEvent:", paste0(table_inputs, collapse = ",")))
+        print(paste("in cdmTable observeEvent:", id, " (", paste0(names(table_inputs), collapse = ", "), ")"))
         
         no_date_inputs <- table_inputs[grep(
           "date",
