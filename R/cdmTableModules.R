@@ -191,10 +191,17 @@ cdmTableServer <- function(
         ignoreInit = TRUE
       )
 
+      observeOtherFields <- reactive({
+        inputs <- isolate(reactiveValuesToList(input))
+        inputs[names(inputs) %in% columnList]
+      })
+      
       # UPDATE all other fields
-      observe({
-        inputs <- reactiveValuesToList(input)
-        table_inputs <- inputs[names(inputs) %in% columnList]
+      observeEvent(observeOtherFields(), {
+        table_inputs <- observeOtherFields()
+        print(paste("in cdmTable observeEvent:", id))
+        print(paste("in cdmTable observeEvent:", paste0(table_inputs, collapse = ",")))
+        
         no_date_inputs <- table_inputs[grep(
           "date",
           names(table_inputs),
