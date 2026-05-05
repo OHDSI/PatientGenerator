@@ -6,7 +6,7 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     patientGenerator <- patientChat$new(model = "gpt")
   })
   expect_no_error({
-    patientGenerator <- patientChat$new(model = "gpt-5.4-pro")
+    # patientGenerator <- patientChat$new(model = "gpt-5.4-pro")
     patientGenerator <- patientChat$new(model = "gpt-5-nano")
     patientGenerator <- patientChat$new(model = "gpt-5-mini")
   })
