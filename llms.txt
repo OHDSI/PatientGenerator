@@ -14,6 +14,7 @@ ensure valid OMOP concept codes.
 ### Installation
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("mi-erasmusmc/PatientGenerator")
 ```
@@ -36,6 +37,7 @@ Available models can be listed using
 [`PatientGenerator::availableModels()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/availableModels.md).
 
 ``` r
+
 library(PatientGenerator)
 
 patientGenerator <- patientChat$new(
@@ -50,6 +52,7 @@ Provide detailed prompts, including specific concept sets, for optimal
 results.
 
 ``` r
+
 patientGenerator$prompt(
   "Population (person table):
      - 10 adult patients
@@ -85,6 +88,7 @@ Save the generated dataset as a JSON file and utilize
 to instantiate a CDM reference.
 
 ``` r
+
 patientGenerator$save(name = "diabetes-patients")
 
 cdm <- TestGenerator::patientsCDM(
@@ -114,6 +118,7 @@ The LLM can be instructed to modify the current test set within the same
 `patientChat` instance.
 
 ``` r
+
 patientGenerator$prompt("Remove all male patients")
 ```
 
@@ -133,6 +138,7 @@ patientGenerator$prompt("Remove all male patients")
 Launch the interactive editor to review and refine datasets:
 
 ``` r
+
 PatientGenerator::patientDesigner()
 ```
 
@@ -154,6 +160,7 @@ directly into the CDM tables.
 Configure Hecate globally via environment variables:
 
 ``` r
+
 Sys.setenv(
   HECATE_BASE_URL = "https://your-hecate-server/api",
   HECATE_API_KEY = "your-api-key"
@@ -163,6 +170,7 @@ Sys.setenv(
 Or via package options:
 
 ``` r
+
 options(PatientGenerator.hecate = list(
   base_url = "https://your-hecate-server/api",
   timeout_ms = 15000,

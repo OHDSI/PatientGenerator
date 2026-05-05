@@ -2,6 +2,8 @@
 
 ## PatientGenerator 0.1.4
 
+CRAN release: 2026-05-04
+
 - Prepared the package for CRAN submission.
 
 - Updated package title and description to follow CRAN metadata style.

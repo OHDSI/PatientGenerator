@@ -1,6 +1,7 @@
 # Interactive Patient Designer & Test Integration
 
 ``` r
+
 library(PatientGenerator)
 library(shiny)
 library(testthat)
@@ -22,6 +23,7 @@ To launch the interactive designer, execute the following command in the
 R console:
 
 ``` r
+
 patientDesigner()
 ```
 
@@ -55,6 +57,7 @@ Saved test sets can be integrated into unit tests by loading them using
 the CDM constructor.
 
 ``` r
+
 test_that("Custom test case behavior is correct", {
   # Locate the test case file relative to the tests/testthat directory
   test_file <- testthat::test_path("testCases", "my_test_case.json")
