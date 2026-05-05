@@ -35,7 +35,8 @@ Imports:
     R6,
     shiny,
     stringr,
-    testthat
+    testthat,
+    cli
 Suggests:
     CDMConnector,
     CohortCharacteristics,
@@ -44,7 +45,8 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
-    TestGenerator
+    TestGenerator,
+    visOmopResults
 VignetteBuilder: knitr
 Config/Needs/website: pkgdown
 Config/testthat/edition: 3
