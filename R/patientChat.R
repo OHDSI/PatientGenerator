@@ -57,13 +57,14 @@ patientChat <- R6::R6Class(
     #'
     #' @return A new `Person` object.
     initialize = function(system_prompt = NULL,
+                          provider = "openai",
                           model = "gpt-5.4",
                           jsonSchemaPath = NULL,
                           echo = c("none", "output", "all"),
                           codelist_data = NULL) {
 
       # Check API and available models -----------------------
-      private$.api_check(model)
+      # private$.api_check(model) 
 
       # check JSON schema file -------------------------------
       private$.json_schema_check(jsonSchemaPath)
@@ -76,13 +77,13 @@ patientChat <- R6::R6Class(
                           must exclusively conform to the OMOP-CDM v5.4 standard"
       }
 
-      # Create chat ------------------------------------------
-      self$chat <- ellmer::chat_openai(
-        system_prompt = system_prompt,
-        model = model,
-        echo = echo
+      # Select chat provider ------------------------------------------
+      private$.selectProvider(
+        provider,
+        system_prompt,
+        model,
+        echo
         )
-      cli::cli_alert_success("Chat created")
 
       # Codelist ---------------------------------------------
       if (!is.null(codelist_data)) {
@@ -229,6 +230,33 @@ patientChat <- R6::R6Class(
   ),
 
   private = list(
+    
+    .selectProvider = function(provider,
+                               system_prompt,
+                               model,
+                               echo) {
+      
+      if (provider == "openai") {
+        self$chat <- ellmer::chat_openai(
+          system_prompt = system_prompt,
+          model = model,
+          echo = echo
+        )
+        cli::cli_alert_success("openai chat created")
+      } else if (provider == "ollama") {
+        self$chat <- ellmer::chat_ollama(
+          system_prompt = system_prompt,
+          model = model,
+          echo = echo
+        )
+        cli::cli_alert_success(
+          glue::glue(
+            "ollama chat created with {model}"
+            )
+        )
+      }
+      
+    },
 
     .api_check = function(model) {
       checkmate::assertCharacter(model)

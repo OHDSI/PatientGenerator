@@ -6,6 +6,14 @@ skip_if_no_openai <- function() {
   }
 }
 
+skip_if_no_ollama <- function() {
+  testthat::skip_on_cran()
+  key <- Sys.getenv("OPENAI_API_KEY", unset = "")
+  if (!nzchar(key)) {
+    testthat::skip("OPENAI_API_KEY not set")
+  }
+}
+
 pick_openai_model <- function() {
   models <- tryCatch(
     PatientGenerator::availableModels(),
