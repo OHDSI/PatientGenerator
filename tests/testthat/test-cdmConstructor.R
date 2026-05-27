@@ -190,6 +190,7 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
   expect_true(
     jsonlite::validate(cdm_json)
     )
+  expect_true("measurement" %in% names(jsonlite::fromJSON(cdm_json)))
 
   timeline <- cdm$getCdmDataTimeline()
   expect_s3_class(

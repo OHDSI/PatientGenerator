@@ -245,6 +245,7 @@ cdmConstructor <- R6::R6Class(
         observation_period = self$observation_period$data(),
         drug_exposure = self$drug_exposure$data(),
         condition_occurrence = self$condition_occurrence$data(),
+        measurement = self$measurement$data(),
         procedure_occurrence = self$procedure_occurrence$data()
         )
 

@@ -11,7 +11,8 @@ createInputs <- function(ns, type, columns, inverse = FALSE) {
     } else if (stringr::str_detect(col_name, "concept") & !stringr::str_detect(col_name, "gender")) {
       column(2,
              textInput(ns(col_name),
-                       label = stringr::str_to_sentence(stringr::str_replace_all(col_name, "_", " ")))
+                       label = stringr::str_to_sentence(stringr::str_replace_all(col_name, "_", " "))),
+             uiOutput(ns(paste0(col_name, "_status")))
       )
     } else {
       if (!stringr::str_detect(col_name, "person_id")) {

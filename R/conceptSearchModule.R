@@ -13,6 +13,49 @@
 #' @name conceptSearchModule
 NULL
 
+#' Resolve a concept id to a compact label
+#'
+#' @param conceptId Concept id entered by the user.
+#' @return Character suffix for a Shiny input label.
+#' @noRd
+hecateConceptLabel <- function(conceptId) {
+  conceptId <- trimws(as.character(conceptId %||% ""))
+  if (!nzchar(conceptId)) {
+    return("")
+  }
+  if (!grepl("^[0-9]+$", conceptId)) {
+    return("(invalid concept id)")
+  }
+
+  result <- tryCatch(
+    hecateSearch(conceptId, limit = 10),
+    warning = function(w) NULL,
+    error = function(e) NULL
+  )
+
+  if (is.null(result) || nrow(result) == 0 || !"conceptId" %in% names(result)) {
+    return("(not found)")
+  }
+
+  conceptIdInt <- suppressWarnings(as.integer(conceptId))
+  match_index <- which(result$conceptId == conceptIdInt)
+  if (length(match_index) == 0) {
+    return("(not found)")
+  }
+
+  concept <- result[match_index[[1]], , drop = FALSE]
+  invalid_reason <- concept$invalidReason %||% NA_character_
+  invalid_reason <- as.character(invalid_reason)
+  is_valid <- is.na(invalid_reason) ||
+    !nzchar(invalid_reason) ||
+    identical(tolower(invalid_reason), "none")
+  if (!isTRUE(is_valid)) {
+    return("(invalid concept id)")
+  }
+
+  "(valid concept id)"
+}
+
 #' @describeIn conceptSearchModule UI for the concept search: a single button that opens the search modal.
 #' @export
 conceptSearchUI <- function(id, buttonLabel = "Concept search") {
