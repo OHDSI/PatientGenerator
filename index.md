@@ -31,7 +31,8 @@ remotes::install_github("mi-erasmusmc/PatientGenerator")
 ### Synthetic Patient Generation with `patientChat`
 
 Set an `OPENAI_API_KEY` environment variable (e.g., via
-`usethis::edit_r_environ()`) to enable LLM access.
+[`usethis::edit_r_environ()`](https://usethis.r-lib.org/reference/edit.html))
+to enable LLM access.
 
 Available models can be listed using
 [`PatientGenerator::availableModels()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/availableModels.md).
