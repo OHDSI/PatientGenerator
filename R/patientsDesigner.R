@@ -490,18 +490,19 @@ patientDesigner <- function(path = NULL) {
     })
 
     observeEvent(input$bar_end, {
-      update_data <- input$bar_end
+      update_data <- normalizeBarEndUpdate(input$bar_end)
       person_id <- update_data$person_id
       event_id <- update_data$event_id
       type <- update_data$type
+      end_date <- if (identical(type, "measurement")) NULL else update_data$end_date
       print("END DATA:")
       update_data$start_date %>% print()
-      update_data$end_date %>% print()
+      end_date %>% print()
       cdm[[type]]$updateDates(
         person_id = person_id,
         event_id = event_id,
         start_date = update_data$start_date,
-        end_date = update_data$end_date
+        end_date = end_date
         )
       updateTableDatesNs(
         cdm = cdm,
@@ -509,7 +510,7 @@ patientDesigner <- function(path = NULL) {
         input_person_id = person_id,
         input_event_id = event_id,
         start_date = update_data$start_date,
-        end_date = update_data$end_date,
+        end_date = end_date,
         session = session,
         input = input,
         syncing = syncing
