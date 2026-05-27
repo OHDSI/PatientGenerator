@@ -165,13 +165,20 @@ updateTableDatesNs <- function(cdm,
   # browser()
   if (type == "condition_occurrence") {
     type_corrected <- "condition"
+  } else if (type == "measurement") {
+    type_corrected <- "measurement"
   } else {
     type_corrected <- type
   }
 
   # Access names
-  table_start_date <- glue::glue("{type_corrected}_start_date")
-  table_end_date <- glue::glue("{type_corrected}_end_date")
+  if (type == "measurement") {
+    table_start_date <- "measurement_date"
+    table_end_date <- NULL
+  } else {
+    table_start_date <- glue::glue("{type_corrected}_start_date")
+    table_end_date <- glue::glue("{type_corrected}_end_date")
+  }
   table_id <- glue::glue("{type}_id")
 
   p_id <- if (is.function(input_person_id)) { input_person_id() } else { input_person_id }
@@ -190,7 +197,9 @@ updateTableDatesNs <- function(cdm,
   freezeReactiveValue(input, ns_module(table_start_date))
   updateDateInput(session, ns_module(table_start_date), value = start_date)
 
-  freezeReactiveValue(input, ns_module(table_end_date))
-  updateDateInput(session, ns_module(table_end_date), value = end_date)
+  if (!is.null(table_end_date)) {
+    freezeReactiveValue(input, ns_module(table_end_date))
+    updateDateInput(session, ns_module(table_end_date), value = end_date)
+  }
 
 }

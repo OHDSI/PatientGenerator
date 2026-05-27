@@ -224,6 +224,71 @@ test_that("loadJsonTestSet loads source test fixtures", {
   expect_gt(nrow(cdm$person$data()), 0)
 })
 
+test_that("loadJsonTestSet backfills missing end dates for renderable tables", {
+  cdm <- new_cdm()
+  path <- tempfile(fileext = ".json")
+
+  jsonlite::write_json(
+    list(
+      person = list(
+        list(
+          person_id = 1L,
+          gender_concept_id = 8507L,
+          year_of_birth = 1970L,
+          month_of_birth = 1L,
+          day_of_birth = 1L
+        )
+      ),
+      condition_occurrence = list(
+        list(
+          condition_occurrence_id = 1L,
+          person_id = 1L,
+          condition_concept_id = 201826L,
+          condition_start_date = "2020-01-10",
+          condition_end_date = NULL
+        )
+      ),
+      drug_exposure = list(
+        list(
+          drug_exposure_id = 1L,
+          person_id = 1L,
+          drug_concept_id = 19079450L,
+          drug_exposure_start_date = "2020-02-10",
+          drug_exposure_end_date = NULL
+        )
+      ),
+      procedure_occurrence = list(
+        list(
+          procedure_occurrence_id = 1L,
+          person_id = 1L,
+          procedure_concept_id = 4159766L,
+          procedure_date = "2020-03-10",
+          procedure_end_date = NULL
+        )
+      )
+    ),
+    path,
+    auto_unbox = TRUE,
+    pretty = TRUE,
+    null = "null"
+  )
+
+  expect_no_error(cdm$loadJsonTestSet(path))
+
+  expect_equal(
+    cdm$condition_occurrence$data()$condition_end_date[[1]],
+    as.Date("2020-01-10")
+  )
+  expect_equal(
+    cdm$drug_exposure$data()$drug_exposure_end_date[[1]],
+    as.Date("2020-02-10")
+  )
+  expect_equal(
+    cdm$procedure_occurrence$data()$procedure_end_date[[1]],
+    as.Date("2020-03-10")
+  )
+})
+
 test_that("Testing methods on LLM testset", {
   testthat::skip_on_cran()
   
