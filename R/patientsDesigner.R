@@ -175,10 +175,98 @@ patientDesigner <- function(path = NULL) {
     file_refresh_trigger <- reactiveVal(0)
     loaded_listeners <- reactiveVal(character(0))
     data_version <- reactiveVal(0)
+    chat_generator <- reactiveVal(NULL)
+    chat_temp_dir <- file.path(
+      tempdir(),
+      paste0("patientDesigner-chat-", session$token)
+    )
+    dir.create(chat_temp_dir, recursive = TRUE, showWarnings = FALSE)
+    session$onSessionEnded(function() {
+      unlink(chat_temp_dir, recursive = TRUE, force = TRUE)
+    })
 
     # TestCases folder
     get_test_dir <- function() {
       testSetDir(path = path, create = TRUE)
+    }
+
+    list_test_set_records <- function() {
+      saved_paths <- list.files(
+        get_test_dir(),
+        pattern = "\\.json$",
+        full.names = TRUE
+      )
+      chat_paths <- list.files(
+        chat_temp_dir,
+        pattern = "\\.json$",
+        full.names = TRUE
+      )
+
+      build_records <- function(paths, source) {
+        if (length(paths) == 0) {
+          return(data.frame(
+            id = character(),
+            label = character(),
+            path = character(),
+            source = character(),
+            stringsAsFactors = FALSE
+          ))
+        }
+
+        data.frame(
+          id = vapply(
+            paste(source, basename(paths), sep = "_"),
+            function(x) gsub("[^A-Za-z0-9_]+", "_", x),
+            character(1)
+          ),
+          label = if (identical(source, "chat")) {
+            paste0("[chat] ", tools::file_path_sans_ext(basename(paths)))
+          } else {
+            tools::file_path_sans_ext(basename(paths))
+          },
+          path = paths,
+          source = source,
+          stringsAsFactors = FALSE
+        )
+      }
+
+      rbind(
+        build_records(saved_paths, "saved"),
+        build_records(chat_paths, "chat")
+      )
+    }
+
+    pick_chat_model <- function() {
+      models <- availableModels()
+      preferred <- c(
+        "gpt-5.4",
+        "gpt-5.2",
+        "gpt-5",
+        "gpt-4.1",
+        "gpt-4o"
+      )
+      model <- preferred[preferred %in% models][1]
+      if (is.na(model) || is.null(model)) {
+        model <- models[[1]]
+      }
+      if (is.null(model) || !nzchar(model)) {
+        stop("No available OpenAI model for this key.", call. = FALSE)
+      }
+      model
+    }
+
+    get_chat_generator <- function() {
+      generator <- chat_generator()
+      if (!is.null(generator)) {
+        return(generator)
+      }
+
+      generator <- patientChat$new(
+        model = pick_chat_model(),
+        echo = "none"
+      )
+      chat_generator(generator)
+      generator
     }
 
     # Create CDM object
@@ -194,11 +282,7 @@ patientDesigner <- function(path = NULL) {
     ##### Update saved file in sidebar
     current_files <- reactive({
       file_refresh_trigger()
-      list.files(
-        get_test_dir(),
-        pattern = "\\.json$",
-        full.names = FALSE
-        )
+      list_test_set_records()
     })
 
     # Render list UI
@@ -206,12 +290,10 @@ patientDesigner <- function(path = NULL) {
       files <- current_files()
 
       tagList(
-        lapply(files, function(f) {
-          # ID includes extension to be unique and consistent
-          # Display name removes extension for looks
+        lapply(seq_len(nrow(files)), function(i) {
           actionLink(
-            inputId = paste0("link_", f),
-            label = tools::file_path_sans_ext(f),
+            inputId = paste0("link_", files$id[[i]]),
+            label = files$label[[i]],
             class = "text-reset text-decoration-none d-block mb-1"
           )
         })
@@ -222,21 +304,25 @@ patientDesigner <- function(path = NULL) {
     observe({
       files <- current_files()
       existing <- loaded_listeners()
-      new_files <- setdiff(files, existing)
+      if (!nrow(files)) {
+        return()
+      }
 
-      lapply(new_files, function(filename) {
+      new_files <- files[!(files$id %in% existing), , drop = FALSE]
 
-        id <- paste0("link_", filename)
+      lapply(seq_len(nrow(new_files)), function(i) {
+        file_id <- new_files$id[[i]]
+        file_path <- new_files$path[[i]]
+        id <- paste0("link_", file_id)
 
         observeEvent(input[[id]], {
-          path <- file.path(get_test_dir(), filename)
-          cdm$loadJsonTestSet(path)
+          cdm$loadJsonTestSet(file_path)
           data_version(data_version() + 1)
         })
       })
 
-      if (length(new_files) > 0) {
-        loaded_listeners(c(existing, new_files))
+      if (nrow(new_files) > 0) {
+        loaded_listeners(c(existing, new_files$id))
       }
       })
 
@@ -278,31 +364,42 @@ patientDesigner <- function(path = NULL) {
       file_refresh_trigger(file_refresh_trigger() + 1)
       removeModal()
     })
-
-
-    ##### Load JSON Test Set
-    lapply(
-      getTestSets(
-        path = get_test_dir()),
-      function(filename) {
-        id <- paste0("link_", filename)
-        observeEvent(input[[id]], {
-          path <- file.path(
-            get_test_dir(),
-            paste(
-              filename,
-              "json",
-              sep = "."
-              )
-            )
-        cdm$loadJsonTestSet(path)
-        data_version(data_version() + 1)
-        })
-    })
-
     patientDesignerChatServer(
       id = "designer_chat",
-      reset_trigger = reactive(input$new_chat)
+      reset_trigger = reactive(input$new_chat),
+      on_submit = function(prompt) {
+        shiny::withProgress(message = "Generating test set", value = 0, {
+          incProgress(0.2)
+          generator <- get_chat_generator()
+          generator$prompt(prompt)
+          incProgress(0.5)
+
+          file_stub <- paste0(
+            "patient-chat-",
+            format(Sys.time(), "%Y%m%d-%H%M%S"),
+            "-",
+            sprintf("%03d", sample.int(999, 1))
+          )
+          generator$save(
+            name = file_stub,
+            path = chat_temp_dir
+          )
+
+          out_file <- file.path(chat_temp_dir, paste0(file_stub, ".json"))
+          cdm$loadJsonTestSet(out_file)
+          data_version(data_version() + 1)
+          file_refresh_trigger(file_refresh_trigger() + 1)
+          incProgress(0.3)
+        })
+
+        paste(
+          "Generated a test set from your prompt, saved it in the chat temp directory,",
+          "and loaded it into PatientDesigner."
+        )
+      },
+      on_reset = function() {
+        chat_generator(NULL)
+      }
     )
 
     ##### PERSON TABLE
