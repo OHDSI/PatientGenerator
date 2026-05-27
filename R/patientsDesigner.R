@@ -80,7 +80,12 @@ patientDesigner <- function(path = NULL) {
             class = "text-reset text-decoration-none"
             )
            ),
-        position = "right", open = FALSE),
+        br(),
+        patientDesignerChatUI("designer_chat"),
+        width = "30rem",
+        position = "right",
+        open = FALSE
+        ),
       tabsetPanel(
         tabPanel(
           "Person",
@@ -292,8 +297,13 @@ patientDesigner <- function(path = NULL) {
             )
         cdm$loadJsonTestSet(path)
         data_version(data_version() + 1)
-      })
+        })
     })
+
+    patientDesignerChatServer(
+      id = "designer_chat",
+      reset_trigger = reactive(input$new_chat)
+    )
 
     ##### PERSON TABLE
 
