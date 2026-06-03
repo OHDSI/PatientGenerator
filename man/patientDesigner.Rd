@@ -4,7 +4,13 @@
 \alias{patientDesigner}
 \title{\code{patientDesigner()} is a visual interface based on D3 to construct test datasets for the OMOP-CDM}
 \usage{
-patientDesigner(path = NULL)
+patientDesigner(
+  path = NULL,
+  makePublishable = FALSE,
+  publishDir = file.path(getwd(), "shiny"),
+  overwritePublishDir = FALSE,
+  launch.browser = FALSE
+)
 }
 \arguments{
 \item{path}{Optional folder containing JSON test sets.
