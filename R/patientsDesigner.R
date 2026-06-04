@@ -33,7 +33,6 @@ patientDesigner <- function(path = NULL,
       
       # copy app
       appFiles <- file.path(appDir, list.files(appDir))
-      appFiles <- appFiles[!grepl("tests$|data$", appFiles)]
       file.copy(appFiles, publishDir, recursive = TRUE, overwrite = TRUE)
       dataFiles <- file.path(path, list.files(path))
       file.copy(dataFiles, file.path(publishDir, dataPath), recursive = TRUE, overwrite = TRUE)
