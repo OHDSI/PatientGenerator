@@ -190,3 +190,174 @@ test_that("Ovarian cancer stages", {
   
 })
 
+test_that("GvHD with intestinal involvement", {
+  skip_if_no_openai()
+  
+  patientGenerator <- PatientGenerator::patientChat$new(
+    model = "gpt-5.4"
+  )
+  
+  patientGenerator$prompt(
+  "Generate OMOP CDM test data for DARWIN EU P5-C3-003: acute GvHD with intestinal involvement.
+    PERSON:
+      - Create exactly 15 persons.
+      - Persons 1–12 are eligible study patients.
+      - Persons 13 and 14 are non-cases and should have no aGvHD diagnosis and no treatment records.
+      - Person 15 is a prevalent case and should be excluded from the incident cohort.
+      - Among persons 1–12:
+        - 6 female using gender_concept_id = 8532.
+        - 6 male using gender_concept_id = 8507.
+      - Age distribution among persons 1–12:
+        - 2 persons aged <18 years.
+        - 8 persons aged 18–65 years.
+        - 2 persons aged >65 years.
+    OBSERVATION_PERIOD:
+      - Create exactly one observation period for every person.
+      - Use period_type_concept_id = 32880 for all observation periods.
+      - Observation periods must include all diagnosis and treatment records.
+      - Observation periods must end on or before 2025-12-31.
+    CONDITION_OCCURRENCE:
+      - For persons 1–12, create exactly one incident diagnosis of Graft versus host disease of intestine using condition_concept_id = 37167528.
+      - Diagnosis dates must occur during the study period between 2015-01-01 and 2025-12-31.
+      - Use condition_type_concept_id = 32020.
+      - All condition_start_date values must occur within the person's observation period.
+      - For person 15:
+        - Create exactly one diagnosis of Graft versus host disease of intestine using condition_concept_id = 37167528.
+        - Diagnosis date must occur before the study period (e.g., 2014-06-01) to represent a prevalent case.
+      - Do not create any condition_occurrence records for persons 13 and 14.
+    DRUG_EXPOSURE:
+      - Create systemic corticosteroid treatment as first-line therapy using drug_concept_id = 21602722.
+         - Exactly 11 patients should receive systemic corticosteroids.
+      - Create ruxolitinib treatment as second-line therapy using drug_concept_id = 40244464.
+          - Exactly 8 patients should receive ruxolitinib.
+      - Treatment pathways for 3 patients from above with systemic corticosteroid and ruxolitinib:
+        - One the above patients with exposure to ruxolitinib will not have recorded corticosteroid exposure.
+        - Another patient of above with exposure to ruxolitinib with overlapping corticosteroid occurring within 30 days.
+        - Another patient from above corticosteroids followed by rituximab without any prior ruxolitinib exposure.
+      - Four patients will have athird-line therapy:
+        - Assign one unique patient to each of the following third-line treatments:
+        - Brentuximab vedotin: drug_concept_id = 40241969.
+        - Etanercept: drug_concept_id = 1151789.
+        - Rituximab: drug_concept_id = 1314273.
+        - Vedolizumab: drug_concept_id = 45774639.
+      - Each of the four third-line treatments listed above MUST be present at least once.
+      - No third-line treatment may be omitted.
+      - Each third-line treatment patient must be different from the others.
+      - Each third-line treatment must occur after a prior ruxolitinib exposure.
+      - Treatment pattern requirements among persons 1–12:
+    DATE RULES:
+      - Drug exposure dates must occur on or after the aGvHD diagnosis date unless intentionally testing the prevalent excluded patient.
+      - All drug_exposure_start_date values must occur within observation period dates.
+      - All drug_exposure_end_date values must occur within observation period dates.
+    OUTPUT TABLES:
+    - Populate only:
+      - PERSON
+      - OBSERVATION_PERIOD
+      - CONDITION_OCCURRENCE
+      - DRUG_EXPOSURE
+    VALIDATION REQUIREMENTS:
+      - Total persons = 15.
+      - Eligible incident aGvHD patients = 12.
+      - Non-cases = 2.
+      - Prevalent excluded case = 1.
+      - Female patients = 6.
+      - Male patients = 6.
+      - Corticosteroid-treated patients = 11.
+      - Ruxolitinib-treated patients = 8.
+      - Third-line patients = 4.
+      - Brentuximab-treated patients = 1.
+      - Etanercept-treated patients = 1.
+      - Vedolizumab-treated patients = 1.
+      - All diagnoses and drug exposures must occur within observation periods.")
+  
+  patientGenerator$save("acute_gvhd")
+  
+  expect_no_error({
+    cdm <- TestGenerator::patientsCDM(
+      testName = "acute_gvhd",
+      cdmVersion = "5.4"
+    )
+  })
+  
+  cdm$person |> 
+    collect() |> 
+    nrow() |> 
+    expect_equal(15)
+  
+  cdm$condition_occurrence |> 
+    collect() |> 
+    nrow() |> 
+    expect_equal(13)
+  
+  cdm$drug_exposure |> 
+    collect() |> 
+    filter(
+      drug_concept_id == 21602722 # corticosteroid
+    ) |> 
+    nrow() |> 
+    expect_equal(11)
+  
+  cdm$drug_exposure |> 
+    collect() |> 
+    filter(
+      drug_concept_id == 40244464 # ruxolitinib
+    ) |> 
+    nrow() |> 
+    expect_equal(8)
+  
+  cdm$drug_exposure |> 
+    collect() |> 
+    filter(
+      drug_concept_id == 40241969 # brentuximab vedotin
+    ) |> 
+    nrow() |> 
+    expect_equal(1)
+  
+  cdm$drug_exposure |> 
+    collect() |> 
+    filter(
+      drug_concept_id == 1151789 # etanercept: drug_concept_id = 1151789
+    ) |> 
+    nrow() |> 
+    expect_equal(1)
+  
+  cdm$drug_exposure |> 
+    collect() |> 
+    filter(
+      drug_concept_id == 1314273 # rituximab: drug_concept_id = 1314273
+    ) |> 
+    nrow() |> 
+    expect_equal(2)
+  
+  cdm$drug_exposure |> 
+    collect() |> 
+    filter(
+      drug_concept_id == 45774639 # vedolizumab: drug_concept_id = 45774639
+    ) |> 
+    nrow() |> 
+    expect_equal(1)
+  
+  # Testing all drugs after conditions
+  cdm$condition_occurrence |> 
+    collect() |> 
+    select(
+      person_id,
+      condition_start_date
+    ) |> 
+    inner_join(
+      cdm$drug_exposure |> 
+        collect() |> 
+        select(
+          person_id,
+          drug_exposure_start_date
+        ),
+      by = join_by(person_id)
+    ) |> 
+    mutate(
+      is_drug_after_condtion = drug_exposure_start_date >= condition_start_date
+    ) |> 
+    pull(is_drug_after_condtion) |> 
+    expect_all_true()
+  
+})
+
