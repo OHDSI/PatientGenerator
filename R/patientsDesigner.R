@@ -2,6 +2,12 @@
 #'
 #' @param path Optional folder containing JSON test sets.
 #' If NULL, default path resolution keeps testthat integration.
+#' @param makePublishable If TRUE, copy the packaged Shiny application template
+#' to `publishDir`, write an `app.R` launcher, and run the app from that folder.
+#' @param publishDir Directory to create for the publishable Shiny app.
+#' @param overwritePublishDir If TRUE, overwrite files in `publishDir` when it
+#' already exists.
+#' @param launch.browser Passed to `shiny::runApp()` when `makePublishable` is TRUE.
 #' @returns A Shiny app
 #' @import r2d3 shiny bslib dplyr
 #' @importFrom stats setNames
@@ -10,62 +16,39 @@
 #' @export
 patientDesigner <- function(path = NULL,
                             makePublishable = FALSE,
-                            publishDir = file.path(getwd(), "shiny"),
+                            publishDir = file.path(getwd(), "PatientGeneratorApp"),
                             overwritePublishDir = FALSE,
                             launch.browser = FALSE) {
-  
-  appDir <- system.file("shiny", package = "PatientGenerator")
-  shinySettings <- list(path = path)
-  .GlobalEnv$shinySettings <- shinySettings
-  on.exit(rm(shinySettings, envir = .GlobalEnv))
-  
-  if (makePublishable) {
-    if (dir.exists(publishDir) && !overwritePublishDir) {
-      warning("Directory for publishing exists, use overwritePublishDir to overwrite")
-    } else {
-      if (getwd() == publishDir) {
-        stop("Publishable dir should not be current working directory")
-      }
-      
-      # create publish and data dir
-      dataPath <- "data"
-      dir.create(file.path(publishDir, dataPath), showWarnings = FALSE, recursive = TRUE)
-      
-      # copy app
-      appFiles <- file.path(appDir, list.files(appDir))
-      file.copy(appFiles, publishDir, recursive = TRUE, overwrite = TRUE)
-      dataFiles <- file.path(path, list.files(path))
-      file.copy(dataFiles, file.path(publishDir, dataPath), recursive = TRUE, overwrite = TRUE)
-    }
-    appDir <- publishDir
-  }
-  if (launch.browser) {
-    options(shiny.launch.browser = TRUE)
-  }
-  shiny::runApp(appDir = appDir)
-}
 
-#' `createPatientGeneratorApp()` is a visual interface based on D3 to construct test datasets for the OMOP-CDM
-#'
-#' @param path Optional folder containing JSON test sets.
-#' If NULL, default path resolution keeps testthat integration.
-#' @returns A Shiny app
-createPatientGeneratorApp <- function(path = NULL) {
+  if (isTRUE(makePublishable)) {
+    publishDir <- preparePublishablePatientDesigner(
+      path = path,
+      publishDir = publishDir,
+      overwritePublishDir = overwritePublishDir
+    )
+    if (launch.browser) {
+      options(shiny.launch.browser = TRUE)
+    }
+    shiny::runApp(
+      appDir = publishDir
+    )
+  }
+
   ui <- page_fillable(
     tags$head(
       tags$style(HTML("
-    /* Hide the element by default (when card is NOT full screen) */
-    .bslib-card[data-full-screen='false'] .reveal-on-full-screen {
-      display: none !important;
-    }
+      /* Hide the element by default (when card is NOT full screen) */
+      .bslib-card[data-full-screen='false'] .reveal-on-full-screen {
+        display: none !important;
+      }
 
-    /* Optional: Add a transition or margin for smoother appearance */
-    .reveal-on-full-screen {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-  "))
+      /* Optional: Add a transition or margin for smoother appearance */
+      .reveal-on-full-screen {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+    "))
     ),
     layout_sidebar(
       
@@ -121,10 +104,10 @@ createPatientGeneratorApp <- function(path = NULL) {
             "Person",
             personUI(id = "person"),
             tags$style(HTML("
-.well {
-  padding: 1rem 1rem .15rem 1rem
-}
-"))
+  .well {
+    padding: 1rem 1rem .15rem 1rem
+  }
+  "))
           )
         ),
         tabsetPanel(
@@ -525,18 +508,19 @@ createPatientGeneratorApp <- function(path = NULL) {
     })
     
     observeEvent(input$bar_end, {
-      update_data <- input$bar_end
+      update_data <- normalizeBarEndUpdate(input$bar_end)
       person_id <- update_data$person_id
       event_id <- update_data$event_id
       type <- update_data$type
+      end_date <- if (identical(type, "measurement")) NULL else update_data$end_date
       print("END DATA:")
       update_data$start_date %>% print()
-      update_data$end_date %>% print()
+      end_date %>% print()
       cdm[[type]]$updateDates(
         person_id = person_id,
         event_id = event_id,
         start_date = update_data$start_date,
-        end_date = update_data$end_date
+        end_date = end_date
       )
       updateTableDatesNs(
         cdm = cdm,
@@ -544,7 +528,7 @@ createPatientGeneratorApp <- function(path = NULL) {
         input_person_id = person_id,
         input_event_id = event_id,
         start_date = update_data$start_date,
-        end_date = update_data$end_date,
+        end_date = end_date,
         session = session,
         input = input,
         syncing = syncing
@@ -572,4 +556,103 @@ createPatientGeneratorApp <- function(path = NULL) {
     })
   }
   shinyApp(ui = ui, server = server)
+}
+
+preparePublishablePatientDesigner <- function(path,
+                                              publishDir,
+                                              overwritePublishDir) {
+  templateDir <- system.file("shiny", package = "PatientGenerator")
+  if (!nzchar(templateDir) || !dir.exists(templateDir)) {
+    stop("Packaged Shiny template directory not found.", call. = FALSE)
+  }
+
+  publishDir <- normalizePath(publishDir, mustWork = FALSE)
+  if (publishDir == normalizePath(getwd(), mustWork = TRUE)) {
+    stop("Publish directory must be a new folder, not the current directory.", call. = FALSE)
+  }
+
+  if (dir.exists(publishDir) && !isTRUE(overwritePublishDir)) {
+    stop(
+      "Publish directory already exists: ", publishDir, "\n",
+      "Use overwritePublishDir = TRUE or choose a different publishDir.",
+      call. = FALSE
+    )
+  }
+
+  if (!dir.exists(publishDir)) {
+    dir.create(publishDir, recursive = TRUE, showWarnings = FALSE)
+  }
+  publishDir <- normalizePath(publishDir, mustWork = TRUE)
+
+  templateFiles <- list.files(
+    templateDir,
+    all.files = TRUE,
+    no.. = TRUE,
+    full.names = TRUE
+  )
+  copied <- file.copy(
+    from = templateFiles,
+    to = publishDir,
+    recursive = TRUE,
+    overwrite = TRUE,
+    copy.date = TRUE
+  )
+  if (!all(copied)) {
+    stop("Failed to copy all files from the packaged Shiny template.", call. = FALSE)
+  }
+
+  appPath <- preparePublishablePath(path, publishDir)
+  writeLines(
+    c(
+      "library(PatientGenerator)",
+      "",
+      paste0("path <- ", deparse(appPath, width.cutoff = 500)),
+      "",
+      "PatientGenerator::patientDesigner(path = path)"
+    ),
+    con = file.path(publishDir, "app.R"),
+    useBytes = TRUE
+  )
+
+  publishDir
+}
+
+preparePublishablePath <- function(path, publishDir) {
+  if (is.null(path)) {
+    return(NULL)
+  }
+
+  checkmate::assertCharacter(path, len = 1, any.missing = FALSE)
+  if (!dir.exists(path)) {
+    return(path)
+  }
+
+  sourcePath <- normalizePath(path, mustWork = TRUE)
+  targetName <- basename(sourcePath)
+  targetPath <- file.path(publishDir, targetName)
+
+  if (normalizePath(dirname(sourcePath), mustWork = TRUE) !=
+      normalizePath(publishDir, mustWork = FALSE)) {
+    dir.create(targetPath, recursive = TRUE, showWarnings = FALSE)
+    dataFiles <- list.files(
+      sourcePath,
+      all.files = TRUE,
+      no.. = TRUE,
+      full.names = TRUE
+    )
+    if (length(dataFiles) > 0) {
+      copied <- file.copy(
+        from = dataFiles,
+        to = targetPath,
+        recursive = TRUE,
+        overwrite = TRUE,
+        copy.date = TRUE
+      )
+      if (!all(copied)) {
+        stop("Failed to copy all files from the test set directory.", call. = FALSE)
+      }
+    }
+  }
+
+  targetName
 }
