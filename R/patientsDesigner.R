@@ -313,7 +313,7 @@ patientDesigner <- function(path = NULL) {
 
     # After person selection, refresh event selectors for all
     # patient-level event tables.
-    observeEvent(list(person_module()), {
+    observeEvent(person_module(), {
       req(person_module())
 
       updateTableIdsNs(
