@@ -132,6 +132,36 @@ cdmConstructor <- R6::R6Class(
       # if (!cdm_schema(toJSON(jsonData, auto_unbox = TRUE))) {
       #   stop("Invalid data structure!")
       # }
+      fillMissingEndDates <- function(tableName, table_data) {
+        if (tableName == "condition_occurrence") {
+          start_col <- "condition_start_date"
+          end_col <- "condition_end_date"
+        } else if (tableName == "drug_exposure") {
+          start_col <- "drug_exposure_start_date"
+          end_col <- "drug_exposure_end_date"
+        } else if (tableName == "procedure_occurrence") {
+          start_col <- "procedure_date"
+          end_col <- "procedure_end_date"
+        } else {
+          return(table_data)
+        }
+
+        if (!start_col %in% names(table_data)) {
+          return(table_data)
+        }
+
+        if (!end_col %in% names(table_data)) {
+          table_data[, (end_col) := get(start_col)]
+          return(table_data)
+        }
+
+        missing_end_date <- is.na(table_data[[end_col]])
+        if (any(missing_end_date)) {
+          table_data[missing_end_date, (end_col) := table_data[[start_col]][missing_end_date]]
+        }
+
+        table_data
+      }
       currentTables <- names(jsonData)
       # Check for the expected columns in the CDM
       for (tableName in currentTables) {
@@ -148,6 +178,7 @@ cdmConstructor <- R6::R6Class(
               if (length(date_cols) > 0 ) {
                 table_data[, (date_cols) := lapply(.SD, as.Date), .SDcols = date_cols]
               }
+            table_data <- fillMissingEndDates(tableName, table_data)
             self[[tableName]]$load(data.table::rbindlist(list(private$.data, table_data)))
           }
         }
@@ -183,7 +214,7 @@ cdmConstructor <- R6::R6Class(
       name_end_date <- private$.tableNameDate("end")
       index_table <- which(private$.data[[name_id]] == event_id)
       if (length(index_table) > 0) {
-        if (!is.null(start_date)) {
+        if (length(start_date) > 0) {
           data.table::set(
             private$.data,
             i = index_table,
@@ -191,7 +222,7 @@ cdmConstructor <- R6::R6Class(
             value = start_date
             )
         }
-        if (!is.null(end_date)) {
+        if (length(name_end_date) > 0 && length(end_date) > 0) {
           data.table::set(
             private$.data,
             i = index_table,
@@ -214,6 +245,7 @@ cdmConstructor <- R6::R6Class(
         observation_period = self$observation_period$data(),
         drug_exposure = self$drug_exposure$data(),
         condition_occurrence = self$condition_occurrence$data(),
+        measurement = self$measurement$data(),
         procedure_occurrence = self$procedure_occurrence$data()
         )
 

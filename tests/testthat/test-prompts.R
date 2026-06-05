@@ -144,7 +144,7 @@ test_that("Diabetes workflow prompt", {
      ) %>%
    pull(days) %>% 
    unique() %>% 
-   expect_equal(29)
+   expect_equal(30)
  
 })
 
