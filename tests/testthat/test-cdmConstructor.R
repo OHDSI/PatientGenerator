@@ -18,7 +18,8 @@ test_that("Initialize correctly tables defined in the parameter", {
     "drug_exposure",
     "condition_occurrence",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
     )
   
   cdm <- cdmConstructor$new(tables = tables)
@@ -47,7 +48,8 @@ test_that("cdmConstructor reset empties core tables", {
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
   )
   
   for (i in seq_along(cdm_tables)) {
@@ -122,7 +124,8 @@ test_that("observation/condition/drug/measurement/procedure_occurrence update da
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
   )
   
   # Add 1 person to all data tables
@@ -174,7 +177,8 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
   )
   
   # Add 1 person to all data tables
@@ -191,6 +195,7 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
     jsonlite::validate(cdm_json)
     )
   expect_true("measurement" %in% names(jsonlite::fromJSON(cdm_json)))
+  expect_true("observation" %in% names(jsonlite::fromJSON(cdm_json)))
 
   timeline <- cdm$getCdmDataTimeline()
   expect_s3_class(
@@ -213,7 +218,8 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
       "drug_exposure",
       "condition_occurrence",
       "measurement",
-      "procedure_occurrence"
+      "procedure_occurrence",
+      "observation"
       )
   )
 })
@@ -352,7 +358,8 @@ test_that("Testing methods on LLM testset", {
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
   )
   
   expect_no_error({
@@ -399,7 +406,8 @@ test_that("Testing modified test from LLM can be inserted back to TestGenerator"
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
   )  
   # Load into memory and modify all fields
   expect_no_error({
@@ -466,7 +474,8 @@ test_that("Testing methods on LLM testset 'objective_1_patient'", {
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
   )
   
   expect_no_error({
