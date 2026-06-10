@@ -34,13 +34,13 @@ hecateConceptLabel <- function(conceptId) {
   )
 
   if (is.null(result) || nrow(result) == 0 || !"conceptId" %in% names(result)) {
-    return("(not found)")
+    return("(invalid concept id)")
   }
 
   conceptIdInt <- suppressWarnings(as.integer(conceptId))
   match_index <- which(result$conceptId == conceptIdInt)
   if (length(match_index) == 0) {
-    return("(not found)")
+    return("(invalid concept id)")
   }
 
   concept <- result[match_index[[1]], , drop = FALSE]
@@ -53,7 +53,13 @@ hecateConceptLabel <- function(conceptId) {
     return("(invalid concept id)")
   }
 
-  "(valid concept id)"
+  concept_name <- concept$conceptName %||% NA_character_
+  concept_name <- as.character(concept_name)
+  if (length(concept_name) != 1 || is.na(concept_name) || !nzchar(concept_name)) {
+    return("(invalid concept id)")
+  }
+
+  concept_name
 }
 
 #' @describeIn conceptSearchModule UI for the concept search: a single button that opens the search modal.
