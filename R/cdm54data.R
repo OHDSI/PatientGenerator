@@ -13,31 +13,12 @@ choicesList <- function(tableName) {
   return(choicesList[[tableName]])
 }
 
-#' Read a parquet file using DuckDB.
-#' @param file Path to the parquet file.
+#' Read an RDS file.
+#' @param file Path to the RDS file.
 #' @return A data frame.
 #' @noRd
-read_parquet_file <- function(file) {
-  con <- DBI::dbConnect(duckdb::duckdb())
-  on.exit(DBI::dbDisconnect(
-    con,
-    shutdown = TRUE
-    ),
-    add = TRUE
-    )
-  path_sql <- gsub(
-    "'",
-    "''",
-    path.expand(file)
-    )
-  DBI::dbGetQuery(
-    con,
-    paste0(
-      "SELECT * FROM read_parquet('",
-      path_sql,
-      "')"
-      )
-    )
+read_rds_file <- function(file) {
+  readRDS(file)
 }
 
 columnNames <- function(
@@ -58,7 +39,7 @@ columnNames <- function(
 
   # supported_tables <- file.path(cdmSpecificationPath) |> 
   #    list.files() |> 
-  #   stringr::str_remove(".parquet")
+  #   stringr::str_remove(".rds")
   
   supported_tables <- c(
     "person",
@@ -86,10 +67,10 @@ columnNames <- function(
       cdmSpecificationPath,
       paste0(
         name,
-        ".parquet"
+        ".rds"
         )
       )
-    table_data <- read_parquet_file(file) |>
+    table_data <- read_rds_file(file) |>
       data.table::as.data.table()
     if (isTRUE(ommitTime)) {
       table_data <- table_data[
@@ -119,10 +100,10 @@ columnNames <- function(
         cdmSpecificationPath,
         paste0(
           table_name,
-          ".parquet"
+          ".rds"
           )
         )
-      table_data <- read_parquet_file(file) |>
+      table_data <- read_rds_file(file) |>
         data.table::as.data.table()
       if (isTRUE(ommitTime)) {
         table_data <- table_data[
