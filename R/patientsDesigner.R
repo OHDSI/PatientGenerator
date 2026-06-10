@@ -132,7 +132,6 @@ patientDesigner <- function(path = NULL) {
         tabPanel(
           "Test Data",
           tableOutput("cdmData"),
-          # verbatimTextOutput("cdmData"),
           tableOutput("personDataTable"),
           tableOutput("observationPeriodTable"),
           tableOutput("drugExposureTable"),
@@ -430,7 +429,7 @@ patientDesigner <- function(path = NULL) {
     cdmDataTimeline <- reactive({
       pid <- suppressWarnings(as.numeric(person_module()))
       req(!is.na(pid), length(pid) == 1)
-      # browser()
+      
       cdm$getCdmDataTimeline() %>%
         dplyr::filter(.data$person_id == pid)
     }) %>% bindEvent(
@@ -457,7 +456,7 @@ patientDesigner <- function(path = NULL) {
     # Render cdm table
     output$cdmData <- renderTable({
       req(cdmDataTimeline)
-      cdmDataTimeline()
+      formatTimelineDateColumns(cdmDataTimeline())
     })
 
     ## UPDATE DATA FROM D3
