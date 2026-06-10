@@ -43,6 +43,14 @@ patientDesigner <- function(path = NULL) {
             class = "text-reset text-decoration-none"
           )
           ),
+        fileInput(
+          "upload_xlsx",
+          "Upload xlsx test data",
+          accept = c(
+            ".xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+          ),
         br(),
         br(),
         h6(strong("Test Sets")),
@@ -189,6 +197,41 @@ patientDesigner <- function(path = NULL) {
       # browser()
       cdm$reset()
       data_version(data_version() + 1)
+    })
+
+    observeEvent(input$upload_xlsx, {
+      req(input$upload_xlsx)
+      result <- tryCatch(
+        cdm$loadXlsxTestSet(input$upload_xlsx$datapath),
+        error = function(e) e
+        )
+
+      if (inherits(result, "error")) {
+        showNotification(
+          conditionMessage(result),
+          type = "error",
+          duration = 8
+          )
+        return(invisible(NULL))
+      }
+
+      data_version(data_version() + 1)
+
+      if (length(result$ignored) > 0) {
+        showNotification(
+          glue::glue(
+            "Loaded xlsx test data. Ignored unsupported sheets: {glue::glue_collapse(result$ignored, sep = ', ')}."
+            ),
+          type = "warning",
+          duration = 8
+          )
+      } else {
+        showNotification(
+          "Loaded xlsx test data.",
+          type = "message",
+          duration = 5
+          )
+      }
     })
 
     ##### Update saved file in sidebar

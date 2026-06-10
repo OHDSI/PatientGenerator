@@ -31,6 +31,7 @@ Imports:
     jsonlite,
     r2d3,
     R6,
+    readxl,
     shiny,
     stringr,
     testthat,
