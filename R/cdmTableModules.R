@@ -117,7 +117,7 @@ cdmTableServer <- function(
         concept_label <- concept_lookup(concept_id)
         output[[paste0(col_name, "_status")]] <- shiny::renderUI(
           shiny::tags$span(
-            class = if (identical(concept_label, "(invalid concept id)")) {
+            class = if (grepl("invalid|not found", concept_label, ignore.case = TRUE)) {
               "text-danger small"
             } else {
               "text-muted small"

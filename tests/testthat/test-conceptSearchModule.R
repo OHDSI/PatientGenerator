@@ -29,7 +29,7 @@ test_that("hecateConceptLabel returns invalid concept id for invalid or missing 
   )
 
   expect_equal(hecate_concept_label("abc"), "(invalid concept id)")
-  expect_equal(hecate_concept_label("9999999"), "(invalid concept id)")
+  expect_equal(hecate_concept_label("9999999"), "(not found)")
 })
 
 test_that("hecateConceptLabel returns invalid concept id for invalid vocabulary concepts", {
