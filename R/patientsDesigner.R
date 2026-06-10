@@ -354,7 +354,7 @@ patientDesigner <- function(path = NULL) {
       observation_period_module$add_click()
       observation_period_module$delete_click()
       observation_period_module$elongation_click()
-      cdm$observation_period$data()
+      formatDateColumns(cdm$observation_period$data())
     })
 
     ##### DRUG EXPOSURE TABLE
@@ -373,7 +373,7 @@ patientDesigner <- function(path = NULL) {
       drug_exposure_module$add_click()
       drug_exposure_module$delete_click()
       drug_exposure_module$elongation_click()
-      cdm$drug_exposure$data()
+      formatDateColumns(cdm$drug_exposure$data())
     })
 
     # CONDITION OCCURRENCE TABLE
@@ -390,7 +390,7 @@ patientDesigner <- function(path = NULL) {
       condition_occurrence_module$add_click()
       condition_occurrence_module$delete_click()
       condition_occurrence_module$elongation_click()
-      cdm$condition_occurrence$data()
+      formatDateColumns(cdm$condition_occurrence$data())
     })
 
     # MEASUREMENT TABLE
@@ -406,7 +406,7 @@ patientDesigner <- function(path = NULL) {
       measurement_module$add_click()
       measurement_module$delete_click()
       measurement_module$elongation_click()
-      cdm$measurement$data()
+      formatDateColumns(cdm$measurement$data())
     })
     
     # PROCEDURE OCCURRENCE TABLE
@@ -422,7 +422,7 @@ patientDesigner <- function(path = NULL) {
       procedure_occurrence_module$add_click()
       procedure_occurrence_module$delete_click()
       procedure_occurrence_module$elongation_click()
-      cdm$procedure_occurrence$data()
+      formatDateColumns(cdm$procedure_occurrence$data())
     })
 
     # CDM Data Timeline
@@ -456,7 +456,7 @@ patientDesigner <- function(path = NULL) {
     # Render cdm table
     output$cdmData <- renderTable({
       req(cdmDataTimeline)
-      formatTimelineDateColumns(cdmDataTimeline())
+      formatDateColumns(cdmDataTimeline())
     })
 
     ## UPDATE DATA FROM D3

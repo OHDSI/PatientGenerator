@@ -31,7 +31,7 @@ test_that("normalizeBarEndUpdate leaves measurement end date untouched", {
   expect_null(measurement_update$end_date)
 })
 
-test_that("formatTimelineDateColumns displays timeline dates as ISO dates", {
+test_that("formatDateColumns displays timeline dates as ISO dates", {
   timeline <- data.table::data.table(
     type = c("condition_occurrence", "drug_exposure", "measurement"),
     start_date = c(
@@ -46,21 +46,36 @@ test_that("formatTimelineDateColumns displays timeline dates as ISO dates", {
     )
   )
 
-  formatted <- format_timeline_date_columns(timeline)
+  formatted <- format_date_columns(timeline)
 
   expect_equal(formatted$start_date, c("2020-01-10", "2020-02-10", NA_character_))
   expect_equal(formatted$end_date, c("2020-01-12", "2020-02-12", NA_character_))
   expect_s3_class(timeline$start_date, "Date")
 })
 
-test_that("formatTimelineDateColumns handles numeric and POSIX timeline dates", {
+test_that("formatDateColumns handles numeric and POSIX timeline dates", {
   timeline <- data.frame(
     start_date = as.numeric(as.Date("2020-03-10")),
     end_date = as.POSIXct("2020-03-12 00:00:00", tz = "UTC")
   )
 
-  formatted <- format_timeline_date_columns(timeline)
+  formatted <- format_date_columns(timeline)
 
   expect_equal(formatted$start_date, "2020-03-10")
   expect_equal(formatted$end_date, "2020-03-12")
+})
+
+test_that("formatDateColumns displays native CDM date columns as ISO dates", {
+  drug_exposure <- data.frame(
+    drug_exposure_id = 1L,
+    drug_exposure_start_date = as.Date("2020-04-10"),
+    drug_exposure_end_date = as.Date("2020-04-20"),
+    verbatim_end_date = as.Date("2020-04-20")
+  )
+
+  formatted <- format_date_columns(drug_exposure)
+
+  expect_equal(formatted$drug_exposure_start_date, "2020-04-10")
+  expect_equal(formatted$drug_exposure_end_date, "2020-04-20")
+  expect_equal(formatted$verbatim_end_date, "2020-04-20")
 })

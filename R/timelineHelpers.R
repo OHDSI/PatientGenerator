@@ -23,21 +23,24 @@ normalizeBarEndUpdate <- function(update_data) {
   update_data
 }
 
-formatTimelineDateColumns <- function(data) {
-  date_cols <- intersect(c("start_date", "end_date"), names(data))
+formatDateColumns <- function(data) {
+  date_cols <- names(data)[
+    names(data) %in% c("start_date", "end_date") |
+      grepl("_date$", names(data))
+  ]
   if (length(date_cols) == 0) {
     return(data)
   }
 
   data <- as.data.frame(data)
   for (date_col in date_cols) {
-    data[[date_col]] <- formatTimelineDateColumn(data[[date_col]])
+    data[[date_col]] <- formatDateColumn(data[[date_col]])
   }
 
   data
 }
 
-formatTimelineDateColumn <- function(x) {
+formatDateColumn <- function(x) {
   if (inherits(x, "Date")) {
     return(as.character(x))
   }
