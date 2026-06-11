@@ -36,14 +36,7 @@ test_that("cdmConstructor exports xlsx test data that can be uploaded again", {
   sheets <- readxl::excel_sheets(xlsx_path)
   expect_setequal(
     sheets,
-    c(
-      "person",
-      "observation_period",
-      "drug_exposure",
-      "condition_occurrence",
-      "measurement",
-      "procedure_occurrence"
-      )
+    c("person", cdm$tables)
     )
 
   uploaded <- new_cdm()

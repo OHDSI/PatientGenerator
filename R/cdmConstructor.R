@@ -320,12 +320,14 @@ cdmConstructor <- R6::R6Class(
       }
 
       cdm_data <- list(
-        person = self$person$data(),
-        observation_period = self$observation_period$data(),
-        drug_exposure = self$drug_exposure$data(),
-        condition_occurrence = self$condition_occurrence$data(),
-        measurement = self$measurement$data(),
-        procedure_occurrence = self$procedure_occurrence$data()
+        person = self$person$data()
+        )
+      cdm_data <- c(
+        cdm_data,
+        stats::setNames(
+          lapply(self$tables, function(table_name) self[[table_name]]$data()),
+          self$tables
+          )
         )
 
       workbook <- openxlsx::createWorkbook()
