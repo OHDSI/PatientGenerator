@@ -313,6 +313,34 @@ cdmConstructor <- R6::R6Class(
         return(cdm_data_json)
         
         },
+    # Export data to xlsx
+    writeCdmDataXlsx = function(path) {
+      if (!requireNamespace("openxlsx", quietly = TRUE)) {
+        stop("The openxlsx package is required to download xlsx test data.")
+      }
+
+      cdm_data <- list(
+        person = self$person$data(),
+        observation_period = self$observation_period$data(),
+        drug_exposure = self$drug_exposure$data(),
+        condition_occurrence = self$condition_occurrence$data(),
+        measurement = self$measurement$data(),
+        procedure_occurrence = self$procedure_occurrence$data()
+        )
+
+      workbook <- openxlsx::createWorkbook()
+      for (table_name in names(cdm_data)) {
+        openxlsx::addWorksheet(workbook, table_name)
+        openxlsx::writeData(
+          workbook,
+          sheet = table_name,
+          x = as.data.frame(cdm_data[[table_name]]),
+          colNames = TRUE
+          )
+      }
+      openxlsx::saveWorkbook(workbook, path, overwrite = TRUE)
+      invisible(path)
+      },
     # Export data to json
     getCdmDataTimeline = function() {
       if (self$person$data() |> length() > 0) {

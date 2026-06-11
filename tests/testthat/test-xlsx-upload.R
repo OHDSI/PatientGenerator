@@ -15,3 +15,48 @@ test_that("cdmConstructor loads supported tables from xlsx test data", {
   expect_true("person_id" %in% names(cdm$person$data()))
   expect_true(inherits(cdm$observation_period$data()$observation_period_start_date, "Date"))
 })
+
+test_that("cdmConstructor exports xlsx test data that can be uploaded again", {
+  skip_if_not_installed("openxlsx")
+  skip_if_not_installed("readxl")
+
+  cdm <- new_cdm()
+  cdm$person$add(
+    gender_concept_id = 8532L,
+    year_of_birth = 1967L,
+    month_of_birth = 4L,
+    day_of_birth = 12L
+    )
+  cdm$observation_period$add(person_id = 1L)
+  cdm$condition_occurrence$add(person_id = 1L)
+
+  xlsx_path <- tempfile(fileext = ".xlsx")
+  expect_no_error(cdm$writeCdmDataXlsx(xlsx_path))
+
+  sheets <- readxl::excel_sheets(xlsx_path)
+  expect_setequal(
+    sheets,
+    c(
+      "person",
+      "observation_period",
+      "drug_exposure",
+      "condition_occurrence",
+      "measurement",
+      "procedure_occurrence"
+      )
+    )
+
+  uploaded <- new_cdm()
+  expect_no_error(uploaded$loadXlsxTestSet(xlsx_path))
+  expect_equal(nrow(uploaded$person$data()), nrow(cdm$person$data()))
+  expect_equal(
+    nrow(uploaded$condition_occurrence$data()),
+    nrow(cdm$condition_occurrence$data())
+    )
+  expect_true(
+    inherits(
+      uploaded$observation_period$data()$observation_period_start_date,
+      "Date"
+      )
+    )
+})
