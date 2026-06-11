@@ -72,7 +72,12 @@ patientDesigner <- function(path = NULL) {
           ),
         downloadButton(
           "downloadTestSet",
-          "Download Test Set",
+          "Download Test Set as JSON",
+          icon = icon("download")
+          ),
+        downloadButton(
+          "downloadTestSetXlsx",
+          "Download Test Set as XLSX",
           icon = icon("download")
           ),
         position = c("left"),
@@ -568,6 +573,15 @@ patientDesigner <- function(path = NULL) {
       },
       content = function(file) {
         write(cdm$getCdmData(), file)
+      }
+    )
+
+    output$downloadTestSetXlsx <- downloadHandler(
+      filename = function() {
+        paste("patientDesigner", ".xlsx", sep = "")
+      },
+      content = function(file) {
+        cdm$writeCdmDataXlsx(file)
       }
     )
 

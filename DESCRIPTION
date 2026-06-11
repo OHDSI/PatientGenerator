@@ -31,6 +31,7 @@ Imports:
     glue,
     httr2,
     jsonlite,
+    openxlsx,
     r2d3,
     R6,
     readxl,
