@@ -14,6 +14,11 @@ const gap  = 12
 const axisPad = 12
 const labelPad = 8
 const measurementMarkerWidth = barHeight
+const pointEventTypes = new Set(["measurement", "observation"])
+
+function isPointEvent(d) {
+  return pointEventTypes.has(d.type);
+}
 
 function formatDate(value) {
   if (value === null || value === undefined || value === "") {
@@ -47,7 +52,7 @@ function tooltipText(d) {
 }
 
 function labelX(scale, d) {
-  if (d.type === "measurement") {
+  if (isPointEvent(d)) {
     return scale(new Date(d.start_date)) - measurementMarkerWidth - labelPad;
   }
 
@@ -79,6 +84,8 @@ function startColor(d, i) {
     return "#D81B60";
   } else if (d.type == "measurement") {
     return "#E53935";
+  } else if (d.type == "observation") {
+    return "#8E44AD";
   } else if (d.type == "procedure_occurrence") {
     return "#1E88E5";
   }
@@ -94,6 +101,8 @@ function dragColor(type) {
     return "#F06292";
   } else if (type == "measurement") {
     return "#FF6F60";
+  } else if (type == "observation") {
+    return "#B47CD9";
   } else if (type == "procedure_occurrence") {
     return "#64B5F6";
   }
@@ -109,6 +118,8 @@ function endColor(type) {
     return "#D81B60";
   } else if (type == "measurement") {
     return "#E53935";
+  } else if (type == "observation") {
+    return "#8E44AD";
   } else if (type == "procedure_occurrence") {
     return "#1E88E5";
   }
@@ -357,7 +368,11 @@ r2d3.onRender(function(data, svg, width, height, options) {
 
     const value_start_date = d3.timeFormat("%Y-%m-%d")(new Date(d.start_date));
 
-    d3.select("#measurement-measurement_date input")
+    const name_start_date = d.type === "observation"
+      ? "#observation-observation_date input"
+      : "#measurement-measurement_date input";
+
+    d3.select(name_start_date)
       .property("value", value_start_date)
       .dispatch("change");
 
@@ -579,7 +594,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
   let g = svg.append("g")
 
   g.selectAll("rect.rectGroup")
-    .data(data.filter(d => d.type !== "measurement"))
+    .data(data.filter(d => !isPointEvent(d)))
     .enter()
     .append("rect")
     .attr("class", d => `rectGroup row_${d.categories}`)
@@ -596,7 +611,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
 
   g.selectAll("polygon.measurementMarker")
-    .data(data.filter(d => d.type === "measurement"))
+    .data(data.filter(d => isPointEvent(d)))
     .enter()
     .append("polygon")
     .attr("class", d => `measurementMarker row_${d.categories}`)
@@ -630,7 +645,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
 
   g.selectAll("circle.circleRightGroup")
-    .data(data.filter(d => d.type !== "measurement"))
+    .data(data.filter(d => !isPointEvent(d)))
     .enter()
     .append("circle")
     .attr("class", d => `circleRightGroup row_${d.categories}`)
@@ -643,7 +658,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr("transform", `translate(${margin.left},${margin.top + axisPad})`)
 
   g.selectAll("circle.circleLeftGroup")
-    .data(data.filter(d => d.type !== "measurement"))
+    .data(data.filter(d => !isPointEvent(d)))
     .enter()
     .append("circle")
     .attr("class", d => `circleLeftGroup row_${d.categories}`)
