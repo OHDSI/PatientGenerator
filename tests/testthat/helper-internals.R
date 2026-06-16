@@ -8,4 +8,5 @@ new_cdm_table <- function(type) {
 
 cdm_table_server <- getFromNamespace("cdmTableServer", "PatientGenerator")
 normalize_bar_end_update <- getFromNamespace("normalizeBarEndUpdate", "PatientGenerator")
+format_date_columns <- getFromNamespace("formatDateColumns", "PatientGenerator")
 hecate_concept_label <- getFromNamespace("hecateConceptLabel", "PatientGenerator")
