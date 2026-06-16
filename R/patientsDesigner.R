@@ -131,6 +131,11 @@ patientDesigner <- function(path = NULL) {
           "Procedure Occurrence",
           cdmTableUI(id = "procedure_occurrence"),
           value = "procedure_occurrence_module"
+          ),
+        tabPanel(
+          "Observation",
+          cdmTableUI(id = "observation"),
+          value = "observation_module"
           )
       ),
       tabsetPanel(
@@ -145,13 +150,13 @@ patientDesigner <- function(path = NULL) {
         tabPanel(
           "Test Data",
           tableOutput("cdmData"),
-          # verbatimTextOutput("cdmData"),
           tableOutput("personDataTable"),
           tableOutput("observationPeriodTable"),
           tableOutput("drugExposureTable"),
           tableOutput("conditionOccurrenceTable"),
           tableOutput("measurementTable"),
-          tableOutput("procedureOccurrenceTable")
+          tableOutput("procedureOccurrenceTable"),
+          tableOutput("observationTable")
           )
       ),
       border = FALSE
@@ -359,8 +364,8 @@ patientDesigner <- function(path = NULL) {
       cdm$person$data()
     })
 
-    # After person selection
-    # Filters and updates observation/drug exposure fields
+    # After person selection, refresh event selectors for all
+    # patient-level event tables.
     observeEvent(person_module(), {
       req(person_module())
 
@@ -373,6 +378,24 @@ patientDesigner <- function(path = NULL) {
       updateTableIdsNs(
         cdm = cdm,
         type = "condition_occurrence",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "measurement",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "procedure_occurrence",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "observation",
         input_person_id = person_module,
         session = session
         )
@@ -403,7 +426,7 @@ patientDesigner <- function(path = NULL) {
       observation_period_module$add_click()
       observation_period_module$delete_click()
       observation_period_module$elongation_click()
-      cdm$observation_period$data()
+      formatDateColumns(cdm$observation_period$data())
     })
 
     ##### DRUG EXPOSURE TABLE
@@ -422,7 +445,7 @@ patientDesigner <- function(path = NULL) {
       drug_exposure_module$add_click()
       drug_exposure_module$delete_click()
       drug_exposure_module$elongation_click()
-      cdm$drug_exposure$data()
+      formatDateColumns(cdm$drug_exposure$data())
     })
 
     # CONDITION OCCURRENCE TABLE
@@ -439,7 +462,7 @@ patientDesigner <- function(path = NULL) {
       condition_occurrence_module$add_click()
       condition_occurrence_module$delete_click()
       condition_occurrence_module$elongation_click()
-      cdm$condition_occurrence$data()
+      formatDateColumns(cdm$condition_occurrence$data())
     })
 
     # MEASUREMENT TABLE
@@ -455,7 +478,7 @@ patientDesigner <- function(path = NULL) {
       measurement_module$add_click()
       measurement_module$delete_click()
       measurement_module$elongation_click()
-      cdm$measurement$data()
+      formatDateColumns(cdm$measurement$data())
     })
     
     # PROCEDURE OCCURRENCE TABLE
@@ -471,14 +494,30 @@ patientDesigner <- function(path = NULL) {
       procedure_occurrence_module$add_click()
       procedure_occurrence_module$delete_click()
       procedure_occurrence_module$elongation_click()
-      cdm$procedure_occurrence$data()
+      formatDateColumns(cdm$procedure_occurrence$data())
+    })
+
+    # OBSERVATION TABLE
+    observation_module <- cdmTableServer(
+      id = "observation",
+      cdm = cdm,
+      person_id_selected = person_module,
+      syncing = syncing
+    )
+
+    output$observationTable <- renderTable({
+      data_version()
+      observation_module$add_click()
+      observation_module$delete_click()
+      observation_module$elongation_click()
+      cdm$observation$data()
     })
 
     # CDM Data Timeline
     cdmDataTimeline <- reactive({
       pid <- suppressWarnings(as.numeric(person_module()))
       req(!is.na(pid), length(pid) == 1)
-      # browser()
+      
       cdm$getCdmDataTimeline() %>%
         dplyr::filter(.data$person_id == pid)
     }) %>% bindEvent(
@@ -499,13 +538,16 @@ patientDesigner <- function(path = NULL) {
       procedure_occurrence_module$add_click(),
       procedure_occurrence_module$delete_click(),
       procedure_occurrence_module$elongation_click(),
+      observation_module$add_click(),
+      observation_module$delete_click(),
+      observation_module$elongation_click(),
       ignoreInit = FALSE
       )
 
     # Render cdm table
     output$cdmData <- renderTable({
       req(cdmDataTimeline)
-      cdmDataTimeline()
+      formatDateColumns(cdmDataTimeline())
     })
 
     ## UPDATE DATA FROM D3
@@ -542,7 +584,8 @@ patientDesigner <- function(path = NULL) {
       person_id <- update_data$person_id
       event_id <- update_data$event_id
       type <- update_data$type
-      end_date <- if (identical(type, "measurement")) NULL else update_data$end_date
+      has_end_date <- length(cdm[[type]]$tableNameDate("end")) > 0
+      end_date <- if (isTRUE(has_end_date)) update_data$end_date else NULL
       print("END DATA:")
       update_data$start_date %>% print()
       end_date %>% print()

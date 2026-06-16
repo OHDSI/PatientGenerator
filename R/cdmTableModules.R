@@ -78,28 +78,17 @@ cdmTableServer <- function(
       session
     ) {
       ns <- session$ns
-      if (id == "condition_occurrence") {
-        table_id <- "condition"
-      } else {
-        table_id <- id
-      }
-
       table_event_id <- paste(
         id,
         "id",
         sep = "_"
       )
       table_concept_id <- cdm[[id]]$tableNameConceptId()
-      table_start_date <- paste(
-        table_id,
-        "start_date",
-        sep = "_"
-      )
-      table_end_date <- paste(
-        table_id,
-        "end_date",
-        sep = "_"
-      )
+      table_start_date <- cdm[[id]]$tableNameDate("start")
+      table_end_date <- cdm[[id]]$tableNameDate("end")
+      if (length(table_end_date) == 0) {
+        table_end_date <- NULL
+      }
       columnList <- columnNames(
         name = id,
         limit = NULL
@@ -297,19 +286,31 @@ cdmTableServer <- function(
       elongation_click <- reactiveVal(NULL)
       #
       # # Elongation
+      tableDateInputs <- reactive({
+        values <- list(input[[table_start_date]])
+        if (!is.null(table_end_date)) {
+          values <- c(values, list(input[[table_end_date]]))
+        }
+        values
+      })
+
       observeEvent(
-        list(input[[table_start_date]], input[[table_end_date]]),
+        tableDateInputs(),
         {
-          print(syncing)
           req(!syncing())
+          req(input[[table_event_id]])
           req(input[[table_start_date]])
-          req(input[[table_end_date]])
+          end_date <- NULL
+          if (!is.null(table_end_date)) {
+            req(input[[table_end_date]])
+            end_date <- input[[table_end_date]]
+          }
 
           cdm[[id]]$updateDates(
             person_id = person_id_selected(),
             event_id = input[[table_event_id]],
             start_date = input[[table_start_date]],
-            end_date = input[[table_end_date]]
+            end_date = end_date
           )
           elongation_click(Sys.time())
         },

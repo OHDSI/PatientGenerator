@@ -66,7 +66,8 @@ columnNames <- function(
     "condition_occurrence",
     "drug_exposure",
     "measurement",
-    "procedure_occurrence"
+    "procedure_occurrence",
+    "observation"
     )
 
   if (!is.null(name)) {
