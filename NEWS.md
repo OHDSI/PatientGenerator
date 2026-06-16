@@ -1,3 +1,9 @@
+# PatientGenerator 0.2.0
+
+* Fixed D3 GUI crash related to empty end dates. For now, the GUI will fill out automatically end dates.
+
+* Added tooltip, a vertical line to track elongation, labels and now measurements are represented only with one triangle since there's no end date for this type of record. 
+
 # PatientGenerator 0.1.4
 
 * Prepared the package for CRAN submission.

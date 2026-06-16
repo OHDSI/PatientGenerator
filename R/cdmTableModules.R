@@ -67,7 +67,8 @@ cdmTableServer <- function(
   id,
   cdm,
   person_id_selected,
-  syncing
+  syncing,
+  concept_lookup = hecateConceptLabel
 ) {
   moduleServer(
     id,
@@ -77,42 +78,47 @@ cdmTableServer <- function(
       session
     ) {
       ns <- session$ns
-      if (id == "condition_occurrence") {
-        table_id <- "condition"
-      } else {
-        table_id <- id
-      }
-
       table_event_id <- paste(
         id,
         "id",
         sep = "_"
       )
-      if (id == "drug_exposure") {
-        table_concept_id <- "drug_concept_id"
-      } else {
-        table_concept_id <- paste(
-          table_id,
-          "concept_id",
-          sep = "_"
-        )
+      table_concept_id <- cdm[[id]]$tableNameConceptId()
+      table_start_date <- cdm[[id]]$tableNameDate("start")
+      table_end_date <- cdm[[id]]$tableNameDate("end")
+      if (length(table_end_date) == 0) {
+        table_end_date <- NULL
       }
-      table_start_date <- paste(
-        table_id,
-        "start_date",
-        sep = "_"
-      )
-      table_end_date <- paste(
-        table_id,
-        "end_date",
-        sep = "_"
-      )
       columnList <- columnNames(
         name = id,
         limit = NULL
       ) |>
         names() |>
         tail(-2)
+      concept_columns <- columnList[
+        stringr::str_detect(columnList, "concept") &
+          !stringr::str_detect(columnList, "gender")
+      ]
+
+      concept_status_ids <- paste0(concept_columns, "_status")
+
+      updateConceptLabel <- function(col_name, concept_id) {
+        concept_label <- concept_lookup(concept_id)
+        output[[paste0(col_name, "_status")]] <- shiny::renderUI(
+          shiny::tags$span(
+            class = if (grepl("invalid|not found", concept_label, ignore.case = TRUE)) {
+              "text-danger small"
+            } else {
+              "text-muted small"
+            },
+            concept_label
+          )
+        )
+      }
+
+      lapply(concept_status_ids, function(output_id) {
+        output[[output_id]] <- shiny::renderUI(NULL)
+      })
 
       ### ADD --------------------------------------------------------------------
       observeEvent(
@@ -162,9 +168,16 @@ cdmTableServer <- function(
             table_concept_id,
             value = as.character(conceptId)
           )
+          updateConceptLabel(table_concept_id, conceptId)
         },
         placeholderText = "e.g. Metformin"
       )
+
+      lapply(concept_columns, function(concept_col) {
+        observeEvent(input[[concept_col]], {
+          updateConceptLabel(concept_col, input[[concept_col]])
+        }, ignoreInit = TRUE)
+      })
 
       # Observe the event id to update its corresponding fields in the interface
       observeEvent(
@@ -192,14 +205,16 @@ cdmTableServer <- function(
       )
 
       observeOtherFields <- reactive({
-        inputs <- isolate(reactiveValuesToList(input))
-        inputs[names(inputs) %in% columnList]
+        inputs <- setNames(
+          lapply(columnList, function(col) input[[col]]),
+          columnList
+        )
+        inputs[!vapply(inputs, is.null, logical(1))]
       })
       
       # UPDATE all other fields
       observeEvent(observeOtherFields(), {
         table_inputs <- observeOtherFields()
-        print(paste("in cdmTable observeEvent:", id, " (", paste0(names(table_inputs), collapse = ", "), ")"))
         
         no_date_inputs <- table_inputs[grep(
           "date",
@@ -209,7 +224,10 @@ cdmTableServer <- function(
         non_empty_inputs <- any(vapply(
           no_date_inputs,
           function(x) {
-            is.character(x) && nzchar(x)
+            if (length(x) == 0 || all(is.na(x))) {
+              return(FALSE)
+            }
+            any(nzchar(trimws(as.character(x))))
           },
           logical(1)
         ))
@@ -268,19 +286,31 @@ cdmTableServer <- function(
       elongation_click <- reactiveVal(NULL)
       #
       # # Elongation
+      tableDateInputs <- reactive({
+        values <- list(input[[table_start_date]])
+        if (!is.null(table_end_date)) {
+          values <- c(values, list(input[[table_end_date]]))
+        }
+        values
+      })
+
       observeEvent(
-        list(input[[table_start_date]], input[[table_end_date]]),
+        tableDateInputs(),
         {
-          print(syncing)
           req(!syncing())
+          req(input[[table_event_id]])
           req(input[[table_start_date]])
-          req(input[[table_end_date]])
+          end_date <- NULL
+          if (!is.null(table_end_date)) {
+            req(input[[table_end_date]])
+            end_date <- input[[table_end_date]]
+          }
 
           cdm[[id]]$updateDates(
             person_id = person_id_selected(),
             event_id = input[[table_event_id]],
             start_date = input[[table_start_date]],
-            end_date = input[[table_end_date]]
+            end_date = end_date
           )
           elongation_click(Sys.time())
         },
