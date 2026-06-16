@@ -95,6 +95,8 @@ cdmTable <- R6::R6Class(
         )
       if (name == "start" & private$.tableName == "measurement") {
         table_name_id <- "measurement_date"
+      } else if (name == "start" & private$.tableName == "observation") {
+        table_name_id <- "observation_date"
       } else if (name == "start" & private$.tableName == "procedure_occurrence") {
         table_name_id <- "procedure_date"
       } else {
