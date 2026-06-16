@@ -352,12 +352,19 @@ cdmConstructor <- R6::R6Class(
         names() |>
         tail(-2) |>
         head(3)
+
       if (private$.tableName == "observation_period") {
         values <- list(
           as.Date("2010-02-28"),
           as.Date("2015-02-28"),
           44191562L
           )
+        } else if (private$.tableName == "measurement") {
+          # this table has no end date
+          column_names <- column_names |> head(2)
+          values <- list(
+            44191562L,
+            as.Date("2010-02-28"))
         } else {
           values <- list(
             44191562L,

@@ -163,22 +163,10 @@ updateTableDatesNs <- function(cdm,
                                input,
                                syncing) {
 
-  # browser()
-  if (type == "condition_occurrence") {
-    type_corrected <- "condition"
-  } else if (type == "measurement") {
-    type_corrected <- "measurement"
-  } else {
-    type_corrected <- type
-  }
-
-  # Access names
-  if (type == "measurement") {
-    table_start_date <- "measurement_date"
+  table_start_date <- cdm[[type]]$tableNameDate("start")
+  table_end_date <- cdm[[type]]$tableNameDate("end")
+  if (length(table_end_date) == 0) {
     table_end_date <- NULL
-  } else {
-    table_start_date <- glue::glue("{type_corrected}_start_date")
-    table_end_date <- glue::glue("{type_corrected}_end_date")
   }
   table_id <- glue::glue("{type}_id")
 

@@ -311,8 +311,8 @@ patientDesigner <- function(path = NULL) {
       cdm$person$data()
     })
 
-    # After person selection
-    # Filters and updates observation/drug exposure fields
+    # After person selection, refresh event selectors for all
+    # patient-level event tables.
     observeEvent(person_module(), {
       req(person_module())
 
@@ -325,6 +325,18 @@ patientDesigner <- function(path = NULL) {
       updateTableIdsNs(
         cdm = cdm,
         type = "condition_occurrence",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "measurement",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "procedure_occurrence",
         input_person_id = person_module,
         session = session
         )
