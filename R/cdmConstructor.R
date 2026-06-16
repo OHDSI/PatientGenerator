@@ -8,12 +8,14 @@ cdmConstructor <- R6::R6Class(
     condition_occurrence = NULL,
     measurement = NULL,
     procedure_occurrence = NULL,
+    observation = NULL,
     initialize = function(tables = c(
       "observation_period",
       "condition_occurrence",
       "drug_exposure",
       "measurement",
-      "procedure_occurrence"
+      "procedure_occurrence",
+      "observation"
       )
     ) {
       self$tables <- tables
@@ -170,7 +172,8 @@ cdmConstructor <- R6::R6Class(
                              "condition_occurrence",
                              "drug_exposure",
                              "measurement",
-                             "procedure_occurrence")) {
+                             "procedure_occurrence",
+                             "observation")) {
           classTable <- class(jsonData[[tableName]])
           table_data <- jsonData[[tableName]] |> as.data.table()
           if (classTable == "data.frame") {
@@ -192,6 +195,7 @@ cdmConstructor <- R6::R6Class(
       self$condition_occurrence$reset()
       self$measurement$reset()
       self$procedure_occurrence$reset()
+      self$observation$reset()
     },
 
     # Delete person or event
@@ -246,7 +250,8 @@ cdmConstructor <- R6::R6Class(
         drug_exposure = self$drug_exposure$data(),
         condition_occurrence = self$condition_occurrence$data(),
         measurement = self$measurement$data(),
-        procedure_occurrence = self$procedure_occurrence$data()
+        procedure_occurrence = self$procedure_occurrence$data(),
+        observation = self$observation$data()
         )
 
         cdm_data_json <- jsonlite::toJSON(
@@ -352,12 +357,19 @@ cdmConstructor <- R6::R6Class(
         names() |>
         tail(-2) |>
         head(3)
+
       if (private$.tableName == "observation_period") {
         values <- list(
           as.Date("2010-02-28"),
           as.Date("2015-02-28"),
           44191562L
           )
+        } else if (private$.tableName %in% c("measurement", "observation")) {
+          # this table has no end date
+          column_names <- column_names |> head(2)
+          values <- list(
+            44191562L,
+            as.Date("2010-02-28"))
         } else {
           values <- list(
             44191562L,

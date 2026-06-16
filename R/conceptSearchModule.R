@@ -53,7 +53,13 @@ hecateConceptLabel <- function(conceptId) {
     return("(invalid concept id)")
   }
 
-  "(valid concept id)"
+  concept_name <- concept$conceptName %||% NA_character_
+  concept_name <- as.character(concept_name)
+  if (length(concept_name) != 1 || is.na(concept_name) || !nzchar(concept_name)) {
+    return("(invalid concept id)")
+  }
+
+  return(concept_name)
 }
 
 #' @describeIn conceptSearchModule UI for the concept search: a single button that opens the search modal.
