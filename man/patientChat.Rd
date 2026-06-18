@@ -63,6 +63,7 @@ Create a new chat to create JSON test sets for OMOP-CDM.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{patientChat$new(
   system_prompt = NULL,
+  provider = "openai",
   model = "gpt-5.4",
   jsonSchemaPath = NULL,
   echo = c("none", "output", "all"),
