@@ -32,6 +32,7 @@ patientDesigner <- function(path = NULL,
     shiny::runApp(
       appDir = publishDir
     )
+    return(invisible(NULL))
   }
 
   ui <- page_fillable(
