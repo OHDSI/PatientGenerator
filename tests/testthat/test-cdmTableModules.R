@@ -1,3 +1,37 @@
+test_that("cdm table input labels remove table context repetition", {
+  expect_equal(
+    input_display_label("observation_period_start_date", "observation_period"),
+    "Start date"
+  )
+  expect_equal(
+    input_display_label("condition_start_date", "condition_occurrence"),
+    "Start date"
+  )
+  expect_equal(
+    input_display_label("drug_exposure_end_date", "drug_exposure"),
+    "End date"
+  )
+  expect_equal(
+    input_display_label("measurement_concept_id", "measurement"),
+    "Concept id"
+  )
+  expect_equal(
+    input_display_label("period_type_concept_id", "observation_period"),
+    "Type concept id"
+  )
+  expect_equal(
+    input_display_label("person_id", "observation_period"),
+    "Person id"
+  )
+})
+
+test_that("person input labels keep their full source meaning", {
+  expect_equal(
+    input_display_label("gender_concept_id", "person"),
+    "Gender concept id"
+  )
+})
+
 test_that("cdmTableServer add action appends event for selected person", {
   cdm <- new_cdm()
   cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
