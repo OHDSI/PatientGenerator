@@ -49,6 +49,13 @@ patientDesigner <- function(path = NULL,
         padding-top: 15px;
         border-top: 1px solid #eee;
       }
+
+      .cdm-input-col .form-label,
+      .cdm-input-col .control-label {
+        min-height: 2.5rem;
+        display: flex;
+        align-items: flex-end;
+      }
     "))
     ),
     layout_sidebar(
