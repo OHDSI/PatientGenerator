@@ -31,7 +31,7 @@ cdmConstructor <- R6::R6Class(
       if (!all(names(input_data) %in% names(private$.columnNames))) {
         stop(
           glue::glue(
-            "Error: one column from c(
+            "Error: one or more column(s) from c(
               {glue::glue_collapse(
                 names(
                   input_data
@@ -95,7 +95,7 @@ cdmConstructor <- R6::R6Class(
       if (!all(names(new_data) %in% names(private$.columnNames))) {
         stop(
           glue::glue(
-            "Error: one column from c(
+            "Error: one or more column(s) from c(
               {glue::glue_collapse(
                 names(
                   new_data

@@ -15,7 +15,7 @@ test_that("cdmTable condition_occurrence supports add/reset/delete", {
   expect_length(condition_tbl$data()$condition_occurrence_id, 0)
 })
 
-test_that("cdmTable add accepts provided condition occurrence dates", {
+test_that("cdmTable 'add' accepts provided condition occurrence dates", {
   condition_tbl <- new_cdm_table("condition_occurrence")
 
   condition_tbl$add(
