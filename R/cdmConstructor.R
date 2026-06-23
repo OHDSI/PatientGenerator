@@ -24,8 +24,25 @@ cdmConstructor <- R6::R6Class(
         self[[tables[i]]] <- cdmTable$new(tables[i])
       }
     },
-    add = function(person_id) {
+    add = function(person_id, ...) {
       checkmate::assertInteger(person_id)
+      input_data <- list(...)
+      input_data <- input_data[!vapply(input_data, is.null, logical(1))]
+      if (!all(names(input_data) %in% names(private$.columnNames))) {
+        stop(
+          glue::glue(
+            "Error: one or more column(s) from c(
+              {glue::glue_collapse(
+                names(
+                  input_data
+                  ),
+                sep = ', '
+                )
+              }
+            ) are not from the {private$.tableName} table"
+            )
+          )
+      }
       name_event_id <- paste(
         private$.tableName,
         "id",
@@ -42,6 +59,22 @@ cdmConstructor <- R6::R6Class(
           1L
       }
       new_person_data <- private$.defaultPersonData()
+      if (length(input_data) > 0) {
+        input_data <- Map(function(col_name, value) {
+          if (length(value) == 0 || all(is.na(value))) {
+            return(NULL)
+          }
+          if (stringr::str_detect(col_name, "date")) {
+            as.Date(value)
+          } else if (stringr::str_detect(col_name, "concept") & !stringr::str_detect(col_name, "gender")) {
+            as.integer(value)
+          } else {
+            as.character(value)
+          }
+        }, names(input_data), input_data)
+        input_data <- input_data[!vapply(input_data, is.null, logical(1))]
+        new_person_data[names(input_data)] <- input_data
+      }
       new_row <- private$.constructNewRow(
         name_event_id,
         event_id, c(
@@ -62,7 +95,7 @@ cdmConstructor <- R6::R6Class(
       if (!all(names(new_data) %in% names(private$.columnNames))) {
         stop(
           glue::glue(
-            "Error: one column from c(
+            "Error: one or more column(s) from c(
               {glue::glue_collapse(
                 names(
                   new_data
