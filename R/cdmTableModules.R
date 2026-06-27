@@ -129,7 +129,17 @@ cdmTableServer <- function(
           req(input$add)
           req(person_id_selected)
           # Create new event for that person in object
-          cdm[[id]]$add(person_id = person_id_selected() |> as.integer())
+          date_inputs <- columnList[grep("_date$", columnList)]
+          input_data <- setNames(
+            lapply(date_inputs, function(col) input[[col]]),
+            date_inputs
+          )
+          input_data <- input_data[!vapply(input_data, is.null, logical(1))]
+          args <- c(
+            list(person_id = person_id_selected() |> as.integer()),
+            input_data
+          )
+          do.call(cdm[[id]]$add, args)
           # Pull data from that person
           cdmTable <- cdm[[id]]$data() %>%
             dplyr::filter(

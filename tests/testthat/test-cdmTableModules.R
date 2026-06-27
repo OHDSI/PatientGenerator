@@ -1,4 +1,38 @@
-test_that("cdmTableServer add action appends event for selected person", {
+test_that("cdm table input labels remove table context repetition", {
+  expect_equal(
+    input_display_label("observation_period_start_date", "observation_period"),
+    "Start date"
+  )
+  expect_equal(
+    input_display_label("condition_start_date", "condition_occurrence"),
+    "Start date"
+  )
+  expect_equal(
+    input_display_label("drug_exposure_end_date", "drug_exposure"),
+    "End date"
+  )
+  expect_equal(
+    input_display_label("measurement_concept_id", "measurement"),
+    "Concept id"
+  )
+  expect_equal(
+    input_display_label("period_type_concept_id", "observation_period"),
+    "Type concept id"
+  )
+  expect_equal(
+    input_display_label("person_id", "observation_period"),
+    "Person id"
+  )
+})
+
+test_that("person input labels keep their full source meaning", {
+  expect_equal(
+    input_display_label("gender_concept_id", "person"),
+    "Gender concept id"
+  )
+})
+
+test_that("cdmTableServer 'add action' appends event for selected person", {
   cdm <- new_cdm()
   cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
   cdm$observation_period$add(person_id = 1L)
@@ -18,6 +52,32 @@ test_that("cdmTableServer add action appends event for selected person", {
 
   expect_equal(nrow(cdm$observation_period$data()), 2L)
   expect_equal(tail(cdm$observation_period$data()$person_id, 1), 1L)
+})
+
+test_that("cdmTableServer 'add action' uses entered condition occurrence dates", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
+
+  syncing <- shiny::reactiveVal(FALSE)
+
+  shiny::testServer(cdm_table_server,
+    args = list(
+      id = "condition_occurrence",
+      cdm = cdm,
+      person_id_selected = shiny::reactive("1"),
+      syncing = syncing,
+      concept_lookup = function(concept_id) "(Condition)"
+    ), {
+      session$setInputs(condition_start_date = as.Date("2021-06-10"))
+      session$setInputs(condition_end_date = as.Date("2021-07-11"))
+      session$setInputs(add = 1)
+    }
+  )
+
+  dat <- cdm$condition_occurrence$data()
+  expect_equal(nrow(dat), 1L)
+  expect_equal(dat$condition_start_date[[1]], as.Date("2021-06-10"))
+  expect_equal(dat$condition_end_date[[1]], as.Date("2021-07-11"))
 })
 
 test_that("cdmTableServer persists manually entered concept ids", {
