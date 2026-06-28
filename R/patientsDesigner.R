@@ -450,6 +450,7 @@ patientDesigner <- function(path = NULL,
       data_version()
       observation_period_module$add_click()
       observation_period_module$delete_click()
+      observation_period_module$field_update()
       observation_period_module$elongation_click()
       formatDateColumns(cdm$observation_period$data())
     })
@@ -469,6 +470,7 @@ patientDesigner <- function(path = NULL,
       data_version()
       drug_exposure_module$add_click()
       drug_exposure_module$delete_click()
+      drug_exposure_module$field_update()
       drug_exposure_module$elongation_click()
       formatDateColumns(cdm$drug_exposure$data())
     })
@@ -486,6 +488,7 @@ patientDesigner <- function(path = NULL,
       data_version()
       condition_occurrence_module$add_click()
       condition_occurrence_module$delete_click()
+      condition_occurrence_module$field_update()
       condition_occurrence_module$elongation_click()
       formatDateColumns(cdm$condition_occurrence$data())
     })
@@ -502,6 +505,7 @@ patientDesigner <- function(path = NULL,
       data_version()
       measurement_module$add_click()
       measurement_module$delete_click()
+      measurement_module$field_update()
       measurement_module$elongation_click()
       formatDateColumns(cdm$measurement$data())
     })
@@ -518,6 +522,7 @@ patientDesigner <- function(path = NULL,
       data_version()
       procedure_occurrence_module$add_click()
       procedure_occurrence_module$delete_click()
+      procedure_occurrence_module$field_update()
       procedure_occurrence_module$elongation_click()
       formatDateColumns(cdm$procedure_occurrence$data())
     })
@@ -534,6 +539,7 @@ patientDesigner <- function(path = NULL,
       data_version()
       observation_module$add_click()
       observation_module$delete_click()
+      observation_module$field_update()
       observation_module$elongation_click()
       cdm$observation$data()
     })
@@ -550,21 +556,27 @@ patientDesigner <- function(path = NULL,
       person_module(),
       observation_period_module$add_click(),
       observation_period_module$delete_click(),
+      observation_period_module$field_update(),
       observation_period_module$elongation_click(),
       drug_exposure_module$add_click(),
       drug_exposure_module$delete_click(),
+      drug_exposure_module$field_update(),
       drug_exposure_module$elongation_click(),
       condition_occurrence_module$add_click(),
       condition_occurrence_module$delete_click(),
+      condition_occurrence_module$field_update(),
       condition_occurrence_module$elongation_click(),
       measurement_module$add_click(),
       measurement_module$delete_click(),
+      measurement_module$field_update(),
       measurement_module$elongation_click(),
       procedure_occurrence_module$add_click(),
       procedure_occurrence_module$delete_click(),
+      procedure_occurrence_module$field_update(),
       procedure_occurrence_module$elongation_click(),
       observation_module$add_click(),
       observation_module$delete_click(),
+      observation_module$field_update(),
       observation_module$elongation_click(),
       ignoreInit = FALSE
     )

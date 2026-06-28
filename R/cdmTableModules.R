@@ -119,6 +119,7 @@ cdmTableServer <- function(
       lapply(concept_status_ids, function(output_id) {
         output[[output_id]] <- shiny::renderUI(NULL)
       })
+      field_update <- reactiveVal(0L)
 
       ### ADD --------------------------------------------------------------------
       observeEvent(
@@ -263,8 +264,8 @@ cdmTableServer <- function(
           list(event_id = as.integer(input[[table_event_id]])),
           no_date_inputs
         )
-        # browser()
         do.call(cdm[[id]]$update, args)
+        field_update(field_update() + 1L)
       })
 
       # # Delete event
@@ -339,6 +340,7 @@ cdmTableServer <- function(
           list(
             add_click = reactive(input$add),
             delete_click = reactive(input$delete),
+            field_update = reactive(field_update()),
             elongation_click = reactive(elongation_click())
           ),
           setNames(list(reactive(input[[table_event_id]])), table_event_id)
