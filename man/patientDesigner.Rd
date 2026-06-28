@@ -9,7 +9,8 @@ patientDesigner(
   makePublishable = FALSE,
   publishDir = file.path(getwd(), "PatientGeneratorApp"),
   overwritePublishDir = FALSE,
-  launch.browser = FALSE
+  launch.browser = FALSE,
+  includeChat = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ to \code{publishDir}, write an \code{app.R} launcher, and run the app from that 
 already exists.}
 
 \item{launch.browser}{Passed to \code{shiny::runApp()} when \code{makePublishable} is TRUE.}
+
+\item{includeChat}{If TRUE, include the chat-driven dataset generator tab.}
 }
 \value{
 A Shiny app

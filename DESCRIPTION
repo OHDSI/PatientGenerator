@@ -16,7 +16,6 @@ BugReports: https://github.com/mi-erasmusmc/PatientGenerator/issues
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends:
     R (>= 4.1.0)
 Imports:
@@ -50,3 +49,4 @@ Suggests:
 VignetteBuilder: knitr
 Config/Needs/website: pkgdown
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
