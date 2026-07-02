@@ -141,8 +141,8 @@ updateTableIds <- function(cdm, type = "drug_exposure", input_person_id, session
 updateTableIdsNs <- function(cdm, type = "drug_exposure", input_person_id, session) {
   # browser()
   # Access names
-  table_person_id <- glue::glue("{type}_person_id")
-  table_event_id <- glue::glue("{type}_id")
+  table_person_id <- "person_id"
+  table_event_id <- cdm[[type]]$tableNameId()
 
   # Get observation period data and filter for the selected person_id
   cdmTable <- cdm[[type]]$data() %>%
