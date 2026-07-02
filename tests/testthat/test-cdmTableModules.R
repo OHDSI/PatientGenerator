@@ -127,3 +127,28 @@ test_that("cdmTableServer persists manually entered procedure dates", {
   expect_equal(cdm$procedure_occurrence$data()$procedure_date[[1]], as.Date("2021-04-03"))
   expect_equal(cdm$procedure_occurrence$data()$procedure_end_date[[1]], as.Date("2021-04-05"))
 })
+
+test_that("cdmTableServer supports death date without a death_id column", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
+
+  syncing <- shiny::reactiveVal(FALSE)
+
+  shiny::testServer(cdm_table_server,
+    args = list(
+      id = "death",
+      cdm = cdm,
+      person_id_selected = shiny::reactive("1"),
+      syncing = syncing,
+      concept_lookup = function(concept_id) "(Cause)"
+    ), {
+      session$setInputs(death_date = as.Date("2021-08-09"))
+      session$setInputs(add = 1)
+    }
+  )
+
+  expect_equal(nrow(cdm$death$data()), 1L)
+  expect_false("death_id" %in% names(cdm$death$data()))
+  expect_equal(cdm$death$data()$person_id[[1]], 1L)
+  expect_equal(cdm$death$data()$death_date[[1]], as.Date("2021-08-09"))
+})

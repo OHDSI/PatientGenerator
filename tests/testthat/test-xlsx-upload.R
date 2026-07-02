@@ -10,9 +10,11 @@ test_that("cdmConstructor loads supported tables from xlsx test data", {
   expect_in("person", result$loaded)
   expect_in("observation_period", result$loaded)
   expect_in("condition_occurrence", result$loaded)
+  expect_in("death", result$loaded)
   expect_in("visit_occurrence", result$ignored)
   expect_gt(nrow(cdm$person$data()), 0)
   expect_true("person_id" %in% names(cdm$person$data()))
+  expect_false("death_occurrence_id" %in% names(cdm$death$data()))
   expect_true(inherits(cdm$observation_period$data()$observation_period_start_date, "Date"))
 })
 

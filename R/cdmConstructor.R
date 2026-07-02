@@ -9,15 +9,8 @@ cdmConstructor <- R6::R6Class(
     measurement = NULL,
     procedure_occurrence = NULL,
     observation = NULL,
-    initialize = function(tables = c(
-      "observation_period",
-      "condition_occurrence",
-      "drug_exposure",
-      "measurement",
-      "procedure_occurrence",
-      "observation"
-      )
-    ) {
+    death = NULL,
+    initialize = function(tables = supportedCdmTables()) {
       self$tables <- tables
       self$person <- personTable$new()
       for (i in seq_along(tables)) {
@@ -43,20 +36,20 @@ cdmConstructor <- R6::R6Class(
             )
           )
       }
-      name_event_id <- paste(
-        private$.tableName,
-        "id",
-        sep = "_"
-        )
-      event_id <-  if (
-        length(private$.data[[name_event_id]]) == 0) {
-        1L
+      name_event_id <- private$.tableNameId()
+      if (identical(name_event_id, "person_id")) {
+        event_id <- person_id
       } else {
+        event_id <-  if (
+          length(private$.data[[name_event_id]]) == 0) {
+          1L
+        } else {
           private$.data[[name_event_id]][length(
             private$.data[[name_event_id]]
             )] |> 
           as.integer() + 
           1L
+        }
       }
       new_person_data <- private$.defaultPersonData()
       if (length(input_data) > 0) {
@@ -75,13 +68,20 @@ cdmConstructor <- R6::R6Class(
         input_data <- input_data[!vapply(input_data, is.null, logical(1))]
         new_person_data[names(input_data)] <- input_data
       }
-      new_row <- private$.constructNewRow(
-        name_event_id,
-        event_id, c(
-          person_id = person_id,
-          new_person_data
+      row_data <- c(
+        person_id = person_id,
+        new_person_data
+      )
+      if (!identical(name_event_id, "person_id")) {
+        row_data <- c(
+          setNames(
+            list(event_id),
+            name_event_id
+            ),
+          row_data
           )
-        )
+      }
+      new_row <- private$.constructNewRow(row_data)
       private$.data <- rbindlist(
         list(
           private$.data,
@@ -107,11 +107,7 @@ cdmConstructor <- R6::R6Class(
             )
           )
       }
-      name_id <- paste(
-        private$.tableName,
-        "id",
-        sep = "_"
-        )
+      name_id <- private$.tableNameId()
       index_table <- which(private$.data[[name_id]] == event_id)
       if (length(index_table) > 0) {
         for (col_name in names(new_data)) {
@@ -134,11 +130,7 @@ cdmConstructor <- R6::R6Class(
       }
       },
     extractRow = function(event_id) {
-      name_event_id <- paste(
-        private$.tableName,
-        "id",
-        sep = "_"
-        )
+      name_event_id <- private$.tableNameId()
       private$.data[private$.data[[name_event_id]] == event_id, ]
     },
     load = function(jsonData) {
@@ -195,11 +187,7 @@ cdmConstructor <- R6::R6Class(
         ))
     },
     delete = function(event_id) {
-      name_id <- paste(
-        private$.tableName,
-        "id",
-        sep = "_"
-        )
+      name_id <- private$.tableNameId()
       index_table <- which(private$.data[[name_id]] == event_id)
       private$.data <- private$.data[-index_table]
     },
@@ -250,16 +238,14 @@ cdmConstructor <- R6::R6Class(
       currentTables <- names(jsonData)
       # Check for the expected columns in the CDM
       for (tableName in currentTables) {
-        if (tableName %in% c("person",
-                             "observation_period",
-                             "condition_occurrence",
-                             "drug_exposure",
-                             "measurement",
-                             "procedure_occurrence",
-                             "observation")) {
+        if (tableName %in% supportedCdmTables(includePerson = TRUE)) {
           classTable <- class(jsonData[[tableName]])
           table_data <- jsonData[[tableName]] |> as.data.table()
           if (classTable == "data.frame") {
+              table_data <- private$.normalizeImportedTable(
+                tableName = tableName,
+                table_data = table_data
+                )
               date_cols <- names(table_data)[grepl("_date$", names(table_data))]
               if (length(date_cols) > 0 ) {
                 table_data[, (date_cols) := lapply(.SD, as.Date), .SDcols = date_cols]
@@ -273,12 +259,9 @@ cdmConstructor <- R6::R6Class(
     # Reset
     reset = function() {
       self$person$reset()
-      self$observation_period$reset()
-      self$drug_exposure$reset()
-      self$condition_occurrence$reset()
-      self$measurement$reset()
-      self$procedure_occurrence$reset()
-      self$observation$reset()
+      for (table_name in self$tables) {
+        self[[table_name]]$reset()
+      }
     },
 
     # Delete person or event
@@ -328,13 +311,14 @@ cdmConstructor <- R6::R6Class(
     # Export data to json
     getCdmData = function() {
       cdm_data <- list(
-        person = self$person$data(),
-        observation_period = self$observation_period$data(),
-        drug_exposure = self$drug_exposure$data(),
-        condition_occurrence = self$condition_occurrence$data(),
-        measurement = self$measurement$data(),
-        procedure_occurrence = self$procedure_occurrence$data(),
-        observation = self$observation$data()
+        person = self$person$data()
+        )
+      cdm_data <- c(
+        cdm_data,
+        stats::setNames(
+          lapply(self$tables, function(table_name) self[[table_name]]$data()),
+          self$tables
+          )
         )
 
         cdm_data_json <- jsonlite::toJSON(
@@ -383,18 +367,37 @@ cdmConstructor <- R6::R6Class(
           lapply(
             self$tables, 
             function(table_name) {
+              id_col <- self[[table_name]]$tableNameId()
+              concept_col <- self[[table_name]]$tableNameConceptId()
+              start_col <- self[[table_name]]$tableNameDate("start")
+              end_col <- self[[table_name]]$tableNameDate("end")
               cols <- c(
-                self[[table_name]]$tableNameId(),
+                id_col,
                 "person_id",
-                self[[table_name]]$tableNameConceptId(),
-                self[[table_name]]$tableNameDate("start"),
-                self[[table_name]]$tableNameDate("end")
+                concept_col,
+                start_col,
+                end_col
               )
+              cols <- cols[nzchar(cols)]
               table_data <- self[[table_name]]$data() 
+              if (identical(id_col, "person_id")) {
+                cols <- unique(cols)
+              }
               dt_timeline <- data.table::copy(
                 table_data[, ..cols]
                 ) 
-              if (length(cols) == 5) {
+              if (identical(id_col, "person_id")) {
+                data.table::setnames(
+                  dt_timeline,
+                  old = c("person_id", concept_col, start_col),
+                  new = c("person_id", "concept_id", "start_date")
+                )
+                dt_timeline[, event_id := person_id]
+                data.table::setcolorder(
+                  dt_timeline,
+                  c("event_id", "person_id", "concept_id", "start_date")
+                )
+              } else if (length(cols) == 5) {
                 data.table::setnames(
                   dt_timeline,
                   old = cols,
@@ -520,6 +523,10 @@ cdmConstructor <- R6::R6Class(
     },
     .validateImportedTable = function(tableName, table_data) {
       table_data <- data.table::as.data.table(table_data)
+      table_data <- private$.normalizeImportedTable(
+        tableName = tableName,
+        table_data = table_data
+        )
       expected_columns <- names(columnNames(tableName))
       unknown_columns <- setdiff(names(table_data), expected_columns)
 
@@ -545,6 +552,19 @@ cdmConstructor <- R6::R6Class(
         fill = TRUE
         )
     },
+    .normalizeImportedTable = function(tableName, table_data) {
+      if (identical(tableName, "death")) {
+        unsupported_id_columns <- intersect(
+          c("death_id", "death_occurrence_id"),
+          names(table_data)
+          )
+        if (length(unsupported_id_columns) > 0) {
+          table_data[, (unsupported_id_columns) := NULL]
+        }
+      }
+
+      table_data
+    },
     .getData = function() {
       return(private$.data)
       },
@@ -563,6 +583,16 @@ cdmConstructor <- R6::R6Class(
           as.Date("2015-02-28"),
           44191562L
           )
+        } else if (private$.tableName == "death") {
+          column_names <- private$.columnNames |>
+            names() |>
+            tail(-1) |>
+            head(3)
+          values <- list(
+            as.Date("2010-02-28"),
+            32817L,
+            44191562L
+            )
         } else if (private$.tableName %in% c("measurement", "observation")) {
           # this table has no end date
           column_names <- column_names |> head(2)
@@ -584,15 +614,7 @@ cdmConstructor <- R6::R6Class(
         )
       return(person_data)
       },
-    .constructNewRow = function(name_event_id, event_id, ...) {
-      checkmate::assertCharacter(name_event_id)
-      checkmate::assertInteger(event_id)
-      new_data <- c(
-        setNames(
-          list(event_id),
-          name_event_id),
-        ...
-        )
+    .constructNewRow = function(new_data) {
       empty_row <- private$.emptyTable()
       new_row <- rbindlist(
         list(

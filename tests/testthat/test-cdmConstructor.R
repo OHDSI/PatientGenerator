@@ -49,7 +49,8 @@ test_that("cdmConstructor reset empties core tables", {
     "drug_exposure",
     "measurement",
     "procedure_occurrence",
-    "observation"
+    "observation",
+    "death"
   )
   
   for (i in seq_along(cdm_tables)) {
@@ -222,6 +223,36 @@ test_that("getCdmData and getCdmDataTimeline return valid structures", {
       "observation"
       )
   )
+})
+
+test_that("death table can be added, exported, and shown on the timeline", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1967L)
+
+  expect_no_error(cdm$death$add(person_id = 1L))
+  expect_equal(nrow(cdm$death$data()), 1L)
+  expect_false("death_id" %in% names(cdm$death$data()))
+  expect_equal(cdm$death$data()$person_id[[1]], 1L)
+  expect_equal(cdm$death$data()$death_date[[1]], as.Date("2010-02-28"))
+
+  cdm$death$updateDates(
+    person_id = 1L,
+    event_id = 1L,
+    start_date = as.Date("2020-05-20"),
+    end_date = NULL
+  )
+  expect_equal(cdm$death$data()$death_date[[1]], as.Date("2020-05-20"))
+
+  cdm_json <- jsonlite::fromJSON(cdm$getCdmData())
+  expect_true("death" %in% names(cdm_json))
+  expect_false("death_id" %in% names(cdm_json$death))
+
+  timeline <- cdm$getCdmDataTimeline()
+  death_row <- timeline[timeline$type == "death", ]
+  expect_equal(nrow(death_row), 1L)
+  expect_equal(death_row$event_id[[1]], 1L)
+  expect_equal(death_row$person_id[[1]], 1L)
+  expect_equal(death_row$start_date[[1]], as.Date("2020-05-20"))
 })
 
 test_that("loadJsonTestSet loads source test fixtures", {

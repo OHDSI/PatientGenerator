@@ -154,17 +154,19 @@ updateTableIdsNs <- function(cdm, type = "drug_exposure", input_person_id, sessi
   updateSelectInput(session, ns_module(table_person_id),
                     choices = cdmTable[["person_id"]] %>% unique(),
                     selected = cdmTable[["person_id"]] %>% unique())
-  updateSelectInput(session, ns_module(table_event_id),
-                    choices = cdmTable[[table_event_id]],
-                    selected = cdmTable[[table_event_id]][length(cdmTable[[table_event_id]])])
+  if (!identical(table_event_id, table_person_id)) {
+    updateSelectInput(session, ns_module(table_event_id),
+                      choices = cdmTable[[table_event_id]],
+                      selected = cdmTable[[table_event_id]][length(cdmTable[[table_event_id]])])
+  }
 
 }
 
 updateTablePersonEventIdsNs <- function(cdm, type = "drug_exposure", input_person_id, input_event_id, session) {
   # browser()
   # Access names
-  table_person_id <- glue::glue("{type}_person_id")
-  table_event_id <- glue::glue("{type}_id")
+  table_person_id <- "person_id"
+  table_event_id <- cdm[[type]]$tableNameId()
 
   p_id <- if (is.function(input_person_id)) input_person_id() else input_person_id
   req(p_id)
@@ -182,9 +184,11 @@ updateTablePersonEventIdsNs <- function(cdm, type = "drug_exposure", input_perso
   updateSelectInput(session, ns_module(table_person_id),
                     choices = cdmTable[["person_id"]] %>% unique(),
                     selected = cdmTable[["person_id"]] %>% unique())
-  updateSelectInput(session, ns_module(table_event_id),
-                    choices = cdmTable[[table_event_id]],
-                    selected = e_id)
+  if (!identical(table_event_id, table_person_id)) {
+    updateSelectInput(session, ns_module(table_event_id),
+                      choices = cdmTable[[table_event_id]],
+                      selected = e_id)
+  }
 
 }
 
@@ -203,7 +207,7 @@ updateTableDatesNs <- function(cdm,
   if (length(table_end_date) == 0) {
     table_end_date <- NULL
   }
-  table_id <- glue::glue("{type}_id")
+  table_id <- cdm[[type]]$tableNameId()
 
   p_id <- if (is.function(input_person_id)) { input_person_id() } else { input_person_id }
   req(p_id)
