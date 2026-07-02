@@ -152,3 +152,32 @@ test_that("cdmTableServer supports death date without a death_id column", {
   expect_equal(cdm$death$data()$person_id[[1]], 1L)
   expect_equal(cdm$death$data()$death_date[[1]], as.Date("2021-08-09"))
 })
+
+test_that("death table selector refresh targets person_id", {
+  cdm <- new_cdm()
+  cdm$loadJsonTestSet(testthat::test_path("testCases", "beta_blocker.json"))
+
+  session <- shiny:::MockShinySession$new()
+  messages <- list()
+  session$sendInputMessage <- function(inputId, message) {
+    messages[[length(messages) + 1L]] <<- list(
+      inputId = inputId,
+      message = message
+    )
+  }
+
+  update_table_ids_ns(
+    cdm = cdm,
+    type = "death",
+    input_person_id = function() 1L,
+    session = session
+  )
+
+  input_ids <- vapply(
+    messages,
+    function(message) message$inputId,
+    character(1)
+  )
+  expect_true("death-person_id" %in% input_ids)
+  expect_false("death-death_id" %in% input_ids)
+})

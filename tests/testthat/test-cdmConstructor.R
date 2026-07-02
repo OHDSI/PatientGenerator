@@ -255,6 +255,23 @@ test_that("death table can be added, exported, and shown on the timeline", {
   expect_equal(death_row$start_date[[1]], as.Date("2020-05-20"))
 })
 
+test_that("loadJsonTestSet completes beta blocker death table schema", {
+  cdm <- new_cdm()
+  path <- testthat::test_path("testCases", "beta_blocker.json")
+  skip_if_not(file.exists(path))
+
+  expect_no_error(cdm$loadJsonTestSet(path))
+
+  expect_equal(nrow(cdm$person$data()), 10L)
+  expect_equal(length(unique(cdm$condition_occurrence$data()$condition_concept_id)), 19L)
+  expect_equal(nrow(cdm$death$data()), 3L)
+  expect_true("cause_source_value" %in% names(cdm$death$data()))
+  expect_false("death_id" %in% names(cdm$death$data()))
+  expect_false("death_occurrence_id" %in% names(cdm$death$data()))
+  expect_equal(cdm$death$data()[person_id == 1L]$death_date[[1]], as.Date("2017-10-07"))
+  expect_equal(sum(cdm$getCdmDataTimeline()$type == "death"), 3L)
+})
+
 test_that("loadJsonTestSet loads source test fixtures", {
   cdm <- new_cdm()
   path <- testthat::test_path("testCases", "objective_1_patients.json")
