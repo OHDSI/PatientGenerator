@@ -251,7 +251,11 @@ cdmConstructor <- R6::R6Class(
                 table_data[, (date_cols) := lapply(.SD, as.Date), .SDcols = date_cols]
               }
             table_data <- fillMissingEndDates(tableName, table_data)
-            self[[tableName]]$load(data.table::rbindlist(list(private$.data, table_data)))
+            table_data <- data.table::rbindlist(
+              list(columnNames(tableName), table_data),
+              fill = TRUE
+              )
+            self[[tableName]]$load(table_data)
           }
         }
       }
