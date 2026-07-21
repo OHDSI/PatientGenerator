@@ -78,23 +78,23 @@ cdmTableServer <- function(
       session
     ) {
       ns <- session$ns
-      table_event_id <- paste(
-        id,
-        "id",
-        sep = "_"
-      )
+      table_event_id <- cdm[[id]]$tableNameId()
       table_concept_id <- cdm[[id]]$tableNameConceptId()
       table_start_date <- cdm[[id]]$tableNameDate("start")
       table_end_date <- cdm[[id]]$tableNameDate("end")
       if (length(table_end_date) == 0) {
         table_end_date <- NULL
       }
-      columnList <- columnNames(
+      all_columns <- columnNames(
         name = id,
         limit = NULL
       ) |>
-        names() |>
-        tail(-2)
+        names()
+      columnList <- if (identical(table_event_id, "person_id")) {
+        all_columns |> tail(-1)
+      } else {
+        all_columns |> tail(-2)
+      }
       concept_columns <- columnList[
         stringr::str_detect(columnList, "concept") &
           !stringr::str_detect(columnList, "gender")

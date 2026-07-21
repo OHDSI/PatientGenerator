@@ -27,6 +27,9 @@ cdmTable <- R6::R6Class(
     .tableName = NULL,
     .data = NULL,
     .tableNameId = function() {
+      if (private$.tableName == "death") {
+        return("person_id")
+      }
       name_id <- paste(
         private$.tableName,
         "id",
@@ -49,7 +52,9 @@ cdmTable <- R6::R6Class(
         table_id <- "condition"
       } else if (private$.tableName == "procedure_occurrence") {
         table_id <- "procedure"
-        } else {
+      } else if (private$.tableName == "death") {
+        table_id <- "cause"
+      } else {
         table_id <- private$.tableName
       }
       if (private$.tableName == "drug_exposure") {
@@ -84,6 +89,8 @@ cdmTable <- R6::R6Class(
         table_name <- "condition"
       } else if (private$.tableName == "procedure_occurrence") {
         table_name <- "procedure"
+      } else if (private$.tableName == "death") {
+        table_name <- "death"
       } else {
         table_name <- private$.tableName
       }
@@ -99,6 +106,8 @@ cdmTable <- R6::R6Class(
         table_name_id <- "observation_date"
       } else if (name == "start" & private$.tableName == "procedure_occurrence") {
         table_name_id <- "procedure_date"
+      } else if (name == "start" & private$.tableName == "death") {
+        table_name_id <- "death_date"
       } else {
         table_name_id <- private$.columnNames[
           ,

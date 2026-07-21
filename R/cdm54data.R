@@ -13,6 +13,24 @@ choicesList <- function(tableName) {
   return(choicesList[[tableName]])
 }
 
+supportedCdmTables <- function(includePerson = FALSE) {
+  tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence",
+    "observation",
+    "death"
+  )
+
+  if (isTRUE(includePerson)) {
+    tables <- c("person", tables)
+  }
+
+  tables
+}
+
 #' Read an RDS file.
 #' @param file Path to the RDS file.
 #' @return A data frame.
@@ -41,15 +59,7 @@ columnNames <- function(
   #    list.files() |> 
   #   stringr::str_remove(".rds")
   
-  supported_tables <- c(
-    "person",
-    "observation_period",
-    "condition_occurrence",
-    "drug_exposure",
-    "measurement",
-    "procedure_occurrence",
-    "observation"
-    )
+  supported_tables <- supportedCdmTables(includePerson = TRUE)
 
   if (!is.null(name)) {
 
