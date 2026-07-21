@@ -11,7 +11,8 @@ patientDesigner(
   makePublishable = FALSE,
   publishDir = file.path(getwd(), "PatientGeneratorApp"),
   overwritePublishDir = FALSE,
-  launch.browser = FALSE
+  launch.browser = FALSE,
+  includeChat = FALSE
 )
 ```
 
@@ -40,6 +41,10 @@ patientDesigner(
   Passed to
   [`shiny::runApp()`](https://rdrr.io/pkg/shiny/man/runApp.html) when
   `makePublishable` is TRUE.
+
+- includeChat:
+
+  If TRUE, include the chat-driven dataset generator tab.
 
 ## Value
 

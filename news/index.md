@@ -1,5 +1,10 @@
 # Changelog
 
+## PatientGenerator 0.2.3
+
+- Parameter `includeChat` in
+  [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md).
+
 ## PatientGenerator 0.2.2
 
 - Fix for concept ids not being maintained when we try to create
