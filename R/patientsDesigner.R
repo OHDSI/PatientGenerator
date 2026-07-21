@@ -162,6 +162,11 @@ patientDesigner <- function(path = NULL,
           "Observation",
           cdmTableUI(id = "observation"),
           value = "observation_module"
+          ),
+        tabPanel(
+          "Death",
+          cdmTableUI(id = "death"),
+          value = "death_module"
           )
         ),
         tabsetPanel(
@@ -182,7 +187,8 @@ patientDesigner <- function(path = NULL,
             tableOutput("conditionOccurrenceTable"),
             tableOutput("measurementTable"),
             tableOutput("procedureOccurrenceTable"),
-            tableOutput("observationTable")
+            tableOutput("observationTable"),
+            tableOutput("deathTable")
           )
         ),
         border = FALSE
@@ -426,6 +432,12 @@ patientDesigner <- function(path = NULL,
         )
       updateTableIdsNs(
         cdm = cdm,
+        type = "death",
+        input_person_id = person_module,
+        session = session
+        )
+      updateTableIdsNs(
+        cdm = cdm,
         type = "drug_exposure",
         input_person_id = person_module,
         session = session
@@ -535,7 +547,23 @@ patientDesigner <- function(path = NULL,
       observation_module$add_click()
       observation_module$delete_click()
       observation_module$elongation_click()
-      cdm$observation$data()
+      formatDateColumns(cdm$observation$data())
+    })
+
+    # DEATH TABLE
+    death_module <- cdmTableServer(
+      id = "death",
+      cdm = cdm,
+      person_id_selected = person_module,
+      syncing = syncing
+    )
+
+    output$deathTable <- renderTable({
+      data_version()
+      death_module$add_click()
+      death_module$delete_click()
+      death_module$elongation_click()
+      formatDateColumns(cdm$death$data())
     })
     
     # CDM Data Timeline
@@ -566,6 +594,9 @@ patientDesigner <- function(path = NULL,
       observation_module$add_click(),
       observation_module$delete_click(),
       observation_module$elongation_click(),
+      death_module$add_click(),
+      death_module$delete_click(),
+      death_module$elongation_click(),
       ignoreInit = FALSE
     )
     
