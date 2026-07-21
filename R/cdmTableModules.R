@@ -119,22 +119,30 @@ cdmTableServer <- function(
       lapply(concept_status_ids, function(output_id) {
         output[[output_id]] <- shiny::renderUI(NULL)
       })
+      field_update <- reactiveVal(0L)
 
       ### ADD --------------------------------------------------------------------
       observeEvent(
         input$add,
         {
-          # browser()
           # Require add button and the person id
           req(input$add)
           req(person_id_selected)
           # Create new event for that person in object
           date_inputs <- columnList[grep("_date$", columnList)]
+          add_inputs <- c(date_inputs, intersect(table_concept_id, columnList))
           input_data <- setNames(
-            lapply(date_inputs, function(col) input[[col]]),
-            date_inputs
+            lapply(add_inputs, function(col) input[[col]]),
+            add_inputs
           )
-          input_data <- input_data[!vapply(input_data, is.null, logical(1))]
+          input_data <- input_data[
+            vapply(input_data, function(value) {
+              if (is.null(value) || length(value) == 0 || all(is.na(value))) {
+                return(FALSE)
+              }
+              any(nzchar(trimws(as.character(value))))
+            }, logical(1))
+          ]
           args <- c(
             list(person_id = person_id_selected() |> as.integer()),
             input_data
@@ -256,8 +264,8 @@ cdmTableServer <- function(
           list(event_id = as.integer(input[[table_event_id]])),
           no_date_inputs
         )
-        # browser()
         do.call(cdm[[id]]$update, args)
+        field_update(field_update() + 1L)
       })
 
       # # Delete event
@@ -332,6 +340,7 @@ cdmTableServer <- function(
           list(
             add_click = reactive(input$add),
             delete_click = reactive(input$delete),
+            field_update = reactive(field_update()),
             elongation_click = reactive(elongation_click())
           ),
           setNames(list(reactive(input[[table_event_id]])), table_event_id)

@@ -1,7 +1,7 @@
 Package: PatientGenerator
 Type: Package
 Title: Generator of Synthetic Patient Data for the OMOP Common Data Model
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: c(
     person("Cesar", "Barboza", , "c.barboza@mi-erasmusmc.nl", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-4453-3071")),
     person("Ger", "Inberg", , "g.inberg@erasmusmc.nl", role = "aut", comment = c(ORCID = "0000-0001-8993-8748")),
