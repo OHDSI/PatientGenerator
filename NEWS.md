@@ -1,5 +1,7 @@
 # PatientGenerator 0.2.1
 
+* Added 'Death' table to `patientDesigner()` required for Survival analysis.
+
 # PatientGenerator 0.2.0
 
 * Fixed D3 GUI crash related to empty end dates. For now, the GUI will fill out automatically end dates.
