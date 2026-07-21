@@ -80,6 +80,59 @@ test_that("cdmTableServer 'add action' uses entered condition occurrence dates",
   expect_equal(dat$condition_end_date[[1]], as.Date("2021-07-11"))
 })
 
+test_that("cdmTableServer 'add action' uses current condition occurrence concept", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
+  cdm$condition_occurrence$add(
+    person_id = 1L,
+    condition_concept_id = 201826L
+  )
+
+  syncing <- shiny::reactiveVal(FALSE)
+
+  shiny::testServer(cdm_table_server,
+    args = list(
+      id = "condition_occurrence",
+      cdm = cdm,
+      person_id_selected = shiny::reactive("1"),
+      syncing = syncing,
+      concept_lookup = function(concept_id) "(Condition)"
+    ), {
+      session$setInputs(condition_occurrence_id = 1L)
+      session$setInputs(condition_concept_id = "201826")
+      session$setInputs(add = 1)
+    }
+  )
+
+  dat <- cdm$condition_occurrence$data()
+  expect_equal(nrow(dat), 2L)
+  expect_equal(dat$condition_concept_id[[2]], 201826L)
+})
+
+test_that("cdmTableServer 'add action' keeps default concept when current concept is empty", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
+
+  syncing <- shiny::reactiveVal(FALSE)
+
+  shiny::testServer(cdm_table_server,
+    args = list(
+      id = "condition_occurrence",
+      cdm = cdm,
+      person_id_selected = shiny::reactive("1"),
+      syncing = syncing,
+      concept_lookup = function(concept_id) "(Condition)"
+    ), {
+      session$setInputs(condition_concept_id = "")
+      session$setInputs(add = 1)
+    }
+  )
+
+  dat <- cdm$condition_occurrence$data()
+  expect_equal(nrow(dat), 1L)
+  expect_equal(dat$condition_concept_id[[1]], 44191562L)
+})
+
 test_that("cdmTableServer persists manually entered concept ids", {
   cdm <- new_cdm()
   cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
@@ -126,4 +179,58 @@ test_that("cdmTableServer persists manually entered procedure dates", {
 
   expect_equal(cdm$procedure_occurrence$data()$procedure_date[[1]], as.Date("2021-04-03"))
   expect_equal(cdm$procedure_occurrence$data()$procedure_end_date[[1]], as.Date("2021-04-05"))
+})
+
+test_that("cdmTableServer supports death date without a death_id column", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)
+
+  syncing <- shiny::reactiveVal(FALSE)
+
+  shiny::testServer(cdm_table_server,
+    args = list(
+      id = "death",
+      cdm = cdm,
+      person_id_selected = shiny::reactive("1"),
+      syncing = syncing,
+      concept_lookup = function(concept_id) "(Cause)"
+    ), {
+      session$setInputs(death_date = as.Date("2021-08-09"))
+      session$setInputs(add = 1)
+    }
+  )
+
+  expect_equal(nrow(cdm$death$data()), 1L)
+  expect_false("death_id" %in% names(cdm$death$data()))
+  expect_equal(cdm$death$data()$person_id[[1]], 1L)
+  expect_equal(cdm$death$data()$death_date[[1]], as.Date("2021-08-09"))
+})
+
+test_that("death table selector refresh targets person_id", {
+  cdm <- new_cdm()
+  cdm$loadJsonTestSet(testthat::test_path("testCases", "beta_blocker.json"))
+
+  session <- shiny:::MockShinySession$new()
+  messages <- list()
+  session$sendInputMessage <- function(inputId, message) {
+    messages[[length(messages) + 1L]] <<- list(
+      inputId = inputId,
+      message = message
+    )
+  }
+
+  update_table_ids_ns(
+    cdm = cdm,
+    type = "death",
+    input_person_id = function() 1L,
+    session = session
+  )
+
+  input_ids <- vapply(
+    messages,
+    function(message) message$inputId,
+    character(1)
+  )
+  expect_true("death-person_id" %in% input_ids)
+  expect_false("death-death_id" %in% input_ids)
 })
