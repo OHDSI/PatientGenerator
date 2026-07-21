@@ -1,3 +1,7 @@
+# PatientGenerator 0.2.3
+
+* Parameter `includeChat` in `patientDesigner()`.
+
 # PatientGenerator 0.2.2
 
 * Fix for concept ids not being maintained when we try to create patients/conditions/prcoedures.
