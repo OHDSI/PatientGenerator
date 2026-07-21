@@ -1,5 +1,11 @@
 # Changelog
 
+## PatientGenerator 0.2.1
+
+- Added ‘Death’ table to
+  [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
+  required for Survival analysis.
+
 ## PatientGenerator 0.2.0
 
 - Fixed D3 GUI crash related to empty end dates. For now, the GUI will

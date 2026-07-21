@@ -11,7 +11,7 @@ The JSON file can be used as an OMOP-CDM patient test set."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PatientGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,15 +69,15 @@ to test analytical packages.</p>
 <dd><p>An ellmer chat instance</p></dd>
 
 
-<dt><code>json_schema_path</code></dt>
+    <dt><code>json_schema_path</code></dt>
 <dd><p>JSON schema to output structured results</p></dd>
 
 
-<dt><code>response</code></dt>
+    <dt><code>response</code></dt>
 <dd><p>Ouput from the LLM</p></dd>
 
 
-<dt><code>codelist</code></dt>
+    <dt><code>codelist</code></dt>
 <dd><p>A codelist with details to search for concepts ids</p></dd>
 
 
@@ -88,8 +88,7 @@ to test analytical packages.</p>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-patientChat-new"><code>patientChat$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-patientChat-initialize"><code>patientChat$new()</code></a></p></li>
 <li><p><a href="#method-patientChat-prompt"><code>patientChat$prompt()</code></a></p></li>
 <li><p><a href="#method-patientChat-json_response"><code>patientChat$json_response()</code></a></p></li>
 <li><p><a href="#method-patientChat-output"><code>patientChat$output()</code></a></p></li>
@@ -97,8 +96,8 @@ to test analytical packages.</p>
 <li><p><a href="#method-patientChat-save"><code>patientChat$save()</code></a></p></li>
 <li><p><a href="#method-patientChat-availableModels"><code>patientChat$availableModels()</code></a></p></li>
 <li><p><a href="#method-patientChat-clone"><code>patientChat$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-patientChat-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p></p><hr><a id="method-patientChat-initialize"></a><div class="section">
+<h3 id="patientchat-new-"><code>patientChat$new()</code><a class="anchor" aria-label="anchor" href="#patientchat-new-"></a></h3>
 <p>Create a new chat to create JSON test sets for OMOP-CDM.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/patientChat.html">patientChat</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
@@ -108,45 +107,38 @@ to test analytical packages.</p>
 <span>  echo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"output"</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
 <span>  codelist_data <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>system_prompt</code></dt>
 <dd><p>Initial system prompt to impose behaviour to the LLM</p></dd>
 
-
-<dt><code>model</code></dt>
+      <dt><code>model</code></dt>
 <dd><p>Such as "gpt-5.3". For a complete list, call patientChat$availableModels()</p></dd>
 
-
-<dt><code>jsonSchemaPath</code></dt>
+      <dt><code>jsonSchemaPath</code></dt>
 <dd><p>The JSON schema to structure output from LLM</p></dd>
 
-
-<dt><code>echo</code></dt>
+      <dt><code>echo</code></dt>
 <dd><p>How the output will be displayed in the console</p></dd>
 
-
-<dt><code>codelist_data</code></dt>
+      <dt><code>codelist_data</code></dt>
 <dd><p>A codelist with details to search for concepts ids</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>A new <code>Person</code> object.</p>
 </div>
 
-</div><p></p><hr><a id="method-patientChat-prompt"></a><div class="section">
-<h3 id="method-prompt-">Method <code><a href="https://rdrr.io/r/utils/prompt.html" class="external-link">prompt()</a></code><a class="anchor" aria-label="anchor" href="#method-prompt-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-patientChat-prompt"></a><div class="section">
+<h3 id="patientchat-prompt-"><code>patientChat$prompt()</code><a class="anchor" aria-label="anchor" href="#patientchat-prompt-"></a></h3>
 <p>Prompt to request data from LLM API</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">prompt</span><span class="op">(</span><span class="va">prompt</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>prompt</code></dt>
 <dd><p>A query in character.</p></dd>
@@ -155,56 +147,56 @@ to test analytical packages.</p>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-patientChat-json_response"></a><div class="section">
-<h3 id="method-json-response-">Method <code>json_response()</code><a class="anchor" aria-label="anchor" href="#method-json-response-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-patientChat-json_response"></a><div class="section">
+<h3 id="patientchat-json-response-"><code>patientChat$json_response()</code><a class="anchor" aria-label="anchor" href="#patientchat-json-response-"></a></h3>
 <p>Output in JSON format</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">json_response</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-patientChat-output"></a><div class="section">
-<h3 id="method-output-">Method <code>output()</code><a class="anchor" aria-label="anchor" href="#method-output-"></a></h3>
+<p></p><hr><a id="method-patientChat-output"></a><div class="section">
+<h3 id="patientchat-output-"><code>patientChat$output()</code><a class="anchor" aria-label="anchor" href="#patientchat-output-"></a></h3>
 <p>Returns the chat object</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">output</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-patientChat-retrieveCodelist"></a><div class="section">
-<h3 id="method-retrievecodelist-">Method <code>retrieveCodelist()</code><a class="anchor" aria-label="anchor" href="#method-retrievecodelist-"></a></h3>
+<p></p><hr><a id="method-patientChat-retrieveCodelist"></a><div class="section">
+<h3 id="patientchat-retrievecodelist-"><code>patientChat$retrieveCodelist()</code><a class="anchor" aria-label="anchor" href="#patientchat-retrievecodelist-"></a></h3>
 <p>Retrieves and filters data from codelist_data</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">retrieveCodelist</span><span class="op">(</span>concept_label <span class="op">=</span> <span class="st">"Stage 1"</span>, domain <span class="op">=</span> <span class="st">"Measurement"</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>concept_label</code></dt>
 <dd><p>Filters the concept_name in the codelist with details</p></dd>
 
-
-<dt><code>domain</code></dt>
+      <dt><code>domain</code></dt>
 <dd><p>Filters the domain in the codelist with details.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-patientChat-save"></a><div class="section">
-<h3 id="method-save-">Method <code><a href="https://rdrr.io/r/base/save.html" class="external-link">save()</a></code><a class="anchor" aria-label="anchor" href="#method-save-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-patientChat-save"></a><div class="section">
+<h3 id="patientchat-save-"><code>patientChat$save()</code><a class="anchor" aria-label="anchor" href="#patientchat-save-"></a></h3>
 <p>Saves the JSON test set to disk.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"patient-chat-test"</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>Name of the file</p></dd>
 
-
-<dt><code>path</code></dt>
+      <dt><code>path</code></dt>
 <dd><p>To save the file.
 If NULL, the package first tries <code>testthat::test_path("testCases")</code>,
 then checks <code>options(PatientGenerator.testSetDir = "...")</code>, and finally
@@ -214,22 +206,23 @@ falls back to the package user data directory.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-patientChat-availableModels"></a><div class="section">
-<h3 id="method-availablemodels-">Method <code><a href="availableModels.html">availableModels()</a></code><a class="anchor" aria-label="anchor" href="#method-availablemodels-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-patientChat-availableModels"></a><div class="section">
+<h3 id="patientchat-availablemodels-"><code>patientChat$availableModels()</code><a class="anchor" aria-label="anchor" href="#patientchat-availablemodels-"></a></h3>
 <p>Retrieves available models from the LLM API.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">availableModels</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-patientChat-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p></p><hr><a id="method-patientChat-clone"></a><div class="section">
+<h3 id="patientchat-clone-"><code>patientChat$clone()</code><a class="anchor" aria-label="anchor" href="#patientchat-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">patientChat</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -239,6 +232,7 @@ falls back to the package user data directory.</p></dd>
 </div>
 
 </div>
+
 
     </div>
 
@@ -260,7 +254,7 @@ falls back to the package user data directory.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
