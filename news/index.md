@@ -8,7 +8,7 @@
 ## PatientGenerator 0.2.2
 
 - Fix for concept ids not being maintained when we try to create
-  patients/conditions/prcoedures.
+  patients/conditions/procedures.
 
 ## PatientGenerator 0.2.1
 
