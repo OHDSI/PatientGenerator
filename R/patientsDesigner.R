@@ -161,7 +161,8 @@ patientDesigner <- function(path = NULL,
         tableOutput("conditionOccurrenceTable"),
         tableOutput("measurementTable"),
         tableOutput("procedureOccurrenceTable"),
-        tableOutput("observationTable")
+        tableOutput("observationTable"),
+        tableOutput("deathTable")
       )
     )
   )
