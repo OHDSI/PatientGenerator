@@ -140,6 +140,11 @@ patientDesigner <- function(path = NULL,
         "Observation",
         cdmTableUI(id = "observation"),
         value = "observation_module"
+      ),
+      tabPanel(
+        "Death",
+        cdmTableUI(id = "death"),
+        value = "death_module"
       )
     ),
     tabsetPanel(
