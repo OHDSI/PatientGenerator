@@ -1,7 +1,8 @@
 #' `patientChat()` generates synthetic patients in the OMOP-CDM using an LLM API.
 #'
 #' @description
-#' Requires an OPEN_AI_KEY in ~/.Renviron.
+#' Requires an OPENAI_API_KEY or ANTHROPIC_API_KEY in ~/.Renviron when using OpenAI or
+#' Anthropic models, respectively.
 #' After that just sent a prompt and save() the results.
 #' The JSON file can be used as an OMOP-CDM patient test set.
 #' @details
@@ -13,14 +14,16 @@
 #' This class allows testing patient sets created by the LLM, prompt engineering,
 #' integration of search tools and functionality, and creating a set of patients
 #' to test analytical packages.
-#' @returns 
+#' @returns
 #' A JSON response that includes: the natural language answer from the LLM and
 #' a JSON with test set patients in accordance to the provided schema.
 #' @importFrom ellmer chat_openai
+#' @importFrom ellmer chat_anthropic
+#' @importFrom ellmer chat_ollama
 #' @importFrom ellmer type_from_schema
 #' @importFrom jsonlite fromJSON
 #' @importFrom httr2 request req_headers req_perform resp_body_json
-#' @importFrom checkmate assertCharacter assertFileExists assertDirectoryExists
+#' @importFrom checkmate assertCharacter assertFileExists assertDirectoryExists assertChoice
 #' @importFrom tools file_path_sans_ext
 #' @importFrom R6 R6Class
 #' @importFrom cli cli_alert_success cli_progress_step
@@ -50,7 +53,8 @@ patientChat <- R6::R6Class(
     #' @description
     #' Create a new chat to create JSON test sets for OMOP-CDM.
     #' @param system_prompt Initial system prompt to impose behaviour to the LLM
-    #' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels()
+    #' @param provider The LLM provider; one of "openai" (default), "anthropic" or "ollama"
+    #' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels(provider)
     #' @param jsonSchemaPath The JSON schema to structure output from LLM
     #' @param echo How the output will be displayed in the console
     #' @param codelist_data A codelist with details to search for concepts ids
@@ -64,7 +68,7 @@ patientChat <- R6::R6Class(
                           codelist_data = NULL) {
 
       # Check API and available models -----------------------
-      # private$.api_check(model) 
+      # private$.api_check(model)
 
       # check JSON schema file -------------------------------
       private$.json_schema_check(jsonSchemaPath)
@@ -72,8 +76,8 @@ patientChat <- R6::R6Class(
       # System propmpt ---------------------------------------
       if (is.null(system_prompt)) {
         system_prompt <- "You are an expert generator of synthetic patient data.
-                          Your output must strictly adhere to the provided JSON schema. 
-                          All generated data, structure, tables, features and data types 
+                          Your output must strictly adhere to the provided JSON schema.
+                          All generated data, structure, tables, features and data types
                           must exclusively conform to the OMOP-CDM v5.4 standard"
       }
 
@@ -94,7 +98,7 @@ patientChat <- R6::R6Class(
           "domain_id",
           "vocabulary_id",
           "standard_concept"
-          ) %in% codelist_data |> 
+          ) %in% codelist_data |>
           names()
           )
           ) {
@@ -212,15 +216,29 @@ patientChat <- R6::R6Class(
 
     #' @description
     #' Retrieves available models from the LLM API.
-    availableModels = function() {
-      private$.check_api_key()
-      # Retrieve and check available models
-      response <- httr2::request("https://api.openai.com/v1/models") |>
+    availableModels = function(provider_name) {
+      if (provider_name == "ollama") {
+        return(ellmer::models_ollama()$id)
+      }
+
+      endpoint <- switch(
+        provider_name,
+        anthropic = "https://api.anthropic.com/v1/models",
+        openai = "https://api.openai.com/v1/models",
+        stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
+      )
+      api_key_name <- switch(
+        provider_name,
+        anthropic = "ANTHROPIC_API_KEY",
+        openai = "OPENAI_API_KEY",
+        stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
+      )
+
+      private$.check_api_key(api_key_name)
+
+      response <- httr2::request(endpoint) |>
         httr2::req_headers(
-          Authorization = paste(
-            "Bearer",
-            Sys.getenv("OPENAI_API_KEY")
-            )
+          Authorization = paste("Bearer", Sys.getenv(api_key_name))
         ) |>
         httr2::req_perform()
       models <- httr2::resp_body_json(response)
@@ -230,43 +248,49 @@ patientChat <- R6::R6Class(
   ),
 
   private = list(
-    
+
     .selectProvider = function(provider,
                                system_prompt,
                                model,
                                echo) {
-      
-      if (provider == "openai") {
-        self$chat <- ellmer::chat_openai(
-          system_prompt = system_prompt,
-          model = model,
-          echo = echo
-        )
-        cli::cli_alert_success("openai chat created")
-      } else if (provider == "ollama") {
-        self$chat <- ellmer::chat_ollama(
-          system_prompt = system_prompt,
-          model = model,
-          echo = echo
-        )
-        cli::cli_alert_success(
-          glue::glue(
-            "ollama chat created with {model}"
-            )
-        )
+
+      checkmate::assertChoice(provider, c("openai", "anthropic", "ollama"))
+
+      chat_fns <- list(
+        openai = ellmer::chat_openai,
+        ollama = ellmer::chat_ollama,
+        anthropic = ellmer::chat_anthropic
+      )
+
+      if (!provider %in% names(chat_fns)) {
+        stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
       }
-      
+
+      self$chat <- chat_fns[[provider]](
+        system_prompt = system_prompt,
+        model = model,
+        echo = echo
+      )
+
+      message <- switch(
+        provider,
+        openai = "openai chat created",
+        ollama = glue::glue("ollama chat created with {model}"),
+        anthropic = "anthropic chat created"
+      )
+
+      cli::cli_alert_success(message)
     },
 
     .api_check = function(model) {
       checkmate::assertCharacter(model)
-      api_models <- self$availableModels()
+      api_models <- self$availableModels(tolower(self$chat$get_provider()@name))
       if (!model %in% api_models) {
         stop(
           glue::glue("{model} not available.\n"),
           "\n These are some models that are available to you:\n",
           paste0("  - ", sample(api_models, 10), collapse = "\n"),
-          "\n For a complete list, call availableModels()\n",
+          "\n For a complete list, call availableModels(provider)\n",
           call. = FALSE
         )
       } else {
@@ -296,12 +320,12 @@ patientChat <- R6::R6Class(
       }
     },
 
-    .check_api_key = function(apiKeyName = "OPENAI_API_KEY") {
-      key <- Sys.getenv("OPENAI_API_KEY", unset = "")
+    .check_api_key = function(apiKeyName) {
+      key <- Sys.getenv(apiKeyName, unset = "")
       if (!nzchar(key)) {
         stop(
           "API key not found.\n",
-          "Set it with Sys.setenv(OPENAI_API_KEY = 'your_key') ",
+          glue::glue("Set it with Sys.setenv({apiKeyName} = 'your_key') "),
           "and/or add it to your ~/.Renviron.",
           call. = FALSE
         )

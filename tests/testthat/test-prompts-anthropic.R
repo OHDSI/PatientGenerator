@@ -1,5 +1,5 @@
 test_that("Diabetes simple", {
-  skip_if_no_openai()
+  skip_if_no_anthropic()
 
   expect_no_error({
     cdm <- TestGenerator::patientsCDM(
@@ -14,13 +14,13 @@ test_that("Diabetes simple", {
 })
 
 test_that("Diabetes workflow prompt", {
-  skip_if_no_openai()
+  skip_if_no_anthropic()
 
   # Get a glimpse of all available models
-  models <- PatientGenerator::availableModels("openai")
+  models <- PatientGenerator::availableModels("anthropic")
 
   # Create a chat instance
-  patientGenerator <- patientChat$new(model = "gpt-5.5")
+  patientGenerator <- patientChat$new(model = "claude-opus-5", provider = "anthropic")
 
   # Prompt a detailed description of test patients
   patientGenerator$prompt(
@@ -149,9 +149,9 @@ test_that("Diabetes workflow prompt", {
 })
 
 test_that("Ovarian cancer stages", {
-  skip_if_no_openai()
+  skip_if_no_anthropic()
 
-  patientGenerator <- PatientGenerator::patientChat$new()
+  patientGenerator <- PatientGenerator::patientChat$new(model = "claude-opus-5", provider = "anthropic")
 
   patientGenerator$prompt({
     "Five females (all over 18 years old) have an observation period from 2000 to 2024.

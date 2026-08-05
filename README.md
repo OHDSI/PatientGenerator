@@ -40,16 +40,17 @@ remotes::install_github("mi-erasmusmc/PatientGenerator")
 
 ### Synthetic Patient Generation with `patientChat`
 
-Set an `OPENAI_API_KEY` environment variable (e.g., via
-`usethis::edit_r_environ()`) to enable LLM access.
+Set an `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` environment variable (e.g., via
+`usethis::edit_r_environ()`) to enable LLM access to OpenAI or Anthropic / Claude, respectively.<br>You must procure an API key yourself; alternatively, it is possible to use a local Ollama model.
 
 Available models can be listed using
-`PatientGenerator::availableModels()`.
+`PatientGenerator::availableModels(provider)`.
 
 ``` r
 library(PatientGenerator)
 
 patientGenerator <- patientChat$new(
+  provider = "openai", # Possible options are "openai", "anthropic", or "ollama"
   model = "gpt-5.4",
   echo = "none"
 )
@@ -66,24 +67,24 @@ patientGenerator$prompt(
      - 10 adult patients
      - 5 female
      - 5 male
-  
+
    Observation Period:
      - Start date between date of birth and 2025-12-31
-  
+
    Condition Occurrence:
      - All patients must have Diabetes (condition_concept_id: 201826)
      - Start date between 2015-01-01 and 2020-12-31
-  
+
    Drug Exposure:
      - All patients must have Semaglutide (drug_concept_id: 19079450)
      - Exposure within 30 days post-index date
-  
+
    Measurement:
      - All patients must have Fasting glucose (measurement_concept_id: 3018251)
-  
+
    Procedure Occurrence:
      - 50% of patients must have Amputation of toe (procedure_concept_id: 4159766)
-  
+
    Output Requirements:
      - Populate only the tables specified in this prompt"
 )
@@ -102,8 +103,8 @@ cdm <- TestGenerator::patientsCDM(
   cdmVersion = "5.4"
 )
 
-cdm$person |> 
-  collect() |> 
+cdm$person |>
+  collect() |>
   print()
 ```
 

@@ -12,6 +12,8 @@ test_that("patientChat benchmark across all available models for diabetes + sema
   # ---------------------------------------------------------------------------
 
   skip_if_no_openai()
+  #skip_if_no_anthropic()
+  #skip_if_no_ollama()
   testthat::skip_on_cran()
 
   run_benchmark <- tolower(Sys.getenv("PATIENTGENERATOR_RUN_MODEL_BENCHMARK", "false")) %in%
@@ -22,7 +24,9 @@ test_that("patientChat benchmark across all available models for diabetes + sema
     )
   }
 
-  models <- unique(PatientGenerator::availableModels())
+  models <- unique(PatientGenerator::availableModels("openai"))
+  #models <- unique(PatientGenerator::availableModels("anthropic"))
+  #models <- unique(PatientGenerator::availableModels("ollama"))
   if (length(models) == 0) {
     testthat::skip("No models returned by availableModels().")
   }
