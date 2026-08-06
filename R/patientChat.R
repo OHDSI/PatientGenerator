@@ -17,10 +17,7 @@
 #' @returns
 #' A JSON response that includes: the natural language answer from the LLM and
 #' a JSON with test set patients in accordance to the provided schema.
-#' @importFrom ellmer chat_openai
-#' @importFrom ellmer chat_anthropic
-#' @importFrom ellmer chat_ollama
-#' @importFrom ellmer type_from_schema
+#' @importFrom ellmer chat_openai chat_anthropic chat_ollama type_from_schema models_ollama
 #' @importFrom jsonlite fromJSON
 #' @importFrom httr2 request req_headers req_perform resp_body_json
 #' @importFrom checkmate assertCharacter assertFileExists assertDirectoryExists assertChoice
@@ -54,7 +51,7 @@ patientChat <- R6::R6Class(
     #' Create a new chat to create JSON test sets for OMOP-CDM.
     #' @param system_prompt Initial system prompt to impose behaviour to the LLM
     #' @param provider The LLM provider; one of "openai" (default), "anthropic" or "ollama"
-    #' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels(provider)
+    #' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels()
     #' @param jsonSchemaPath The JSON schema to structure output from LLM
     #' @param echo How the output will be displayed in the console
     #' @param codelist_data A codelist with details to search for concepts ids
@@ -216,7 +213,9 @@ patientChat <- R6::R6Class(
 
     #' @description
     #' Retrieves available models from the LLM API.
-    availableModels = function(provider_name) {
+    availableModels = function() {
+      provider_name <- tolower(self$chat$get_provider()@name)
+
       if (provider_name == "ollama") {
         return(ellmer::models_ollama()$id)
       }
@@ -284,7 +283,7 @@ patientChat <- R6::R6Class(
 
     .api_check = function(model) {
       checkmate::assertCharacter(model)
-      api_models <- self$availableModels(tolower(self$chat$get_provider()@name))
+      api_models <- self$availableModels()
       if (!model %in% api_models) {
         stop(
           glue::glue("{model} not available.\n"),

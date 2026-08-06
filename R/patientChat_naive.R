@@ -17,14 +17,11 @@
 #'
 #' @param prompt A prompt to the LLM, in character or JSON response.
 #' @param provider The LLM provider; one of "openai" (default), "anthropic" or "ollama"
-#' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels(provider)
+#' @param model Such as "gpt-5.3". For a complete list, call availableModels()
 #' @param jsonSchemaPath Path to a JSON schema used to structure the response.
 #'
 #' @returns A JSON response that includes: the natural language answer from the LLM and a JSON with test set patients in accordance to the provided schema.
-#' @importFrom ellmer chat_openai
-#' @importFrom ellmer chat_anthropic
-#' @importFrom ellmer chat_ollama
-#' @importFrom ellmer type_from_schema
+#' @importFrom ellmer chat_openai chat_anthropic chat_ollama type_from_schema models_ollama
 #' @importFrom jsonlite fromJSON
 #' @export
 patientChatNaive <- function(prompt = "### Give me a sample of five patients",
