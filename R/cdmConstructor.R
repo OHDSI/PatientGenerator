@@ -336,13 +336,17 @@ cdmConstructor <- R6::R6Class(
       cdm_data <- list(
         person = self$person$data()
         )
-      cdm_data <- c(
-        cdm_data,
-        stats::setNames(
-          lapply(self$tables, function(table_name) self[[table_name]]$data()),
-          self$tables
-          )
-        )
+      table_data <- stats::setNames(
+        lapply(self$tables, function(table_name) self[[table_name]]$data()),
+        self$tables
+      )
+      # Pregnancy is a PatientGenerator extension rather than an OMOP CDM
+      # table. Excluding an empty instance preserves compatibility with
+      # downstream OMOP tooling that rejects unknown tables.
+      if (!is.null(table_data$pregnancy) && nrow(table_data$pregnancy) == 0) {
+        table_data$pregnancy <- NULL
+      }
+      cdm_data <- c(cdm_data, table_data)
 
         cdm_data_json <- jsonlite::toJSON(
           cdm_data,

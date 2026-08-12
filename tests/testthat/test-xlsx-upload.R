@@ -55,3 +55,26 @@ test_that("cdmConstructor exports xlsx test data that can be uploaded again", {
       )
     )
 })
+
+test_that("cdmConstructor loads the pregnancy sheet from PET test data", {
+  skip_if_not_installed("readxl")
+
+  xlsx_path <- testthat::test_path("../../extras/testDataPET.xlsx")
+  skip_if_not(file.exists(xlsx_path))
+
+  cdm <- new_cdm()
+  result <- cdm$loadXlsxTestSet(xlsx_path)
+
+  expect_in("pregnancy", result$loaded)
+  expect_equal(nrow(cdm$pregnancy$data()), 17L)
+  expect_equal(
+    names(cdm$pregnancy$data()),
+    c(
+      "person_id", "pregnancy_id", "pregnancy_start_date",
+      "pregnancy_end_date", "gestational_length_in_day",
+      "pregnancy_outcome", "pregnancy_mode_delivery", "pregnancy_single",
+      "prev_pregnancy_gravidity"
+    )
+  )
+  expect_s3_class(cdm$pregnancy$data()$pregnancy_start_date, "Date")
+})

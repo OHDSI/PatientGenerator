@@ -39,6 +39,13 @@ isConceptInputColumn <- function(col_name) {
     )
 }
 
+isNumericInputColumn <- function(col_name) {
+  col_name %in% c(
+    "gestational_length_in_day",
+    "prev_pregnancy_gravidity"
+  )
+}
+
 createInputs <- function(ns, type, columns, inverse = FALSE) {
   if (inverse) {
     columns <- setdiff(columnNames(type) |> names(), columns)
@@ -57,6 +64,12 @@ createInputs <- function(ns, type, columns, inverse = FALSE) {
              textInput(ns(col_name),
                        label = label),
              uiOutput(ns(paste0(col_name, "_status")))
+      )
+    } else if (isNumericInputColumn(col_name)) {
+      column(2,
+             class = "cdm-input-col",
+             textInput(ns(col_name),
+                       label = label)
       )
     } else {
       if (!stringr::str_detect(col_name, "person_id")) {
@@ -90,6 +103,12 @@ updateInputs <- function(session, ns, type, cdmTableRow, columns) {
         max = NULL
        )
     } else if (isConceptInputColumn(col_name)) {
+      updateTextInput(
+        session = session,
+        inputId = col_name,
+        value = cdmTableRow[[col_name]]
+        )
+    } else if (isNumericInputColumn(col_name)) {
       updateTextInput(
         session = session,
         inputId = col_name,

@@ -156,6 +156,33 @@ test_that("cdmTableServer persists manually entered concept ids", {
   expect_equal(cdm$measurement$data()$measurement_concept_id[[1]], 3018251L)
 })
 
+test_that("pregnancy numeric fields use editable text inputs", {
+  expect_true(isNumericInputColumn("gestational_length_in_day"))
+  expect_true(isNumericInputColumn("prev_pregnancy_gravidity"))
+  expect_false(isNumericInputColumn("pregnancy_outcome"))
+
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1990L)
+  cdm$pregnancy$add(person_id = 1L)
+
+  shiny::testServer(cdm_table_server,
+    args = list(
+      id = "pregnancy",
+      cdm = cdm,
+      person_id_selected = shiny::reactive("1"),
+      syncing = shiny::reactiveVal(FALSE),
+      concept_lookup = function(concept_id) "(Pregnancy outcome)"
+    ), {
+      session$setInputs(pregnancy_id = 1L)
+      session$setInputs(gestational_length_in_day = "280")
+      session$setInputs(prev_pregnancy_gravidity = "2")
+    }
+  )
+
+  expect_equal(cdm$pregnancy$data()$gestational_length_in_day[[1]], 280L)
+  expect_equal(cdm$pregnancy$data()$prev_pregnancy_gravidity[[1]], 2L)
+})
+
 test_that("cdmTableServer persists manually entered procedure dates", {
   cdm <- new_cdm()
   cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1970L)

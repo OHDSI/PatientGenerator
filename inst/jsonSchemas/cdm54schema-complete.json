@@ -6,7 +6,6 @@
   "required": [
       "person",
       "observation_period",
-      "pregnancy",
       "death",
       "visit_occurrence",
       "visit_detail",
