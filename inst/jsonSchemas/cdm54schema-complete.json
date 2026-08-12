@@ -6,6 +6,7 @@
   "required": [
       "person",
       "observation_period",
+      "pregnancy",
       "death",
       "visit_occurrence",
       "visit_detail",
@@ -186,6 +187,45 @@
           },
           "period_type_concept_id": {
             "type": "integer"
+          }
+        }
+      }
+    },
+    "pregnancy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["person_id", "pregnancy_id", "pregnancy_start_date", "pregnancy_end_date", "gestational_length_in_day", "pregnancy_outcome", "pregnancy_mode_delivery", "pregnancy_single", "prev_pregnancy_gravidity"],
+        "properties": {
+          "person_id": {
+            "type": "integer"
+          },
+          "pregnancy_id": {
+            "type": "integer"
+          },
+          "pregnancy_start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "pregnancy_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "gestational_length_in_day": {
+            "type": ["integer", "null"]
+          },
+          "pregnancy_outcome": {
+            "type": ["integer", "null"]
+          },
+          "pregnancy_mode_delivery": {
+            "type": ["integer", "null"]
+          },
+          "pregnancy_single": {
+            "type": ["integer", "null"]
+          },
+          "prev_pregnancy_gravidity": {
+            "type": ["integer", "null"]
           }
         }
       }

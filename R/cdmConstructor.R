@@ -10,6 +10,7 @@ cdmConstructor <- R6::R6Class(
     procedure_occurrence = NULL,
     observation = NULL,
     death = NULL,
+    pregnancy = NULL,
     initialize = function(tables = supportedCdmTables()) {
       self$tables <- tables
       self$person <- personTable$new()
@@ -59,7 +60,16 @@ cdmConstructor <- R6::R6Class(
           }
           if (stringr::str_detect(col_name, "date")) {
             as.Date(value)
-          } else if (stringr::str_detect(col_name, "concept") & !stringr::str_detect(col_name, "gender")) {
+          } else if (
+            stringr::str_detect(col_name, "concept") ||
+              col_name %in% c(
+                "gestational_length_in_day",
+                "pregnancy_outcome",
+                "pregnancy_mode_delivery",
+                "pregnancy_single",
+                "prev_pregnancy_gravidity"
+              )
+            ) {
             as.integer(value)
           } else {
             as.character(value)
@@ -113,7 +123,16 @@ cdmConstructor <- R6::R6Class(
         for (col_name in names(new_data)) {
           if (stringr::str_detect(col_name, "date")) {
             new_value <- new_data[[col_name]] |> as.Date()
-          } else if (stringr::str_detect(col_name, "concept") & !stringr::str_detect(col_name, "gender")) {
+          } else if (
+            stringr::str_detect(col_name, "concept") ||
+              col_name %in% c(
+                "gestational_length_in_day",
+                "pregnancy_outcome",
+                "pregnancy_mode_delivery",
+                "pregnancy_single",
+                "prev_pregnancy_gravidity"
+              )
+            ) {
             new_value <- new_data[[col_name]] |> as.integer()
           } else {
             new_value <- new_data[[col_name]] |> as.character()
@@ -557,6 +576,13 @@ cdmConstructor <- R6::R6Class(
         )
     },
     .normalizeImportedTable = function(tableName, table_data) {
+      annotation_columns <- names(table_data)[
+        tolower(names(table_data)) %in% c("comment", "comments")
+      ]
+      if (length(annotation_columns) > 0) {
+        table_data[, (annotation_columns) := NULL]
+      }
+
       if (identical(tableName, "death")) {
         unsupported_id_columns <- intersect(
           c("death_id", "death_occurrence_id"),
@@ -597,6 +623,17 @@ cdmConstructor <- R6::R6Class(
             32817L,
             44191562L
             )
+        } else if (private$.tableName == "pregnancy") {
+          column_names <- c(
+            "pregnancy_start_date",
+            "pregnancy_end_date",
+            "gestational_length_in_day"
+          )
+          values <- list(
+            as.Date("2010-02-28"),
+            as.Date("2010-11-22"),
+            267L
+          )
         } else if (private$.tableName %in% c("measurement", "observation")) {
           # this table has no end date
           column_names <- column_names |> head(2)

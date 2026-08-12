@@ -29,6 +29,16 @@ inputDisplayLabel <- function(col_name, type) {
   default_label(display_name)
 }
 
+isConceptInputColumn <- function(col_name) {
+  (stringr::str_detect(col_name, "concept") &&
+    !stringr::str_detect(col_name, "gender")) ||
+    col_name %in% c(
+      "pregnancy_outcome",
+      "pregnancy_mode_delivery",
+      "pregnancy_single"
+    )
+}
+
 createInputs <- function(ns, type, columns, inverse = FALSE) {
   if (inverse) {
     columns <- setdiff(columnNames(type) |> names(), columns)
@@ -41,7 +51,7 @@ createInputs <- function(ns, type, columns, inverse = FALSE) {
              dateInput(ns(col_name),
                        label = label)
       )
-    } else if (stringr::str_detect(col_name, "concept") & !stringr::str_detect(col_name, "gender")) {
+    } else if (isConceptInputColumn(col_name)) {
       column(2,
              class = "cdm-input-col",
              textInput(ns(col_name),
@@ -79,7 +89,7 @@ updateInputs <- function(session, ns, type, cdmTableRow, columns) {
         min = NULL,
         max = NULL
        )
-    } else if (stringr::str_detect(col_name, "concept") & !stringr::str_detect(col_name, "gender")) {
+    } else if (isConceptInputColumn(col_name)) {
       updateTextInput(
         session = session,
         inputId = col_name,

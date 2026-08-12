@@ -48,7 +48,9 @@ cdmTable <- R6::R6Class(
     },
     .tableNameConceptId = function() {
       # browser()
-      if (private$.tableName == "condition_occurrence") {
+      if (private$.tableName == "pregnancy") {
+        return("pregnancy_outcome")
+      } else if (private$.tableName == "condition_occurrence") {
         table_id <- "condition"
       } else if (private$.tableName == "procedure_occurrence") {
         table_id <- "procedure"
