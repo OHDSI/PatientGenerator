@@ -1,3 +1,18 @@
+designerTableChoices <- function() {
+  table_labels <- c(
+    observation_period = "Observation Period",
+    condition_occurrence = "Condition Occurrence",
+    drug_exposure = "Drug Exposure",
+    measurement = "Measurement",
+    procedure_occurrence = "Procedure Occurrence",
+    observation = "Observation",
+    death = "Death",
+    pregnancy = "Pregnancy"
+  )
+  table_names <- supportedCdmTables()
+  stats::setNames(table_names, table_labels[table_names])
+}
+
 #' `patientDesigner()` is a visual interface based on D3 to construct test datasets for the OMOP-CDM
 #'
 #' @param path Optional folder containing JSON test sets.
@@ -9,6 +24,8 @@
 #' already exists.
 #' @param launch.browser Passed to `shiny::runApp()` when `makePublishable` is TRUE.
 #' @param includeChat If TRUE, include the chat-driven dataset generator tab.
+#' @param visibleTables Optional character vector of event tables to show when
+#' the Designer opens. `NULL` shows all supported event tables.
 #' @returns A Shiny app
 #' @import r2d3 shiny bslib dplyr
 #' @importFrom stats setNames
@@ -20,14 +37,28 @@ patientDesigner <- function(path = NULL,
                             publishDir = file.path(getwd(), "PatientGeneratorApp"),
                             overwritePublishDir = FALSE,
                             launch.browser = FALSE,
-                            includeChat = FALSE) {
+                            includeChat = FALSE,
+                            visibleTables = NULL) {
+
+  if (!is.null(visibleTables)) {
+    checkmate::assertCharacter(visibleTables, any.missing = FALSE)
+    unsupported_tables <- setdiff(visibleTables, supportedCdmTables())
+    if (length(unsupported_tables) > 0) {
+      stop(
+        "'visibleTables' contains unsupported table(s): ",
+        paste(unsupported_tables, collapse = ", "),
+        call. = FALSE
+      )
+    }
+  }
 
   if (isTRUE(makePublishable)) {
     publishDir <- preparePublishablePatientDesigner(
       path = path,
       publishDir = publishDir,
       overwritePublishDir = overwritePublishDir,
-      includeChat = includeChat
+      includeChat = includeChat,
+      visibleTables = visibleTables
     )
     if (launch.browser) {
       options(shiny.launch.browser = TRUE)
@@ -108,8 +139,19 @@ patientDesigner <- function(path = NULL,
     )
   )
 
+  table_choices <- designerTableChoices()
+  event_tables <- unname(table_choices)
+  initial_visible_tables <- visibleTables %||% event_tables
+  visible_event_tables_condition <- paste0(
+    "input.visible_tables && [",
+    paste(shQuote(event_tables), collapse = ", "),
+    "].some(function(table) { return input.visible_tables.indexOf(table) >= 0; })"
+  )
+
   designerPanel <- tagList(
-    tabsetPanel(
+    conditionalPanel(
+      condition = visible_event_tables_condition,
+      tabsetPanel(
       id = "cdm_table_tabs",
       tabPanel(
         "Observation Period",
@@ -150,6 +192,7 @@ patientDesigner <- function(path = NULL,
         "Pregnancy",
         cdmTableUI(id = "pregnancy"),
         value = "pregnancy_module"
+      )
       )
     ),
     tabsetPanel(
@@ -288,6 +331,18 @@ patientDesigner <- function(path = NULL,
           "Download Test Set as XLSX",
           icon = icon("download")
         ),
+        hr(),
+        selectizeInput(
+          "visible_tables",
+          "Visible tables",
+          choices = table_choices,
+          selected = initial_visible_tables,
+          multiple = TRUE,
+          options = list(
+            plugins = list("remove_button"),
+            placeholder = "Select tables"
+          )
+        ),
         position = c("left"),
         open = "open"
         # selectInput("theme", "Bootswatch theme:", bootswatch_themes, selected = "flatly")
@@ -328,6 +383,32 @@ patientDesigner <- function(path = NULL,
     
     # Create CDM object
     cdm <- cdmConstructor$new()
+
+    observeEvent(input$visible_tables, {
+      visible_tables <- input$visible_tables %||% character()
+      visible_event_tables <- intersect(event_tables, visible_tables)
+      current_tab <- input$cdm_table_tabs %||% ""
+
+      for (table_name in event_tables) {
+        tab_target <- paste0(table_name, "_module")
+        if (table_name %in% visible_event_tables) {
+          showTab("cdm_table_tabs", target = tab_target, session = session)
+        } else {
+          hideTab("cdm_table_tabs", target = tab_target, session = session)
+        }
+      }
+
+      if (
+        length(visible_event_tables) > 0 &&
+          !current_tab %in% paste0(visible_event_tables, "_module")
+        ) {
+        updateTabsetPanel(
+          session,
+          "cdm_table_tabs",
+          selected = paste0(visible_event_tables[[1]], "_module")
+        )
+      }
+    }, ignoreInit = FALSE)
     
     # Wipe clean
     observeEvent(input$new_test_set, {
@@ -1039,7 +1120,8 @@ patientDesigner <- function(path = NULL,
 preparePublishablePatientDesigner <- function(path,
                                               publishDir,
                                               overwritePublishDir,
-                                              includeChat = FALSE) {
+                                              includeChat = FALSE,
+                                              visibleTables = NULL) {
   templateDir <- system.file("shiny", package = "PatientGenerator")
   if (!nzchar(templateDir) || !dir.exists(templateDir)) {
     stop("Packaged Shiny template directory not found.", call. = FALSE)
@@ -1090,6 +1172,8 @@ preparePublishablePatientDesigner <- function(path,
       paste0(
         "PatientGenerator::patientDesigner(path = path, includeChat = ",
         if (isTRUE(includeChat)) "TRUE" else "FALSE",
+        ", visibleTables = ",
+        deparse(visibleTables, width.cutoff = 500),
         ")"
       )
     ),

@@ -10,7 +10,8 @@ patientDesigner(
   publishDir = file.path(getwd(), "PatientGeneratorApp"),
   overwritePublishDir = FALSE,
   launch.browser = FALSE,
-  includeChat = FALSE
+  includeChat = FALSE,
+  visibleTables = NULL
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ already exists.}
 \item{launch.browser}{Passed to \code{shiny::runApp()} when \code{makePublishable} is TRUE.}
 
 \item{includeChat}{If TRUE, include the chat-driven dataset generator tab.}
+
+\item{visibleTables}{Optional character vector of event tables to show when
+the Designer opens. \code{NULL} shows all supported event tables.}
 }
 \value{
 A Shiny app
