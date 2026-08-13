@@ -2,6 +2,19 @@ test_that("patientDesigner exposes configurable path argument", {
   expect_true("path" %in% names(formals(patientDesigner)))
 })
 
+test_that("patientDesigner provides a picker for all available Designer tables", {
+  table_choices <- getFromNamespace(
+    "designerTableChoices",
+    "PatientGenerator"
+  )()
+
+  expect_setequal(
+    unname(table_choices),
+    supportedCdmTables()
+  )
+  expect_false("person" %in% unname(table_choices))
+})
+
 test_that("patientDesigner can prepare a publishable app directory", {
   prepare_publishable <- getFromNamespace(
     "preparePublishablePatientDesigner",
