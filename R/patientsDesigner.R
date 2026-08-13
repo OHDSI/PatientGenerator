@@ -24,6 +24,8 @@ designerTableChoices <- function() {
 #' already exists.
 #' @param launch.browser Passed to `shiny::runApp()` when `makePublishable` is TRUE.
 #' @param includeChat If TRUE, include the chat-driven dataset generator tab.
+#' @param visibleTables Optional character vector of event tables to show when
+#' the Designer opens. `NULL` shows all supported event tables.
 #' @returns A Shiny app
 #' @import r2d3 shiny bslib dplyr
 #' @importFrom stats setNames
@@ -35,14 +37,28 @@ patientDesigner <- function(path = NULL,
                             publishDir = file.path(getwd(), "PatientGeneratorApp"),
                             overwritePublishDir = FALSE,
                             launch.browser = FALSE,
-                            includeChat = FALSE) {
+                            includeChat = FALSE,
+                            visibleTables = NULL) {
+
+  if (!is.null(visibleTables)) {
+    checkmate::assertCharacter(visibleTables, any.missing = FALSE)
+    unsupported_tables <- setdiff(visibleTables, supportedCdmTables())
+    if (length(unsupported_tables) > 0) {
+      stop(
+        "'visibleTables' contains unsupported table(s): ",
+        paste(unsupported_tables, collapse = ", "),
+        call. = FALSE
+      )
+    }
+  }
 
   if (isTRUE(makePublishable)) {
     publishDir <- preparePublishablePatientDesigner(
       path = path,
       publishDir = publishDir,
       overwritePublishDir = overwritePublishDir,
-      includeChat = includeChat
+      includeChat = includeChat,
+      visibleTables = visibleTables
     )
     if (launch.browser) {
       options(shiny.launch.browser = TRUE)
@@ -125,6 +141,7 @@ patientDesigner <- function(path = NULL,
 
   table_choices <- designerTableChoices()
   event_tables <- unname(table_choices)
+  initial_visible_tables <- visibleTables %||% event_tables
   visible_event_tables_condition <- paste0(
     "input.visible_tables && [",
     paste(shQuote(event_tables), collapse = ", "),
@@ -313,7 +330,7 @@ patientDesigner <- function(path = NULL,
           "visible_tables",
           "Visible tables",
           choices = table_choices,
-          selected = unname(table_choices),
+          selected = initial_visible_tables,
           multiple = TRUE,
           options = list(
             plugins = list("remove_button"),
@@ -1070,7 +1087,8 @@ patientDesigner <- function(path = NULL,
 preparePublishablePatientDesigner <- function(path,
                                               publishDir,
                                               overwritePublishDir,
-                                              includeChat = FALSE) {
+                                              includeChat = FALSE,
+                                              visibleTables = NULL) {
   templateDir <- system.file("shiny", package = "PatientGenerator")
   if (!nzchar(templateDir) || !dir.exists(templateDir)) {
     stop("Packaged Shiny template directory not found.", call. = FALSE)
@@ -1121,6 +1139,8 @@ preparePublishablePatientDesigner <- function(path,
       paste0(
         "PatientGenerator::patientDesigner(path = path, includeChat = ",
         if (isTRUE(includeChat)) "TRUE" else "FALSE",
+        ", visibleTables = ",
+        deparse(visibleTables, width.cutoff = 500),
         ")"
       )
     ),
