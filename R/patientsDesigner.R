@@ -282,6 +282,17 @@ patientDesigner <- function(path = NULL,
         display: flex;
         align-items: flex-end;
       }
+
+      /* Keep saved test sets compact so the table picker remains visible. */
+      .test-set-list {
+        max-height: 9rem;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+      }
+
+      .test-set-list .shiny-html-output {
+        margin-bottom: 0;
+      }
     "))
     ),
     layout_sidebar(
@@ -303,18 +314,11 @@ patientDesigner <- function(path = NULL,
             )
           ),
         br(),
-        br(),
         h6(strong("Test Sets")),
-        uiOutput("sidebar_file_list"),
-        br(),
-        br(),
-        br(),
-        br(),
-        br(),
-        br(),
-        br(),
-        br(),
-        br(),
+        div(
+          class = "test-set-list",
+          uiOutput("sidebar_file_list")
+        ),
         br(),
         actionButton(
           "save_current",
@@ -323,13 +327,15 @@ patientDesigner <- function(path = NULL,
         ),
         downloadButton(
           "downloadTestSet",
-          "Download Test Set as JSON",
-          icon = icon("download")
+          "Download JSON",
+          icon = icon("download"),
+          class = "btn-sm"
           ),
         downloadButton(
           "downloadTestSetXlsx",
-          "Download Test Set as XLSX",
-          icon = icon("download")
+          "Download XLSX",
+          icon = icon("download"),
+          class = "btn-sm"
         ),
         hr(),
         selectizeInput(
