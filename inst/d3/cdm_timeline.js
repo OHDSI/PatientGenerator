@@ -128,10 +128,23 @@ function endColor(type) {
 
 let currentTransform = d3.zoomIdentity;
 
-var domainStart = new Date(1980, 0, 1);
-    domainEnd = new Date(2026, 0, 1);
-
 r2d3.onRender(function(data, svg, width, height, options) {
+  const observationPeriodStart = d3.min(
+    data.filter(d => d.type === "observation_period"),
+    d => {
+      const startDate = new Date(d.start_date);
+      return Number.isNaN(startDate.getTime()) ? undefined : startDate;
+    }
+  );
+  const domainStart = observationPeriodStart
+    ? new Date(observationPeriodStart)
+    : new Date(1980, 0, 1);
+
+  if (observationPeriodStart) {
+    domainStart.setUTCFullYear(domainStart.getUTCFullYear() - 5);
+  }
+
+  const domainEnd = new Date(2026, 0, 1);
   const tooltipId = "patient-generator-timeline-tooltip";
   let tooltip = d3.select(`body #${tooltipId}`);
 
