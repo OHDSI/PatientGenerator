@@ -141,7 +141,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     : new Date(1980, 0, 1);
 
   if (observationPeriodStart) {
-    domainStart.setUTCFullYear(domainStart.getUTCFullYear() - 5);
+    domainStart.setUTCFullYear(domainStart.getUTCFullYear() - 2);
   }
 
   const domainEnd = new Date(2026, 0, 1);
