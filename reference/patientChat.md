@@ -99,7 +99,7 @@ Create a new chat to create JSON test sets for OMOP-CDM.
 
 #### Returns
 
-A new `Person` object.
+A new `patientChat` object.
 
 ------------------------------------------------------------------------
 
