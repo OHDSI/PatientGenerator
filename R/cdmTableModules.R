@@ -78,23 +78,23 @@ cdmTableServer <- function(
       session
     ) {
       ns <- session$ns
-      table_event_id <- paste(
-        id,
-        "id",
-        sep = "_"
-      )
+      table_event_id <- cdm[[id]]$tableNameId()
       table_concept_id <- cdm[[id]]$tableNameConceptId()
       table_start_date <- cdm[[id]]$tableNameDate("start")
       table_end_date <- cdm[[id]]$tableNameDate("end")
       if (length(table_end_date) == 0) {
         table_end_date <- NULL
       }
-      columnList <- columnNames(
+      all_columns <- columnNames(
         name = id,
         limit = NULL
       ) |>
-        names() |>
-        tail(-2)
+        names()
+      columnList <- if (identical(table_event_id, "person_id")) {
+        all_columns |> tail(-1)
+      } else {
+        all_columns |> tail(-2)
+      }
       concept_columns <- columnList[
         stringr::str_detect(columnList, "concept") &
           !stringr::str_detect(columnList, "gender")
@@ -119,17 +119,35 @@ cdmTableServer <- function(
       lapply(concept_status_ids, function(output_id) {
         output[[output_id]] <- shiny::renderUI(NULL)
       })
+      field_update <- reactiveVal(0L)
 
       ### ADD --------------------------------------------------------------------
       observeEvent(
         input$add,
         {
-          # browser()
           # Require add button and the person id
           req(input$add)
           req(person_id_selected)
           # Create new event for that person in object
-          cdm[[id]]$add(person_id = person_id_selected() |> as.integer())
+          date_inputs <- columnList[grep("_date$", columnList)]
+          add_inputs <- c(date_inputs, intersect(table_concept_id, columnList))
+          input_data <- setNames(
+            lapply(add_inputs, function(col) input[[col]]),
+            add_inputs
+          )
+          input_data <- input_data[
+            vapply(input_data, function(value) {
+              if (is.null(value) || length(value) == 0 || all(is.na(value))) {
+                return(FALSE)
+              }
+              any(nzchar(trimws(as.character(value))))
+            }, logical(1))
+          ]
+          args <- c(
+            list(person_id = person_id_selected() |> as.integer()),
+            input_data
+          )
+          do.call(cdm[[id]]$add, args)
           # Pull data from that person
           cdmTable <- cdm[[id]]$data() %>%
             dplyr::filter(
@@ -246,8 +264,8 @@ cdmTableServer <- function(
           list(event_id = as.integer(input[[table_event_id]])),
           no_date_inputs
         )
-        # browser()
         do.call(cdm[[id]]$update, args)
+        field_update(field_update() + 1L)
       })
 
       # # Delete event
@@ -322,6 +340,7 @@ cdmTableServer <- function(
           list(
             add_click = reactive(input$add),
             delete_click = reactive(input$delete),
+            field_update = reactive(field_update()),
             elongation_click = reactive(elongation_click())
           ),
           setNames(list(reactive(input[[table_event_id]])), table_event_id)

@@ -1,3 +1,15 @@
+# PatientGenerator 0.2.3
+
+* Parameter `includeChat` in `patientDesigner()`.
+
+# PatientGenerator 0.2.2
+
+* Fix for concept ids not being maintained when we try to create patients/conditions/procedures.
+
+# PatientGenerator 0.2.1
+
+* Added 'Death' table to `patientDesigner()` required for Survival analysis.
+
 # PatientGenerator 0.2.0
 
 * Fixed D3 GUI crash related to empty end dates. For now, the GUI will fill out automatically end dates.
