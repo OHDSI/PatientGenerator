@@ -83,7 +83,7 @@ generator$save("my_test")
     \if{html}{\out{</div>}}
   }
   \subsection{Returns}{
-    A new \code{Person} object.
+    A new \code{patientChat} object.
   }
 }
 
