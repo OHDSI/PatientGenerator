@@ -21,3 +21,6 @@ mod_test_file_updated.json
 docs
 .positai
 gui-crash.md
+
+/.quarto/
+**/*.quarto_ipynb
