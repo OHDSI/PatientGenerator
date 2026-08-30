@@ -121,18 +121,14 @@ test_that("Diabetes workflow prompt", {
        style = "darwin"
      )
  })
- 
  patientGenerator$prompt(
    "Within the current records in the drug exposure tables, each drug exposure should be 30 days long"
  )
- 
  patientGenerator$save("test_diabetes_patients_30")
- 
  cdm <- TestGenerator::patientsCDM(
    testName = "test_diabetes_patients_30",
    cdmVersion = "5.4"
  )
- 
  cdm$drug_exposure %>% 
    select(person_id,
           drug_exposure_start_date,
@@ -145,14 +141,11 @@ test_that("Diabetes workflow prompt", {
    pull(days) %>% 
    unique() %>% 
    expect_equal(30)
- 
 })
 
 test_that("Ovarian cancer stages", {
   skip_if_no_openai()
-  
   patientGenerator <- PatientGenerator::patientChat$new()
-  
   patientGenerator$prompt({
     "Five females (all over 18 years old) have an observation period from 2000 to 2024.
 
@@ -178,16 +171,13 @@ test_that("Ovarian cancer stages", {
       - **Female 5**:
       - No cancer stage measurement record"
   })
-  
   patientGenerator$save("patient_chat_ovarian_stages")
-  
   expect_no_error({
     cdm <- TestGenerator::patientsCDM(
       testName = "patient_chat_ovarian_stages",
       cdmVersion = "5.4"
     )
   })
-  
 })
 
 test_that("pregnancy prompt", {
