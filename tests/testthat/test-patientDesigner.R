@@ -2,6 +2,30 @@ test_that("patientDesigner exposes configurable path argument", {
   expect_true("path" %in% names(formals(patientDesigner)))
 })
 
+test_that("patientDesigner accepts optional default visible tables", {
+  expect_null(formals(patientDesigner)$visibleTables)
+  expect_no_error(
+    patientDesigner(visibleTables = c("observation_period", "condition_occurrence"))
+  )
+  expect_error(
+    patientDesigner(visibleTables = "not_a_table"),
+    "unsupported table"
+  )
+})
+
+test_that("patientDesigner provides a picker for all available Designer tables", {
+  table_choices <- getFromNamespace(
+    "designerTableChoices",
+    "PatientGenerator"
+  )()
+
+  expect_setequal(
+    unname(table_choices),
+    supportedCdmTables()
+  )
+  expect_false("person" %in% unname(table_choices))
+})
+
 test_that("patientDesigner can prepare a publishable app directory", {
   prepare_publishable <- getFromNamespace(
     "preparePublishablePatientDesigner",
