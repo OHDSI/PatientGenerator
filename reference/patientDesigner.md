@@ -12,7 +12,8 @@ patientDesigner(
   publishDir = file.path(getwd(), "PatientGeneratorApp"),
   overwritePublishDir = FALSE,
   launch.browser = FALSE,
-  includeChat = FALSE
+  includeChat = FALSE,
+  visibleTables = NULL
 )
 ```
 
@@ -45,6 +46,11 @@ patientDesigner(
 - includeChat:
 
   If TRUE, include the chat-driven dataset generator tab.
+
+- visibleTables:
+
+  Optional character vector of event tables to show when the Designer
+  opens. `NULL` shows all supported event tables.
 
 ## Value
 
