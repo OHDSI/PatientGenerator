@@ -23,7 +23,8 @@
       "provider",
       "payer_plan_period",
       "cost",
-      "fact_relationship"
+      "fact_relationship",
+      "pregnancy"
   ],
   "properties": {
     "person": {

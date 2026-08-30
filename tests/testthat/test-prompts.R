@@ -190,3 +190,59 @@ test_that("Ovarian cancer stages", {
   
 })
 
+test_that("pregnancy prompt", {
+  skip_if_no_openai()
+  model <- pick_openai_model()
+  patientGenerator <- patientChat$new(model = "gpt-5.6-luna")
+  patientGenerator$prompt(
+    "Population (person table):
+    - 10 adult patients
+    - 5 female, use gender_concept_id = 8532
+    - 5 male, use gender_concept_id = 8507
+
+   Observation Period:
+    - Start date between date of birth each person and end of observation 2025-12-31
+
+   Condition Occurrence:
+    - All patients must have diabetes (condition_concept_id: 201826)
+
+   Pregnancy (extension table):
+    - All 5 females are pregnant. 
+    - 24 weeks before their condition occurrence of diabetes.
+    - Fill synthetic for all columns. 
+
+   Output Requirements:
+    - Fill only specified tables in this prompt
+    - All patients in person have an observation period
+    - Fill out end dates in every table where you can"
+  )
+  patientGenerator$save(
+    name = "pregnancy_test"
+  )
+  cdm <- TestGenerator::patientsCDM(
+    testName = "pregnancy_test",
+    cdmVersion = "5.4"
+  )
+  cdm$pregnancy |> 
+    collect() |> 
+    nrow() |> 
+    expect_equal(5)
+
+  cdm$pregnancy |> 
+    dplyr::collect() |> 
+    dplyr::select(
+      person_id,
+      pregnancy_start_date
+    ) |> 
+      dplyr::left_join(
+        select(collect(cdm$condition_occurrence), person_id, condition_start_date),
+        by = "person_id"
+      ) |> 
+        mutate(
+          difference_days = as.numeric(as.Date(pregnancy_start_date) - as.Date(condition_start_date)) / 7
+        ) |> 
+          pull(difference_days) |>
+          unique() |> 
+          expect_equal(-24)
+})
+
