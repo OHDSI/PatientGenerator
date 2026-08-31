@@ -5,6 +5,11 @@
 - Parameter `includeChat` in
   [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md).
 
+- Pregnancy table support.
+
+- [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
+  now has an option parameter to select tables to hide.
+
 ## PatientGenerator 0.2.2
 
 - Fix for concept ids not being maintained when we try to create
