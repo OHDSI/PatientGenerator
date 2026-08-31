@@ -59,7 +59,7 @@ test_that("cdmConstructor exports xlsx test data that can be uploaded again", {
 test_that("cdmConstructor loads the pregnancy sheet from PET test data", {
   skip_if_not_installed("readxl")
 
-  xlsx_path <- testthat::test_path("../../extras/testDataPET.xlsx")
+  xlsx_path <- testthat::test_path("testData/testDataPET.xlsx")
   skip_if_not(file.exists(xlsx_path))
 
   cdm <- new_cdm()
