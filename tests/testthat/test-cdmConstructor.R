@@ -255,6 +255,19 @@ test_that("death table can be added, exported, and shown on the timeline", {
   expect_equal(death_row$start_date[[1]], as.Date("2020-05-20"))
 })
 
+test_that("getCdmData omits an empty pregnancy table and exports populated data", {
+  cdm <- new_cdm()
+  cdm$person$add(gender_concept_id = 8532L, year_of_birth = 1990L)
+
+  exported <- jsonlite::fromJSON(cdm$getCdmData())
+  expect_false("pregnancy" %in% names(exported))
+
+  cdm$pregnancy$add(person_id = 1L)
+  exported <- jsonlite::fromJSON(cdm$getCdmData())
+  expect_true("pregnancy" %in% names(exported))
+  expect_equal(nrow(exported$pregnancy), 1L)
+})
+
 test_that("loadJsonTestSet completes beta blocker death table schema", {
   cdm <- new_cdm()
   path <- testthat::test_path("testCases", "beta_blocker.json")

@@ -21,7 +21,8 @@ supportedCdmTables <- function(includePerson = FALSE) {
     "measurement",
     "procedure_occurrence",
     "observation",
-    "death"
+    "death",
+    "pregnancy"
   )
 
   if (isTRUE(includePerson)) {
@@ -29,6 +30,20 @@ supportedCdmTables <- function(includePerson = FALSE) {
   }
 
   tables
+}
+
+pregnancyColumnNames <- function() {
+  data.table::data.table(
+    person_id = integer(),
+    pregnancy_id = integer(),
+    pregnancy_start_date = as.Date(character()),
+    pregnancy_end_date = as.Date(character()),
+    gestational_length_in_day = integer(),
+    pregnancy_outcome = integer(),
+    pregnancy_mode_delivery = integer(),
+    pregnancy_single = integer(),
+    prev_pregnancy_gravidity = integer()
+  )
 }
 
 #' Read an RDS file.
@@ -73,15 +88,19 @@ columnNames <- function(
       stop("Error: Variable 'name' should be a cdm table")
     }
 
-    file <- file.path(
-      cdmSpecificationPath,
-      paste0(
-        name,
-        ".rds"
+    table_data <- if (identical(name, "pregnancy")) {
+      pregnancyColumnNames()
+    } else {
+      file <- file.path(
+        cdmSpecificationPath,
+        paste0(
+          name,
+          ".rds"
+          )
         )
-      )
-    table_data <- read_rds_file(file) |>
-      data.table::as.data.table()
+      read_rds_file(file) |>
+        data.table::as.data.table()
+    }
     if (isTRUE(ommitTime)) {
       table_data <- table_data[
         ,
@@ -106,15 +125,19 @@ columnNames <- function(
     cdm_tables <- list()
 
     for(table_name in supported_tables){
-      file <- file.path(
-        cdmSpecificationPath,
-        paste0(
-          table_name,
-          ".rds"
+      table_data <- if (identical(table_name, "pregnancy")) {
+        pregnancyColumnNames()
+      } else {
+        file <- file.path(
+          cdmSpecificationPath,
+          paste0(
+            table_name,
+            ".rds"
+            )
           )
-        )
-      table_data <- read_rds_file(file) |>
-        data.table::as.data.table()
+        read_rds_file(file) |>
+          data.table::as.data.table()
+      }
       if (isTRUE(ommitTime)) {
         table_data <- table_data[
           ,

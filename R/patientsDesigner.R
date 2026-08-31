@@ -187,6 +187,11 @@ patientDesigner <- function(path = NULL,
         "Death",
         cdmTableUI(id = "death"),
         value = "death_module"
+      ),
+      tabPanel(
+        "Pregnancy",
+        cdmTableUI(id = "pregnancy"),
+        value = "pregnancy_module"
       )
       )
     ),
@@ -210,7 +215,8 @@ patientDesigner <- function(path = NULL,
         tableOutput("measurementTable"),
         tableOutput("procedureOccurrenceTable"),
         tableOutput("observationTable"),
-        tableOutput("deathTable")
+        tableOutput("deathTable"),
+        tableOutput("pregnancyTable")
       )
     )
   )
@@ -818,6 +824,12 @@ patientDesigner <- function(path = NULL,
         input_person_id = person_module,
         session = session
       )
+      updateTableIdsNs(
+        cdm = cdm,
+        type = "pregnancy",
+        input_person_id = person_module,
+        session = session
+      )
       
     }, ignoreInit = TRUE)
     
@@ -947,6 +959,23 @@ patientDesigner <- function(path = NULL,
       death_module$elongation_click()
       formatDateColumns(cdm$death$data())
     })
+
+    # PREGNANCY TABLE
+    pregnancy_module <- cdmTableServer(
+      id = "pregnancy",
+      cdm = cdm,
+      person_id_selected = person_module,
+      syncing = syncing
+    )
+
+    output$pregnancyTable <- renderTable({
+      data_version()
+      pregnancy_module$add_click()
+      pregnancy_module$delete_click()
+      pregnancy_module$field_update()
+      pregnancy_module$elongation_click()
+      formatDateColumns(cdm$pregnancy$data())
+    })
     
     # CDM Data Timeline
     cdmDataTimeline <- reactive({
@@ -985,6 +1014,10 @@ patientDesigner <- function(path = NULL,
       death_module$add_click(),
       death_module$delete_click(),
       death_module$elongation_click(),
+      pregnancy_module$add_click(),
+      pregnancy_module$delete_click(),
+      pregnancy_module$field_update(),
+      pregnancy_module$elongation_click(),
       ignoreInit = FALSE
     )
     

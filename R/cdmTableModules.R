@@ -95,10 +95,11 @@ cdmTableServer <- function(
       } else {
         all_columns |> tail(-2)
       }
-      concept_columns <- columnList[
-        stringr::str_detect(columnList, "concept") &
-          !stringr::str_detect(columnList, "gender")
-      ]
+      concept_columns <- columnList[vapply(
+        columnList,
+        isConceptInputColumn,
+        logical(1)
+      )]
 
       concept_status_ids <- paste0(concept_columns, "_status")
 

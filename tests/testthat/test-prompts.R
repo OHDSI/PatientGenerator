@@ -121,18 +121,14 @@ test_that("Diabetes workflow prompt", {
        style = "darwin"
      )
  })
- 
  patientGenerator$prompt(
    "Within the current records in the drug exposure tables, each drug exposure should be 30 days long"
  )
- 
  patientGenerator$save("test_diabetes_patients_30")
- 
  cdm <- TestGenerator::patientsCDM(
    testName = "test_diabetes_patients_30",
    cdmVersion = "5.4"
  )
- 
  cdm$drug_exposure %>% 
    select(person_id,
           drug_exposure_start_date,
@@ -145,14 +141,11 @@ test_that("Diabetes workflow prompt", {
    pull(days) %>% 
    unique() %>% 
    expect_equal(30)
- 
 })
 
 test_that("Ovarian cancer stages", {
   skip_if_no_openai()
-  
   patientGenerator <- PatientGenerator::patientChat$new()
-  
   patientGenerator$prompt({
     "Five females (all over 18 years old) have an observation period from 2000 to 2024.
 
@@ -178,15 +171,68 @@ test_that("Ovarian cancer stages", {
       - **Female 5**:
       - No cancer stage measurement record"
   })
-  
   patientGenerator$save("patient_chat_ovarian_stages")
-  
   expect_no_error({
     cdm <- TestGenerator::patientsCDM(
       testName = "patient_chat_ovarian_stages",
       cdmVersion = "5.4"
     )
   })
-  
+})
+
+test_that("pregnancy prompt", {
+  skip_if_no_openai()
+  model <- pick_openai_model()
+  patientGenerator <- patientChat$new(model = "gpt-5.6-luna")
+  patientGenerator$prompt(
+    "Population (person table):
+    - 10 adult patients
+    - 5 female, use gender_concept_id = 8532
+    - 5 male, use gender_concept_id = 8507
+
+   Observation Period:
+    - Start date between date of birth each person and end of observation 2025-12-31
+
+   Condition Occurrence:
+    - All patients must have diabetes (condition_concept_id: 201826)
+
+   Pregnancy (extension table):
+    - All 5 females are pregnant. 
+    - 24 weeks before their condition occurrence of diabetes.
+    - Fill synthetic for all columns. 
+
+   Output Requirements:
+    - Fill only specified tables in this prompt
+    - All patients in person have an observation period
+    - Fill out end dates in every table where you can"
+  )
+  patientGenerator$save(
+    name = "pregnancy_test"
+  )
+  cdm <- TestGenerator::patientsCDM(
+    testName = "pregnancy_test",
+    cdmVersion = "5.4"
+  )
+  cdm$pregnancy |> 
+    collect() |> 
+    nrow() |> 
+    expect_equal(5)
+
+  cdm$pregnancy |> 
+    dplyr::collect() |> 
+    dplyr::select(
+      person_id,
+      pregnancy_start_date
+    ) |> 
+      dplyr::left_join(
+        select(collect(cdm$condition_occurrence), person_id, condition_start_date),
+        by = "person_id"
+      ) |> 
+        mutate(
+          difference_days = as.numeric(as.Date(pregnancy_start_date) - as.Date(condition_start_date)) / 7
+        ) |> 
+          pull(difference_days) |>
+          unique() |> 
+          expect_equal(-24)
 })
 
