@@ -2,6 +2,10 @@
 
 * Parameter `includeChat` in `patientDesigner()`.
 
+* Pregnancy table support. 
+
+* `patientDesigner()` now has an option parameter to select tables to hide. 
+
 # PatientGenerator 0.2.2
 
 * Fix for concept ids not being maintained when we try to create patients/conditions/procedures.
