@@ -13,8 +13,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/PatientGenerator)](https://CRAN.R-project.org/package=PatientGenerator)
-[![R CMD check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
+[![R CMD check](https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/OHDSI/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/OHDSI/PatientGenerator)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
@@ -28,8 +28,11 @@ The package also includes support for Hecate-powered concept lookups to ensure v
 ### Installation
 
 ```r
+# From CRAN
+install.packages("PatientGenerator")
+
 # install.packages("remotes")
-remotes::install_github("mi-erasmusmc/PatientGenerator")
+remotes::install_github("OHDSI/PatientGenerator")
 ```
 
 ### Workflow Overview

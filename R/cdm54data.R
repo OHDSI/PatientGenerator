@@ -13,31 +13,45 @@ choicesList <- function(tableName) {
   return(choicesList[[tableName]])
 }
 
-#' Read a parquet file using DuckDB.
-#' @param file Path to the parquet file.
+supportedCdmTables <- function(includePerson = FALSE) {
+  tables <- c(
+    "observation_period",
+    "condition_occurrence",
+    "drug_exposure",
+    "measurement",
+    "procedure_occurrence",
+    "observation",
+    "death",
+    "pregnancy"
+  )
+
+  if (isTRUE(includePerson)) {
+    tables <- c("person", tables)
+  }
+
+  tables
+}
+
+pregnancyColumnNames <- function() {
+  data.table::data.table(
+    person_id = integer(),
+    pregnancy_id = integer(),
+    pregnancy_start_date = as.Date(character()),
+    pregnancy_end_date = as.Date(character()),
+    gestational_length_in_day = integer(),
+    pregnancy_outcome = integer(),
+    pregnancy_mode_delivery = integer(),
+    pregnancy_single = integer(),
+    prev_pregnancy_gravidity = integer()
+  )
+}
+
+#' Read an RDS file.
+#' @param file Path to the RDS file.
 #' @return A data frame.
 #' @noRd
-read_parquet_file <- function(file) {
-  con <- DBI::dbConnect(duckdb::duckdb())
-  on.exit(DBI::dbDisconnect(
-    con,
-    shutdown = TRUE
-    ),
-    add = TRUE
-    )
-  path_sql <- gsub(
-    "'",
-    "''",
-    path.expand(file)
-    )
-  DBI::dbGetQuery(
-    con,
-    paste0(
-      "SELECT * FROM read_parquet('",
-      path_sql,
-      "')"
-      )
-    )
+read_rds_file <- function(file) {
+  readRDS(file)
 }
 
 columnNames <- function(
@@ -58,16 +72,9 @@ columnNames <- function(
 
   # supported_tables <- file.path(cdmSpecificationPath) |> 
   #    list.files() |> 
-  #   stringr::str_remove(".parquet")
+  #   stringr::str_remove(".rds")
   
-  supported_tables <- c(
-    "person",
-    "observation_period",
-    "condition_occurrence",
-    "drug_exposure",
-    "measurement",
-    "procedure_occurrence"
-    )
+  supported_tables <- supportedCdmTables(includePerson = TRUE)
 
   if (!is.null(name)) {
 
@@ -81,15 +88,19 @@ columnNames <- function(
       stop("Error: Variable 'name' should be a cdm table")
     }
 
-    file <- file.path(
-      cdmSpecificationPath,
-      paste0(
-        name,
-        ".parquet"
+    table_data <- if (identical(name, "pregnancy")) {
+      pregnancyColumnNames()
+    } else {
+      file <- file.path(
+        cdmSpecificationPath,
+        paste0(
+          name,
+          ".rds"
+          )
         )
-      )
-    table_data <- read_parquet_file(file) |>
-      data.table::as.data.table()
+      read_rds_file(file) |>
+        data.table::as.data.table()
+    }
     if (isTRUE(ommitTime)) {
       table_data <- table_data[
         ,
@@ -114,15 +125,19 @@ columnNames <- function(
     cdm_tables <- list()
 
     for(table_name in supported_tables){
-      file <- file.path(
-        cdmSpecificationPath,
-        paste0(
-          table_name,
-          ".parquet"
+      table_data <- if (identical(table_name, "pregnancy")) {
+        pregnancyColumnNames()
+      } else {
+        file <- file.path(
+          cdmSpecificationPath,
+          paste0(
+            table_name,
+            ".rds"
+            )
           )
-        )
-      table_data <- read_parquet_file(file) |>
-        data.table::as.data.table()
+        read_rds_file(file) |>
+          data.table::as.data.table()
+      }
       if (isTRUE(ommitTime)) {
         table_data <- table_data[
           ,

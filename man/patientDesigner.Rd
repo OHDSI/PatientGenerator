@@ -4,11 +4,34 @@
 \alias{patientDesigner}
 \title{\code{patientDesigner()} is a visual interface based on D3 to construct test datasets for the OMOP-CDM}
 \usage{
-patientDesigner(path = NULL)
+patientDesigner(
+  path = NULL,
+  makePublishable = FALSE,
+  publishDir = file.path(getwd(), "PatientGeneratorApp"),
+  overwritePublishDir = FALSE,
+  launch.browser = FALSE,
+  includeChat = FALSE,
+  visibleTables = NULL
+)
 }
 \arguments{
 \item{path}{Optional folder containing JSON test sets.
 If NULL, default path resolution keeps testthat integration.}
+
+\item{makePublishable}{If TRUE, copy the packaged Shiny application template
+to \code{publishDir}, write an \code{app.R} launcher, and run the app from that folder.}
+
+\item{publishDir}{Directory to create for the publishable Shiny app.}
+
+\item{overwritePublishDir}{If TRUE, overwrite files in \code{publishDir} when it
+already exists.}
+
+\item{launch.browser}{Passed to \code{shiny::runApp()} when \code{makePublishable} is TRUE.}
+
+\item{includeChat}{If TRUE, include the chat-driven dataset generator tab.}
+
+\item{visibleTables}{Optional character vector of event tables to show when
+the Designer opens. \code{NULL} shows all supported event tables.}
 }
 \value{
 A Shiny app

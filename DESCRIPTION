@@ -1,7 +1,7 @@
 Package: PatientGenerator
 Type: Package
 Title: Generator of Synthetic Patient Data for the OMOP Common Data Model
-Version: 0.1.4
+Version: 0.2.3
 Authors@R: c(
     person("Cesar", "Barboza", , "c.barboza@mi-erasmusmc.nl", role = c("aut", "cre"), comment = c(ORCID = "0009-0002-4453-3071")),
     person("Ger", "Inberg", , "g.inberg@erasmusmc.nl", role = "aut", comment = c(ORCID = "0000-0001-8993-8748")),
@@ -11,31 +11,31 @@ Description: Tools to generate synthetic patient-level test datasets in the
     Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM).
     Includes a chat-driven generator backed by large language models and an
     interactive 'shiny' designer for editing CDM test sets.
-URL: https://github.com/mi-erasmusmc/PatientGenerator, https://mi-erasmusmc.github.io/PatientGenerator/
-BugReports: https://github.com/mi-erasmusmc/PatientGenerator/issues
+URL: https://github.com/OHDSI/PatientGenerator, https://ohdsi.github.io/PatientGenerator/
+BugReports: https://github.com/OHDSI/PatientGenerator/issues
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends:
     R (>= 4.1.0)
 Imports:
     bslib,
     checkmate,
     data.table,
-    DBI,
     dplyr,
     DT,
-    duckdb,
     ellmer,
     glue,
     httr2,
     jsonlite,
+    openxlsx,
     r2d3,
     R6,
+    readxl,
     shiny,
     stringr,
-    testthat
+    testthat,
+    cli
 Suggests:
     CDMConnector,
     CohortCharacteristics,
@@ -44,7 +44,9 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
-    TestGenerator
+    TestGenerator,
+    visOmopResults
 VignetteBuilder: knitr
 Config/Needs/website: pkgdown
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
