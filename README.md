@@ -20,9 +20,6 @@ for the OMOP Common Data Model (CDM) using two complementary approaches:
 - **`patientDesigner`**: Provides a D3-based Shiny interface for
   reviewing and editing CDM test sets.
 
-The package also includes support for Hecate-powered concept lookups to
-ensure valid OMOP concept codes.
-
 ### Installation
 
 ``` r
