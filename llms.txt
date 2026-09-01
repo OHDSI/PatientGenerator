@@ -107,20 +107,13 @@ cdm$person |>
 
 ``` R
 #> cdm$person |> collect() |> head(5)
-#>    person_id gender_concept_id
-#>        <int>             <int>
-#> 1:         1              8532
-#> 2:         2              8532
-#> 3:         3              8532
-#> 4:         4              8532
-#> 5:         5              8532
-#>    year_of_birth person_source_value
-#>            <int>              <char>
-#> 1:          1962                P001
-#> 2:          1970                P002
-#> 3:          1958                P003
-#> 4:          1981                P004
-#> 5:          1967                P005
+#>    person_id gender_concept_id year_of_birth person_source_value
+#>        <int>             <int>         <int>              <char>
+#> 1:         1              8532          1962                P001
+#> 2:         2              8532          1970                P002
+#> 3:         3              8532          1958                P003
+#> 4:         4              8532          1981                P004
+#> 5:         5              8532          1967                P005
 ```
 
 ### Iterative Refinement
@@ -135,20 +128,13 @@ patientGenerator$prompt("Remove all male patients")
 
 ``` R
 #> cdm$person |> collect() |> head(5)
-#>    person_id gender_concept_id
-#>        <int>             <int>
-#> 1:         1              8532
-#> 2:         2              8532
-#> 3:         3              8532
-#> 4:         4              8532
-#> 5:         5              8532
-#>    year_of_birth person_source_value
-#>            <int>              <char>
-#> 1:          1962                P001
-#> 2:          1970                P002
-#> 3:          1958                P003
-#> 4:          1981                P004
-#> 5:          1967                P005
+#>    person_id gender_concept_id year_of_birth person_source_value
+#>        <int>             <int>         <int>              <char>
+#> 1:         1              8532          1962                P001
+#> 2:         2              8532          1970                P002
+#> 3:         3              8532          1958                P003
+#> 4:         4              8532          1981                P004
+#> 5:         5              8532          1967                P005
 ```
 
 ### Visual Review and Editing with `patientDesigner()`
