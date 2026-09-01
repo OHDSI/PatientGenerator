@@ -241,7 +241,7 @@
       "ethnicity_source_concept_id": 38003563
     },
     {
-      "person_id": 13,
+      "person_id": 4,
       "gender_concept_id": 8532,
       "year_of_birth": 1970,
       "month_of_birth": 4,
@@ -2050,6 +2050,7 @@
       "dose_unit_source_value": "day"
     }
   ],
+  "drug_exposure": [],
   "procedure_occurrence": [],
   "measurement": [
     {
