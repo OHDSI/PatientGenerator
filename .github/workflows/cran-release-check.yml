@@ -25,7 +25,7 @@ jobs:
             const { owner, repo } = context.repo;
             const requiredWorkflows = [
               {
-                workflow_id: 'r-cmd-check.yaml',
+                workflow_id: ''R-CMD-check.yaml',
                 label: 'R-CMD-check'
               }
             ];
