@@ -23,8 +23,6 @@ knitr::opts_chunk$set(
 - **`patientChat`**: Generates structured patient JSON files using Large Language Models (LLMs).
 - **`patientDesigner`**: Provides a D3-based Shiny interface for reviewing and editing CDM test sets.
 
-The package also includes support for Hecate-powered concept lookups to ensure valid OMOP concept codes.
-
 ### Installation
 
 ```r
