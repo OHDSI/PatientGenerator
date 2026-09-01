@@ -23,7 +23,7 @@
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/mi-erasmusmc/PatientGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/OHDSI/PatientGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -33,33 +33,39 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/mi-erasmusmc/PatientGenerator/blob/develop/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/OHDSI/PatientGenerator/blob/develop/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.3" id="patientgenerator-023">PatientGenerator 0.2.3<a class="anchor" aria-label="anchor" href="#patientgenerator-023"></a></h2>
-<ul><li><p>Parameter <code>includeChat</code> in <code><a href="../reference/patientDesigner.html">patientDesigner()</a></code>.</p></li>
+<h2 class="pkg-version" data-toc-text="0.2.4" id="patientgenerator-024">PatientGenerator 0.2.4<a class="anchor" aria-label="anchor" href="#patientgenerator-024"></a></h2>
+<ul><li><p><code><a href="../reference/patientDesigner.html">patientDesigner()</a></code> now has an option parameter to select tables to hide.</p></li>
 <li><p>Pregnancy table support.</p></li>
-<li><p><code><a href="../reference/patientDesigner.html">patientDesigner()</a></code> now has an option parameter to select tables to hide.</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.3" id="patientgenerator-023">PatientGenerator 0.2.3<a class="anchor" aria-label="anchor" href="#patientgenerator-023"></a></h2>
+<ul><li>
+<code><a href="../reference/patientDesigner.html">patientDesigner()</a></code> now includes arameter <code>includeChat</code>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.2" id="patientgenerator-022">PatientGenerator 0.2.2<a class="anchor" aria-label="anchor" href="#patientgenerator-022"></a></h2>
-<ul><li>Fix for concept ids not being maintained when we try to create patients/conditions/procedures.</li>
+<ul><li>
+<code>patients/conditions/procedures</code> creation of concept ids fix.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.1" id="patientgenerator-021">PatientGenerator 0.2.1<a class="anchor" aria-label="anchor" href="#patientgenerator-021"></a></h2>
-<ul><li>Added ‘Death’ table to <code><a href="../reference/patientDesigner.html">patientDesigner()</a></code> required for Survival analysis.</li>
+<ul><li>
+<code><a href="../reference/patientDesigner.html">patientDesigner()</a></code> now includes ‘Death’, a requirement of survival analysis.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="patientgenerator-020">PatientGenerator 0.2.0<a class="anchor" aria-label="anchor" href="#patientgenerator-020"></a></h2>
-<ul><li><p>Fixed D3 GUI crash related to empty end dates. For now, the GUI will fill out automatically end dates.</p></li>
+<ul><li><p>D3 GUI works now with if there’s no empty end dates. The GUI will fill them out automatically.</p></li>
 <li><p>Added tooltip, a vertical line to track elongation, labels and now measurements are represented only with one triangle since there’s no end date for this type of record.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.4" id="patientgenerator-014">PatientGenerator 0.1.4<a class="anchor" aria-label="anchor" href="#patientgenerator-014"></a></h2><p class="text-muted">CRAN release: 2026-05-04</p>
 <ul><li><p>Prepared the package for CRAN submission.</p></li>
 <li><p>Updated package title and description to follow CRAN metadata style.</p></li>
-<li><p>Added <code>cran-comments.md</code> documenting local CRAN check results.</p></li>
+<li><p><code>cran-comments.md</code> added to document local CRAN check results.</p></li>
 <li><p>Excluded local session and operating-system artifacts from source builds.</p></li>
 <li><p>Skipped network-dependent <code>TestGenerator</code> checks on CRAN.</p></li>
 </ul></div>

@@ -1,30 +1,30 @@
 # Changelog
 
-## PatientGenerator 0.2.3
-
-- Parameter `includeChat` in
-  [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md).
-
-- Pregnancy table support.
+## PatientGenerator 0.2.4
 
 - [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
   now has an option parameter to select tables to hide.
 
+- Pregnancy table support.
+
+## PatientGenerator 0.2.3
+
+- [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
+  now includes arameter `includeChat`.
+
 ## PatientGenerator 0.2.2
 
-- Fix for concept ids not being maintained when we try to create
-  patients/conditions/procedures.
+- `patients/conditions/procedures` creation of concept ids fix.
 
 ## PatientGenerator 0.2.1
 
-- Added ‘Death’ table to
-  [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
-  required for Survival analysis.
+- [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
+  now includes ‘Death’, a requirement of survival analysis.
 
 ## PatientGenerator 0.2.0
 
-- Fixed D3 GUI crash related to empty end dates. For now, the GUI will
-  fill out automatically end dates.
+- D3 GUI works now with if there’s no empty end dates. The GUI will fill
+  them out automatically.
 
 - Added tooltip, a vertical line to track elongation, labels and now
   measurements are represented only with one triangle since there’s no
@@ -38,7 +38,7 @@ CRAN release: 2026-05-04
 
 - Updated package title and description to follow CRAN metadata style.
 
-- Added `cran-comments.md` documenting local CRAN check results.
+- `cran-comments.md` added to document local CRAN check results.
 
 - Excluded local session and operating-system artifacts from source
   builds.

@@ -44,7 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/mi-erasmusmc/PatientGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/OHDSI/PatientGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -69,8 +69,11 @@
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mi-erasmusmc/PatientGenerator"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># From CRAN</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"PatientGenerator"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"OHDSI/PatientGenerator"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="workflow-overview">Workflow Overview<a class="anchor" aria-label="anchor" href="#workflow-overview"></a>
@@ -95,7 +98,7 @@
 <p>Set an <code>OPENAI_API_KEY</code> environment variable (e.g., via <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>) to enable LLM access.</p>
 <p>Available models can be listed using <code><a href="reference/availableModels.html">PatientGenerator::availableModels()</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mi-erasmusmc/PatientGenerator" class="external-link">PatientGenerator</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/OHDSI/PatientGenerator" class="external-link">PatientGenerator</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">patientGenerator</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/patientChat.html">patientChat</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="st">"gpt-5.4"</span>,</span>
@@ -151,13 +154,20 @@
 <span>  <span class="fu">collect</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1965              SYN001</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1972              SYN002</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958              SYN003</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981              SYN004</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1949              SYN005</span></span></code></pre></div>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;    year_of_birth person_source_value</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;            &lt;int&gt;              &lt;char&gt;</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; 1:          1962                P001</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; 2:          1970                P002</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; 3:          1958                P003</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 4:          1981                P004</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; 5:          1967                P005</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="iterative-refinement">Iterative Refinement<a class="anchor" aria-label="anchor" href="#iterative-refinement"></a>
@@ -166,13 +176,20 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">patientGenerator</span><span class="op">$</span><span class="fu">prompt</span><span class="op">(</span><span class="st">"Remove all male patients"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1965              SYN001</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1972              SYN002</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958              SYN003</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981              SYN004</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1949              SYN005</span></span></code></pre></div>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt;    year_of_birth person_source_value</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;            &lt;int&gt;              &lt;char&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; 1:          1962                P001</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; 2:          1970                P002</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; 3:          1958                P003</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 4:          1981                P004</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 5:          1967                P005</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visual-review-and-editing-with-patientdesigner">Visual Review and Editing with <code>patientDesigner()</code>
@@ -223,8 +240,8 @@
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=PatientGenerator" class="external-link">View on CRAN</a></li>
-<li><a href="https://github.com/mi-erasmusmc/PatientGenerator/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/mi-erasmusmc/PatientGenerator/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/OHDSI/PatientGenerator/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/OHDSI/PatientGenerator/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -257,8 +274,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=PatientGenerator" class="external-link"><img src="https://www.r-pkg.org/badges/version/PatientGenerator" alt="CRAN status"></a></li>
-<li><a href="https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R CMD check"></a></li>
-<li><a href="https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator" class="external-link"><img src="https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R CMD check"></a></li>
+<li><a href="https://app.codecov.io/gh/OHDSI/PatientGenerator" class="external-link"><img src="https://codecov.io/gh/OHDSI/PatientGenerator/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>

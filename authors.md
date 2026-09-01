@@ -12,16 +12,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/mi-erasmusmc/PatientGenerator/blob/develop/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/OHDSI/PatientGenerator/blob/develop/DESCRIPTION)
 
 Barboza C, Inberg G, Black A (2026). *PatientGenerator: Generator of
 Synthetic Patient Data for the OMOP Common Data Model*. R package
-version 0.2.3, <https://github.com/mi-erasmusmc/PatientGenerator>.
+version 0.2.3, <https://github.com/OHDSI/PatientGenerator>.
 
     @Manual{,
       title = {PatientGenerator: Generator of Synthetic Patient Data for the OMOP Common Data Model},
       author = {Cesar Barboza and Ger Inberg and Adam Black},
       year = {2026},
       note = {R package version 0.2.3},
-      url = {https://github.com/mi-erasmusmc/PatientGenerator},
+      url = {https://github.com/OHDSI/PatientGenerator},
     }
