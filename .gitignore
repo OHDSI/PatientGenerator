@@ -24,3 +24,5 @@ gui-crash.md
 
 /.quarto/
 **/*.quarto_ipynb
+
+README.html
