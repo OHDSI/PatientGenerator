@@ -101,7 +101,7 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/OHDSI/PatientGenerator" class="external-link">PatientGenerator</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">patientGenerator</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/patientChat.html">patientChat</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  model <span class="op">=</span> <span class="st">"gpt-5.4"</span>,</span>
+<span>  model <span class="op">=</span> <span class="st">"gpt-5.6-luna"</span>,</span>
 <span>  echo <span class="op">=</span> <span class="st">"none"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -138,12 +138,15 @@
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="integration-with-testthat">Integration with <code>testthat</code>
-<a class="anchor" aria-label="anchor" href="#integration-with-testthat"></a>
+<h3 id="integration-with-testthat-and-testgenerator">Integration with <code>testthat</code> and <code>TestGenerator</code>
+<a class="anchor" aria-label="anchor" href="#integration-with-testthat-and-testgenerator"></a>
 </h3>
-<p>Save the generated dataset as a JSON file and utilize <code><a href="https://darwin-eu.github.io/TestGenerator/reference/patientsCDM.html" class="external-link">TestGenerator::patientsCDM</a></code> to instantiate a CDM reference.</p>
+<p>Save the generated dataset as a JSON file.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">patientGenerator</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"diabetes-patients"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">patientGenerator</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"diabetes-patients"</span><span class="op">)</span></span></code></pre></div>
+<p>Then, you can instantiate a CDM reference.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/darwin-eu/TestGenerator" class="external-link">TestGenerator</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu">TestGenerator</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/TestGenerator/reference/patientsCDM.html" class="external-link">patientsCDM</a></span><span class="op">(</span></span>
 <span>  testName <span class="op">=</span> <span class="st">"diabetes-patients"</span>,</span>
@@ -153,36 +156,36 @@
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">person</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">collect</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1962                P001</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1970                P002</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958                P003</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981                P004</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1967                P005</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1962                P001</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1970                P002</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958                P003</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981                P004</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1967                P005</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="iterative-refinement">Iterative Refinement<a class="anchor" aria-label="anchor" href="#iterative-refinement"></a>
 </h3>
 <p>The LLM can be instructed to modify the current test set within the same <code>patientChat</code> instance.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">patientGenerator</span><span class="op">$</span><span class="fu">prompt</span><span class="op">(</span><span class="st">"Remove all male patients"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1962                P001</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1970                P002</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958                P003</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981                P004</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1967                P005</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; cdm$person |&gt; collect() |&gt; head(5)</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;    person_id gender_concept_id year_of_birth person_source_value</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;              &lt;char&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 1:         1              8532          1962                P001</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 2:         2              8532          1970                P002</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 3:         3              8532          1958                P003</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 4:         4              8532          1981                P004</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 5:         5              8532          1967                P005</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visual-review-and-editing-with-patientdesigner">Visual Review and Editing with <code>patientDesigner()</code>
 <a class="anchor" aria-label="anchor" href="#visual-review-and-editing-with-patientdesigner"></a>
 </h3>
 <p>Launch the interactive editor to review and refine datasets:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">PatientGenerator</span><span class="fu">::</span><span class="fu"><a href="reference/patientDesigner.html">patientDesigner</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The interface supports:</p>
 <ul>
@@ -197,13 +200,13 @@
 </h3>
 <p><code>patientDesigner</code> integrates a concept search module powered by <code><a href="reference/hecateSearch.html">hecateSearch()</a></code>. This allows users to search for and insert valid OMOP concept IDs directly into the CDM tables.</p>
 <p>Configure Hecate globally via environment variables:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span></span>
 <span>  HECATE_BASE_URL <span class="op">=</span> <span class="st">"https://your-hecate-server/api"</span>,</span>
 <span>  HECATE_API_KEY <span class="op">=</span> <span class="st">"your-api-key"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Or via package options:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>PatientGenerator.hecate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  base_url <span class="op">=</span> <span class="st">"https://your-hecate-server/api"</span>,</span>
 <span>  timeout_ms <span class="op">=</span> <span class="fl">15000</span>,</span>

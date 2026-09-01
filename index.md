@@ -45,7 +45,7 @@ Available models can be listed using
 library(PatientGenerator)
 
 patientGenerator <- patientChat$new(
-  model = "gpt-5.4",
+  model = "gpt-5.6-luna",
   echo = "none"
 )
 ```
@@ -85,15 +85,20 @@ patientGenerator$prompt(
 )
 ```
 
-### Integration with `testthat`
+### Integration with `testthat` and `TestGenerator`
 
-Save the generated dataset as a JSON file and utilize
-[`TestGenerator::patientsCDM`](https://darwin-eu.github.io/TestGenerator/reference/patientsCDM.html)
-to instantiate a CDM reference.
+Save the generated dataset as a JSON file.
 
 ``` r
 
 patientGenerator$save(name = "diabetes-patients")
+```
+
+Then, you can instantiate a CDM reference.
+
+``` r
+
+library(TestGenerator)
 
 cdm <- TestGenerator::patientsCDM(
   testName = "diabetes-patients",
