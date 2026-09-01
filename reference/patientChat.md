@@ -42,7 +42,7 @@ a set of patients to test analytical packages.
 
 ### Public methods
 
-- [`patientChat$new()`](#method-patientChat-initialize)
+- [`patientChat$new()`](#method-patientChat-new)
 
 - [`patientChat$prompt()`](#method-patientChat-prompt)
 
@@ -60,7 +60,7 @@ a set of patients to test analytical packages.
 
 ------------------------------------------------------------------------
 
-### `patientChat$new()`
+### Method `new()`
 
 Create a new chat to create JSON test sets for OMOP-CDM.
 
@@ -99,11 +99,11 @@ Create a new chat to create JSON test sets for OMOP-CDM.
 
 #### Returns
 
-A new `patientChat` object.
+A new `Person` object.
 
 ------------------------------------------------------------------------
 
-### `patientChat$prompt()`
+### Method [`prompt()`](https://rdrr.io/r/utils/prompt.html)
 
 Prompt to request data from LLM API
 
@@ -119,7 +119,7 @@ Prompt to request data from LLM API
 
 ------------------------------------------------------------------------
 
-### `patientChat$json_response()`
+### Method `json_response()`
 
 Output in JSON format
 
@@ -129,7 +129,7 @@ Output in JSON format
 
 ------------------------------------------------------------------------
 
-### `patientChat$output()`
+### Method `output()`
 
 Returns the chat object
 
@@ -139,7 +139,7 @@ Returns the chat object
 
 ------------------------------------------------------------------------
 
-### `patientChat$retrieveCodelist()`
+### Method `retrieveCodelist()`
 
 Retrieves and filters data from codelist_data
 
@@ -159,7 +159,7 @@ Retrieves and filters data from codelist_data
 
 ------------------------------------------------------------------------
 
-### `patientChat$save()`
+### Method [`save()`](https://rdrr.io/r/base/save.html)
 
 Saves the JSON test set to disk.
 
@@ -182,7 +182,7 @@ Saves the JSON test set to disk.
 
 ------------------------------------------------------------------------
 
-### `patientChat$availableModels()`
+### Method [`availableModels()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/availableModels.md)
 
 Retrieves available models from the LLM API.
 
@@ -192,7 +192,7 @@ Retrieves available models from the LLM API.
 
 ------------------------------------------------------------------------
 
-### `patientChat$clone()`
+### Method `clone()`
 
 The objects of this class are cloneable with this method.
 
