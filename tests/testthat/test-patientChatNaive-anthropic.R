@@ -9,13 +9,13 @@ test_that("patientChatNaive rejects non-JSON schema files", {
 })
 
 test_that("patientChatNaive API output can be loaded by cdmConstructor", {
-  skip_if_no_openai()
-  model <- pick_openai_model()
+  skip_if_no_anthropic()
+  model <- pick_anthropic_model()
 
   schema <- system.file("jsonSchemas", "cdm54schema-complete.json", package = "PatientGenerator")
   response <- patientChatNaive(
     prompt = "Generate exactly 1 patient in OMOP-CDM v5.4.",
-    provider = "openai",
+    provider = "anthropic",
     model = model,
     jsonSchemaPath = schema
   )
