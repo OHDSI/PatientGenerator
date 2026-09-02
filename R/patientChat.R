@@ -57,18 +57,25 @@ patientChat <- R6::R6Class(
     #' @param codelist_data A codelist with details to search for concepts ids
     #'
     #' @return A new `Person` object.
-    initialize = function(system_prompt = NULL,
-                          provider = "openai",
-                          model = "gpt-5.4",
-                          jsonSchemaPath = NULL,
-                          echo = c("none", "output", "all"),
-                          codelist_data = NULL) {
+    initialize = function(
+      system_prompt = NULL,
+      provider = "openai",
+      model = "gpt-5.6-luna",
+      jsonSchemaPath = NULL,
+      echo = c("none", "output", "all"),
+      codelist_data = NULL
+    ) {
 
       # Check API and available models -----------------------
-      # private$.api_check(model)
+      private$.assertModel(
+        provider,
+        model
+      )
 
       # check JSON schema file -------------------------------
-      private$.json_schema_check(jsonSchemaPath)
+      private$.json_schema_check(
+        jsonSchemaPath
+      )
 
       # System propmpt ---------------------------------------
       if (is.null(system_prompt)) {
@@ -110,7 +117,6 @@ patientChat <- R6::R6Class(
             )
         }
       }
-
     },
 
     #' @description
@@ -155,7 +161,10 @@ patientChat <- R6::R6Class(
     #' Retrieves and filters data from codelist_data
     #' @param concept_label Filters the concept_name in the codelist with details
     #' @param domain Filters the domain in the codelist with details.
-    retrieveCodelist = function(concept_label = "Stage 1", domain = "Measurement") {
+    retrieveCodelist = function(
+      concept_label = "Stage 1",
+      domain = "Measurement"
+    ) {
       checkmate::assertCharacter(concept_label)
       checkmate::assertCharacter(domain)
       domain_names <- self$codelist |>
@@ -188,8 +197,10 @@ patientChat <- R6::R6Class(
     #' If NULL, the package first tries `testthat::test_path("testCases")`,
     #' then checks `options(PatientGenerator.testSetDir = "...")`, and finally
     #' falls back to the package user data directory.
-    save = function(name = "patient-chat-test",
-                    path = NULL) {
+    save = function(
+      name = "patient-chat-test",
+      path = NULL
+    ) {
       if (is.null(path)) {
         path <- testSetDir(create = TRUE)
       } else {
@@ -209,81 +220,48 @@ patientChat <- R6::R6Class(
         file = test_file_path
         )
       cli::cli_alert_success("Test set saved to {.path {test_file_path} }")
-    },
-
-    #' @description
-    #' Retrieves available models from the LLM API.
-    availableModels = function() {
-      provider_name <- tolower(self$chat$get_provider()@name)
-
-      if (provider_name == "ollama") {
-        return(ellmer::models_ollama()$id)
-      }
-
-      endpoint <- switch(
-        provider_name,
-        anthropic = "https://api.anthropic.com/v1/models",
-        openai = "https://api.openai.com/v1/models",
-        stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
-      )
-      api_key_name <- switch(
-        provider_name,
-        anthropic = "ANTHROPIC_API_KEY",
-        openai = "OPENAI_API_KEY",
-        stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
-      )
-
-      private$.check_api_key(api_key_name)
-
-      response <- httr2::request(endpoint) |>
-        httr2::req_headers(
-          Authorization = paste("Bearer", Sys.getenv(api_key_name))
-        ) |>
-        httr2::req_perform()
-      models <- httr2::resp_body_json(response)
-      lapply(models$data, function(data) data$id) |>
-        unlist()
     }
   ),
 
   private = list(
-
-    .selectProvider = function(provider,
-                               system_prompt,
-                               model,
-                               echo) {
-
-      checkmate::assertChoice(provider, c("openai", "anthropic", "ollama"))
-
+    .selectProvider = function(
+      provider,
+      system_prompt,
+      model,
+      echo
+    ) {
       chat_fns <- list(
         openai = ellmer::chat_openai,
         ollama = ellmer::chat_ollama,
         anthropic = ellmer::chat_anthropic
       )
-
       if (!provider %in% names(chat_fns)) {
-        stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
+        stop("Provider not supported. Use one of: 'openai', 'anthropic' or 'ollama'")
       }
-
       self$chat <- chat_fns[[provider]](
         system_prompt = system_prompt,
         model = model,
         echo = echo
       )
-
       message <- switch(
         provider,
         openai = "openai chat created",
         ollama = glue::glue("ollama chat created with {model}"),
         anthropic = "anthropic chat created"
       )
-
       cli::cli_alert_success(message)
     },
 
-    .api_check = function(model) {
+    .assertModel = function(
+      provider,
+      model
+    ) {
+      checkmate::assertChoice(
+        provider,
+        c("openai", "anthropic", "ollama")
+      )
       checkmate::assertCharacter(model)
-      api_models <- self$availableModels()
+      api_models <- availableModels(provider)
       if (!model %in% api_models) {
         stop(
           glue::glue("{model} not available.\n"),
@@ -319,18 +297,6 @@ patientChat <- R6::R6Class(
       }
     },
 
-    .check_api_key = function(apiKeyName) {
-      key <- Sys.getenv(apiKeyName, unset = "")
-      if (!nzchar(key)) {
-        stop(
-          "API key not found.\n",
-          glue::glue("Set it with Sys.setenv({apiKeyName} = 'your_key') "),
-          "and/or add it to your ~/.Renviron.",
-          call. = FALSE
-        )
-      }
-    },
-
     .register_codelist_tool = function() {
       retrieveCodelistTool <- ellmer::tool(
         fun = self$retrieveCodelist,
@@ -348,3 +314,70 @@ patientChat <- R6::R6Class(
     }
   )
 )
+
+
+
+#' `availableModels(provider)` If the API key is valid in the system, returns available models to the user from the LLM provider.
+#' @param provider "openai", "anthropic", and "ollama" are the supported providers.
+#'
+#' @returns A string list with the id of a vailable models.
+#' @importFrom httr2 request req_headers req_perform resp_body_json 
+#' @importFrom ellmer models_ollama
+#' @export
+availableModels <- function(provider) {
+  checkmate::assertChoice(
+    provider,
+    c("openai", "anthropic", "ollama")
+  )
+  if (provider == "ollama") {
+    return(ellmer::models_ollama()$id)
+  }
+  endpoint <- switch(
+    provider,
+    anthropic = "https://api.anthropic.com/v1/models",
+    openai = "https://api.openai.com/v1/models",
+    stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
+  ) 
+  api_key_name <- switch(
+    provider,
+    anthropic = "ANTHROPIC_API_KEY",
+    openai = "OPENAI_API_KEY",
+    stop("Provider not supported. Use one of: 'openai', 'ollama', 'anthropic'")
+  )
+  check_api_key(api_key_name)
+  headers <- switch(
+    provider,
+    anthropic = list(
+      `X-Api-Key` = Sys.getenv(api_key_name),
+      `anthropic-version` = "2023-06-01"
+    ),
+    openai = list(
+      Authorization = paste(
+        "Bearer",
+        Sys.getenv(api_key_name)
+      )
+    )
+  )
+  response <- httr2::request(endpoint) |>
+    httr2::req_headers(
+     !!!headers
+    ) |>
+    httr2::req_perform(
+      verbosity = 0
+    )
+  models <- httr2::resp_body_json(response)
+  lapply(models$data, function(data) data$id) |>
+    unlist()
+}
+
+check_api_key <- function(apiKeyName) {
+  key <- Sys.getenv(apiKeyName, unset = "")
+  if (!nzchar(key)) {
+    stop(
+      "API key not found.\n",
+      glue::glue("Set it with Sys.setenv({apiKeyName} = 'your_key') "),
+      "and/or add it to your ~/.Renviron.",
+      call. = FALSE
+    )
+  }
+}

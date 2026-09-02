@@ -27,6 +27,7 @@ pick_openai_model <- function() {
     error = function(e) testthat::skip(paste("Cannot list models:", conditionMessage(e)))
   )
   preferred <- c(
+    "gpt-5.6-luna",
     "gpt-5.4",
     "gpt-5.2",
     "gpt-5",
