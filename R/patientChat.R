@@ -62,7 +62,7 @@ patientChat <- R6::R6Class(
       provider = "openai",
       model = "gpt-5.6-luna",
       jsonSchemaPath = NULL,
-      echo = c("none", "output", "all"),
+      echo = "none",
       codelist_data = NULL
     ) {
 

@@ -50,9 +50,9 @@ pick_anthropic_model <- function() {
     error = function(e) testthat::skip(paste("Cannot list models:", conditionMessage(e)))
   )
   preferred <- c(
+    "claude-sonnet-5",
     "claude-opus-5",
     "claude-opus-4-8",
-    "claude-sonnet-5",
     "claude-opus-4-7",
     "claude-opus-4-6",
     "claude-sonnet-4-6"

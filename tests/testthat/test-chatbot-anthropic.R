@@ -7,11 +7,13 @@ test_that("ellmer chat_structured output is loadable", {
     "cdm54schema-complete.json",
     package = "PatientGenerator"
     )
-  chat <- ellmer::chat_anthropic(model = model)
+  chat <- ellmer::chat_anthropic(model)
 
   response <- chat$chat_structured(
     "Generate exactly one OMOP-CDM v5.4 patient with one condition occurrence.",
-    type = ellmer::type_from_schema(path = schema)
+    type = ellmer::type_from_schema(
+      path = schema
+    )
   )
 
   out_json <- jsonlite::toJSON(
