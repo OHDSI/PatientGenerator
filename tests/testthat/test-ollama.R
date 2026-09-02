@@ -1,35 +1,28 @@
-test_that("multiplication works", {
+test_that("local gemma4:26b", {
   skip_if_no_ollama()
-  
   patientChat <- ellmer::chat_ollama(
     model = "gemma4:26b"
   )
-  
   patientChat$chat(
     "Hello"
   ) |> 
     expect_no_error()
-  
   jsonSchema <- system.file(
     "jsonSchemas",
     "cdm54schema-short_deprecated.json",
     package = "PatientGenerator"
   )
-  
   checkmate::checkFileExists(jsonSchema)
-  
   prompt <- "5 female patients;
             condition occurrence ovarian cancer with concept id 602306,
             condition between 2015 and 2020.
             All condition occurrences must end one year after index date"
-  
   response_structured <- patientChat$chat_structured(
     prompt,
     type = ellmer::type_from_schema(
       path = jsonSchema
     )
   )
-  
   # Instantiate patientGenerator
   expect_no_error({
     patientGenerator <- patientChat$new(
@@ -37,17 +30,13 @@ test_that("multiplication works", {
       model = "gemma4:26b"
       )
   })
-  
   patientGenerator$save(
     name = "ollama-gemma426b-test-set",
   )
-  
   cdm <- TestGenerator::patientsCDM(
     testName = "ollama-gemma426b-test-set"
   )
-  
   cdm$person
-  
   patientGenerator$prompt(
     "Population (PERSON table):
       - 35 persons of various ages born between 1960 and 2000
@@ -91,36 +80,30 @@ test_that("multiplication works", {
     - Fill out the condition end date 2024-12-31 for everyone
     - All condition occurrence records must be inside observation_period dates."
   )
-  
   patientGenerator$save(
     name = "testCancerCohortsLLM"
   )
-  
   cdm <- TestGenerator::patientsCDM(
     testName = "testCancerCohortsLLM",
     cdmVersion = "5.4"
   )
-  
   # call createCancerCohorts to generate codelists and create cohorts
   cdm <- createCancerCohorts(
     cdm = cdm,
     concept_sets_folder = "cancer_cohorts",
     name = "cancer_cohorts"
   )
-  
   # test number of patients in cdm instance
   cdm$person |>
     dplyr::collect() |>
     nrow() |>
     expect_equal(35)
-  
   # test total attrition
   cdm$cancer_cohorts |>
     CohortConstructor::attrition() |>
     dplyr::select(excluded_records) |>
     sum() |>
     expect_equal(28)
-  
   # test attrition after imposing age ≥18
   cdm$cancer_cohorts |>
     CohortConstructor::attrition() |>
@@ -128,7 +111,6 @@ test_that("multiplication works", {
     dplyr::pull(excluded_records) |>
     sum() |>
     expect_equal(7)
-  
   # test attrition after imposing start date 2010-01-01
   cdm$cancer_cohorts |>
     CohortConstructor::attrition() |>
@@ -136,7 +118,6 @@ test_that("multiplication works", {
     dplyr::pull(excluded_records) |>
     sum() |>
     expect_equal(7)
-  
   # test attrition after excluding people with death date before index date
   cdm$cancer_cohorts |>
     CohortConstructor::attrition() |>
@@ -144,7 +125,6 @@ test_that("multiplication works", {
     dplyr::pull(excluded_records) |>
     sum() |>
     expect_equal(7)
-  
   # test attrition after excluding people with death date on index date
   cdm$cancer_cohorts |>
     CohortConstructor::attrition() |>
@@ -152,13 +132,11 @@ test_that("multiplication works", {
     dplyr::pull(excluded_records) |>
     sum() |>
     expect_equal(7)
-  
   # test number of final patients in the cohort
   cdm$cancer_cohorts |>
     dplyr::collect() |>
     nrow() |>
     expect_equal(7)
-  
   # test valid sex variable
   cdm$cancer_cohorts |>
     PatientProfiles::addSex() |>
@@ -168,5 +146,4 @@ test_that("multiplication works", {
       "Male",
       "Female")
     )
-  
 })
