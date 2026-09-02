@@ -30,178 +30,168 @@ generator$save("my_test")
 }
 }
 \section{Public fields}{
-  \if{html}{\out{<div class="r6-fields">}}
-  \describe{
-    \item{\code{chat}}{An ellmer chat instance}
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{chat}}{An ellmer chat instance}
 
-    \item{\code{json_schema_path}}{JSON schema to output structured results}
+\item{\code{json_schema_path}}{JSON schema to output structured results}
 
-    \item{\code{response}}{Ouput from the LLM}
+\item{\code{response}}{Ouput from the LLM}
 
-    \item{\code{codelist}}{A codelist with details to search for concepts ids}
-  }
-  \if{html}{\out{</div>}}
+\item{\code{codelist}}{A codelist with details to search for concepts ids}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-  \itemize{
-    \item \href{#method-patientChat-initialize}{\code{patientChat$new()}}
-    \item \href{#method-patientChat-prompt}{\code{patientChat$prompt()}}
-    \item \href{#method-patientChat-json_response}{\code{patientChat$json_response()}}
-    \item \href{#method-patientChat-output}{\code{patientChat$output()}}
-    \item \href{#method-patientChat-retrieveCodelist}{\code{patientChat$retrieveCodelist()}}
-    \item \href{#method-patientChat-save}{\code{patientChat$save()}}
-    \item \href{#method-patientChat-availableModels}{\code{patientChat$availableModels()}}
-    \item \href{#method-patientChat-clone}{\code{patientChat$clone()}}
-  }
+\itemize{
+\item \href{#method-patientChat-new}{\code{patientChat$new()}}
+\item \href{#method-patientChat-prompt}{\code{patientChat$prompt()}}
+\item \href{#method-patientChat-json_response}{\code{patientChat$json_response()}}
+\item \href{#method-patientChat-output}{\code{patientChat$output()}}
+\item \href{#method-patientChat-retrieveCodelist}{\code{patientChat$retrieveCodelist()}}
+\item \href{#method-patientChat-save}{\code{patientChat$save()}}
+\item \href{#method-patientChat-availableModels}{\code{patientChat$availableModels()}}
+\item \href{#method-patientChat-clone}{\code{patientChat$clone()}}
+}
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-patientChat-initialize"></a>}}
-\if{latex}{\out{\hypertarget{method-patientChat-initialize}{}}}
-\subsection{\code{patientChat$new()}}{
-  Create a new chat to create JSON test sets for OMOP-CDM.
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$new(
+\if{html}{\out{<a id="method-patientChat-new"></a>}}
+\if{latex}{\out{\hypertarget{method-patientChat-new}{}}}
+\subsection{Method \code{new()}}{
+Create a new chat to create JSON test sets for OMOP-CDM.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$new(
   system_prompt = NULL,
   model = "gpt-5.4",
   jsonSchemaPath = NULL,
   echo = c("none", "output", "all"),
   codelist_data = NULL
-)}
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Arguments}{
-    \if{html}{\out{<div class="arguments">}}
-    \describe{
-      \item{\code{system_prompt}}{Initial system prompt to impose behaviour to the LLM}
-      \item{\code{model}}{Such as "gpt-5.3". For a complete list, call patientChat$availableModels()}
-      \item{\code{jsonSchemaPath}}{The JSON schema to structure output from LLM}
-      \item{\code{echo}}{How the output will be displayed in the console}
-      \item{\code{codelist_data}}{A codelist with details to search for concepts ids}
-    }
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Returns}{
-    A new \code{Person} object.
-  }
+)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{system_prompt}}{Initial system prompt to impose behaviour to the LLM}
+
+\item{\code{model}}{Such as "gpt-5.3". For a complete list, call patientChat$availableModels()}
+
+\item{\code{jsonSchemaPath}}{The JSON schema to structure output from LLM}
+
+\item{\code{echo}}{How the output will be displayed in the console}
+
+\item{\code{codelist_data}}{A codelist with details to search for concepts ids}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{Person} object.
+}
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-prompt"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-prompt}{}}}
-\subsection{\code{patientChat$prompt()}}{
-  Prompt to request data from LLM API
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$prompt(prompt)}
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Arguments}{
-    \if{html}{\out{<div class="arguments">}}
-    \describe{
-      \item{\code{prompt}}{A query in character.}
-    }
-    \if{html}{\out{</div>}}
-  }
+\subsection{Method \code{prompt()}}{
+Prompt to request data from LLM API
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$prompt(prompt)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{prompt}}{A query in character.}
+}
+\if{html}{\out{</div>}}
+}
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-json_response"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-json_response}{}}}
-\subsection{\code{patientChat$json_response()}}{
-  Output in JSON format
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$json_response()}
-    \if{html}{\out{</div>}}
-  }
+\subsection{Method \code{json_response()}}{
+Output in JSON format
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$json_response()}\if{html}{\out{</div>}}
 }
 
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-output"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-output}{}}}
-\subsection{\code{patientChat$output()}}{
-  Returns the chat object
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$output()}
-    \if{html}{\out{</div>}}
-  }
+\subsection{Method \code{output()}}{
+Returns the chat object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$output()}\if{html}{\out{</div>}}
 }
 
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-retrieveCodelist"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-retrieveCodelist}{}}}
-\subsection{\code{patientChat$retrieveCodelist()}}{
-  Retrieves and filters data from codelist_data
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$retrieveCodelist(concept_label = "Stage 1", domain = "Measurement")}
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Arguments}{
-    \if{html}{\out{<div class="arguments">}}
-    \describe{
-      \item{\code{concept_label}}{Filters the concept_name in the codelist with details}
-      \item{\code{domain}}{Filters the domain in the codelist with details.}
-    }
-    \if{html}{\out{</div>}}
-  }
+\subsection{Method \code{retrieveCodelist()}}{
+Retrieves and filters data from codelist_data
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$retrieveCodelist(concept_label = "Stage 1", domain = "Measurement")}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{concept_label}}{Filters the concept_name in the codelist with details}
+
+\item{\code{domain}}{Filters the domain in the codelist with details.}
+}
+\if{html}{\out{</div>}}
+}
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-save"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-save}{}}}
-\subsection{\code{patientChat$save()}}{
-  Saves the JSON test set to disk.
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$save(name = "patient-chat-test", path = NULL)}
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Arguments}{
-    \if{html}{\out{<div class="arguments">}}
-    \describe{
-      \item{\code{name}}{Name of the file}
-      \item{\code{path}}{To save the file.
+\subsection{Method \code{save()}}{
+Saves the JSON test set to disk.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$save(name = "patient-chat-test", path = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Name of the file}
+
+\item{\code{path}}{To save the file.
 If NULL, the package first tries \code{testthat::test_path("testCases")},
 then checks \code{options(PatientGenerator.testSetDir = "...")}, and finally
 falls back to the package user data directory.}
-    }
-    \if{html}{\out{</div>}}
-  }
 }
-
+\if{html}{\out{</div>}}
+}
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-availableModels"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-availableModels}{}}}
-\subsection{\code{patientChat$availableModels()}}{
-  Retrieves available models from the LLM API.
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$availableModels()}
-    \if{html}{\out{</div>}}
-  }
+\subsection{Method \code{availableModels()}}{
+Retrieves available models from the LLM API.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$availableModels()}\if{html}{\out{</div>}}
 }
 
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-patientChat-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-patientChat-clone}{}}}
-\subsection{\code{patientChat$clone()}}{
-  The objects of this class are cloneable with this method.
-  \subsection{Usage}{
-    \if{html}{\out{<div class="r">}}
-    \preformatted{patientChat$clone(deep = FALSE)}
-    \if{html}{\out{</div>}}
-  }
-  \subsection{Arguments}{
-    \if{html}{\out{<div class="arguments">}}
-    \describe{
-      \item{\code{deep}}{Whether to make a deep clone.}
-    }
-    \if{html}{\out{</div>}}
-  }
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{patientChat$clone(deep = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

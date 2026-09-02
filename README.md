@@ -6,8 +6,8 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/PatientGenerator)](https://CRAN.R-project.org/package=PatientGenerator)
 [![R CMD
-check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
+check](https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/OHDSI/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/OHDSI/PatientGenerator)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
@@ -20,14 +20,14 @@ for the OMOP Common Data Model (CDM) using two complementary approaches:
 - **`patientDesigner`**: Provides a D3-based Shiny interface for
   reviewing and editing CDM test sets.
 
-The package also includes support for Hecate-powered concept lookups to
-ensure valid OMOP concept codes.
-
 ### Installation
 
 ``` r
+# From CRAN
+install.packages("PatientGenerator")
+
 # install.packages("remotes")
-remotes::install_github("mi-erasmusmc/PatientGenerator")
+remotes::install_github("OHDSI/PatientGenerator")
 ```
 
 ### Workflow Overview
@@ -50,7 +50,7 @@ Available models can be listed using
 library(PatientGenerator)
 
 patientGenerator <- patientChat$new(
-  model = "gpt-5.4",
+  model = "gpt-5.6-luna",
   echo = "none"
 )
 ```
@@ -89,13 +89,18 @@ patientGenerator$prompt(
 )
 ```
 
-### Integration with `testthat`
+### Integration with `testthat` and `TestGenerator`
 
-Save the generated dataset as a JSON file and utilize
-`TestGenerator::patientsCDM` to instantiate a CDM reference.
+Save the generated dataset as a JSON file.
 
 ``` r
 patientGenerator$save(name = "diabetes-patients")
+```
+
+Then, you can instantiate a CDM reference.
+
+``` r
+library(TestGenerator)
 
 cdm <- TestGenerator::patientsCDM(
   testName = "diabetes-patients",
@@ -110,11 +115,11 @@ cdm$person |>
     #> cdm$person |> collect() |> head(5)
     #>    person_id gender_concept_id year_of_birth person_source_value
     #>        <int>             <int>         <int>              <char>
-    #> 1:         1              8532          1965              SYN001
-    #> 2:         2              8532          1972              SYN002
-    #> 3:         3              8532          1958              SYN003
-    #> 4:         4              8532          1981              SYN004
-    #> 5:         5              8532          1949              SYN005
+    #> 1:         1              8532          1962                P001
+    #> 2:         2              8532          1970                P002
+    #> 3:         3              8532          1958                P003
+    #> 4:         4              8532          1981                P004
+    #> 5:         5              8532          1967                P005
 
 ### Iterative Refinement
 
@@ -128,11 +133,11 @@ patientGenerator$prompt("Remove all male patients")
     #> cdm$person |> collect() |> head(5)
     #>    person_id gender_concept_id year_of_birth person_source_value
     #>        <int>             <int>         <int>              <char>
-    #> 1:         1              8532          1965              SYN001
-    #> 2:         2              8532          1972              SYN002
-    #> 3:         3              8532          1958              SYN003
-    #> 4:         4              8532          1981              SYN004
-    #> 5:         5              8532          1949              SYN005
+    #> 1:         1              8532          1962                P001
+    #> 2:         2              8532          1970                P002
+    #> 3:         3              8532          1958                P003
+    #> 4:         4              8532          1981                P004
+    #> 5:         5              8532          1967                P005
 
 ### Visual Review and Editing with `patientDesigner()`
 

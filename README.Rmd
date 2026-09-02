@@ -13,8 +13,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/PatientGenerator)](https://CRAN.R-project.org/package=PatientGenerator)
-[![R CMD check](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mi-erasmusmc/PatientGenerator/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/mi-erasmusmc/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/mi-erasmusmc/PatientGenerator)
+[![R CMD check](https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/OHDSI/PatientGenerator/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/OHDSI/PatientGenerator/graph/badge.svg)](https://app.codecov.io/gh/OHDSI/PatientGenerator)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
@@ -23,13 +23,14 @@ knitr::opts_chunk$set(
 - **`patientChat`**: Generates structured patient JSON files using Large Language Models (LLMs).
 - **`patientDesigner`**: Provides a D3-based Shiny interface for reviewing and editing CDM test sets.
 
-The package also includes support for Hecate-powered concept lookups to ensure valid OMOP concept codes.
-
 ### Installation
 
 ```r
+# From CRAN
+install.packages("PatientGenerator")
+
 # install.packages("remotes")
-remotes::install_github("mi-erasmusmc/PatientGenerator")
+remotes::install_github("OHDSI/PatientGenerator")
 ```
 
 ### Workflow Overview
@@ -49,7 +50,7 @@ Available models can be listed using `PatientGenerator::availableModels()`.
 library(PatientGenerator)
 
 patientGenerator <- patientChat$new(
-  model = "gpt-5.4",
+  model = "gpt-5.6-luna",
   echo = "none"
 )
 ```
@@ -87,12 +88,18 @@ patientGenerator$prompt(
 )
 ```
 
-### Integration with `testthat`
+### Integration with `testthat` and `TestGenerator`
 
-Save the generated dataset as a JSON file and utilize `TestGenerator::patientsCDM` to instantiate a CDM reference.
+Save the generated dataset as a JSON file. 
 
 ```{r, eval = FALSE}
 patientGenerator$save(name = "diabetes-patients")
+```
+
+Then, you can instantiate a CDM reference.
+
+```r
+library(TestGenerator)
 
 cdm <- TestGenerator::patientsCDM(
   testName = "diabetes-patients",
