@@ -2,6 +2,8 @@
 
 ## PatientGenerator 0.2.4
 
+CRAN release: 2026-09-15
+
 - [`patientDesigner()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientDesigner.md)
   now has an option parameter to select tables to hide.
 

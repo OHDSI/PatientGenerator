@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/OHDSI/PatientGenerator/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/OHDSI/PatientGenerator/blob/v0.2.4/DESCRIPTION)
 
 Barboza C, Inberg G, Black A (2026). *PatientGenerator: Generator of
 Synthetic Patient Data for the OMOP Common Data Model*. R package
