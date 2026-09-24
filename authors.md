@@ -16,12 +16,12 @@ Source:
 
 Barboza C, Inberg G, Black A (2026). *PatientGenerator: Generator of
 Synthetic Patient Data for the OMOP Common Data Model*. R package
-version 0.2.4, <https://github.com/OHDSI/PatientGenerator>.
+version 0.2.5, <https://github.com/OHDSI/PatientGenerator>.
 
     @Manual{,
       title = {PatientGenerator: Generator of Synthetic Patient Data for the OMOP Common Data Model},
       author = {Cesar Barboza and Ger Inberg and Adam Black},
       year = {2026},
-      note = {R package version 0.2.4},
+      note = {R package version 0.2.5},
       url = {https://github.com/OHDSI/PatientGenerator},
     }

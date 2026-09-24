@@ -1,5 +1,11 @@
 # Changelog
 
+## PatientGenerator 0.2.5
+
+- [`patientChat()`](https://mi-erasmusmc.github.io/PatientGenerator/reference/patientChat.md)
+  now includes a logical ‘PET’ parameter to add the Pregnancy Extension
+  Table (PET) to the JSON schema.
+
 ## PatientGenerator 0.2.4
 
 CRAN release: 2026-09-15
