@@ -29,7 +29,6 @@ getHecateConfig <- function() {
 #' @param y Fallback value when \code{x} is NULL.
 #' @return \code{x} if not NULL, otherwise \code{y}.
 #' @name nullOr
-#' @export
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
 #' Create a rate limiter

@@ -183,7 +183,10 @@ test_that("Ovarian cancer stages", {
 test_that("pregnancy prompt", {
   skip_if_no_openai()
   model <- pick_openai_model()
-  patientGenerator <- patientChat$new(model = "gpt-5.6-luna")
+  patientGenerator <- patientChat$new(
+    model = "gpt-5.6-luna",
+    PET = TRUE
+  )
   patientGenerator$prompt(
     "Population (person table):
     - 10 adult patients
