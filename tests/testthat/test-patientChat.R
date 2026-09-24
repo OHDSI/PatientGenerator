@@ -1,3 +1,111 @@
+test_that("patientChat API flow creates loadable test set", {
+  skip_if_no_openai()
+  model <- pick_openai_model()
+
+  expect_error(patientChat$new(model = "gpt"))
+
+  generator <- patientChat$new(model = model, echo = "none")
+  generator$prompt("Generate exactly 1 synthetic patient in OMOP-CDM v5.4 with one observation period.")
+
+  tmp <- tempfile("pg_chat_")
+  dir.create(tmp, recursive = TRUE)
+  generator$save(name = "patient-chat-test", path = tmp)
+
+  out_file <- file.path(tmp, "patient-chat-test.json")
+  expect_true(file.exists(out_file))
+
+  cdm <- new_cdm()
+  expect_no_error(cdm$loadJsonTestSet(out_file))
+  expect_gte(nrow(cdm$person$data()), 1)
+})
+
+test_that("patientChat switch PET false", {
+  skip_if_no_openai()
+  model <- pick_openai_model()
+  patientGenerator <- patientChat$new(
+    model = model,
+    PET = FALSE, # Default
+    echo = "none"
+  )
+  patientGenerator$prompt(
+    "Generate exactly 1 synthetic patient in OMOP-CDM v5.4 with one observation period."
+  )
+  tmp <- tempfile("json_complete")
+  dir.create(
+    tmp,
+    recursive = TRUE
+  )
+  patientGenerator$save(
+    name = "json-complete",
+    path = tmp
+  )
+  expect_no_error({
+    cdm <- TestGenerator::patientsCDM(
+      pathJson = tmp,
+      testName = "json-complete",
+      cdmVersion = "5.4"
+    )
+  })
+  unlink(
+    tmp,
+    recursive = TRUE
+  )
+})
+
+test_that("patientChat switch PET true", {
+  skip_if_no_openai()
+  model <- pick_openai_model()
+  patientGenerator <- patientChat$new(
+    model = model,
+    PET = TRUE, # Pregnancy Extension Table
+    echo = "none"
+  )
+  patientGenerator$prompt(
+    "Generate exactly 1 synthetic patient in OMOP-CDM v5.4 with one observation period.
+    Female, fill synthetic data about her pregnancy"
+  )
+  tmp <- tempfile("json_PET")
+  dir.create(
+    tmp,
+    recursive = TRUE
+  )
+  patientGenerator$save(
+    name = "json-PET",
+    path = tmp
+  )
+  expect_no_error({
+    cdm <- TestGenerator::patientsCDM(
+      pathJson = tmp,
+      testName = "json-PET",
+      cdmVersion = "5.4"
+    )
+  })
+  cdm$pregnancy |> 
+    dplyr::pull(
+      person_id
+    ) |> 
+    expect_equal(1)
+  unlink(
+    tmp,
+    recursive = TRUE
+  )
+  })
+
+test_that("patientChat with local codelist returns retrievable concepts", {
+  codelist_path <- system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
+  codelist_data <- readRDS(codelist_path)
+
+  skip_if_no_openai()
+  model <- pick_openai_model()
+
+  generator <- patientChat$new(model = model, codelist_data = codelist_data, echo = "none")
+  result <- generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
+  parsed <- jsonlite::fromJSON(result)
+
+  expect_s3_class(parsed, "data.frame")
+  expect_gt(nrow(parsed), 0)
+})
+
 test_that("Chaining LLM thought for synthetic patient generation", {
   skip_if_no_openai()
   
@@ -115,41 +223,4 @@ test_that("Chaining LLM thought for synthetic patient generation", {
     length() |>
     expect_equal(17)
   
-})
-
-
-test_that("patientChat API flow creates loadable test set", {
-  skip_if_no_openai()
-  model <- pick_openai_model()
-
-  expect_error(patientChat$new(model = "gpt"))
-
-  generator <- patientChat$new(model = model, echo = "none")
-  generator$prompt("Generate exactly 1 synthetic patient in OMOP-CDM v5.4 with one observation period.")
-
-  tmp <- tempfile("pg_chat_")
-  dir.create(tmp, recursive = TRUE)
-  generator$save(name = "patient-chat-test", path = tmp)
-
-  out_file <- file.path(tmp, "patient-chat-test.json")
-  expect_true(file.exists(out_file))
-
-  cdm <- new_cdm()
-  expect_no_error(cdm$loadJsonTestSet(out_file))
-  expect_gte(nrow(cdm$person$data()), 1)
-})
-
-test_that("patientChat with local codelist returns retrievable concepts", {
-  codelist_path <- system.file("concept_sets", "ovarian_cancer_codelist.rds", package = "PatientGenerator")
-  codelist_data <- readRDS(codelist_path)
-
-  skip_if_no_openai()
-  model <- pick_openai_model()
-
-  generator <- patientChat$new(model = model, codelist_data = codelist_data, echo = "none")
-  result <- generator$retrieveCodelist(concept_label = "ovarian", domain = "Condition")
-  parsed <- jsonlite::fromJSON(result)
-
-  expect_s3_class(parsed, "data.frame")
-  expect_gt(nrow(parsed), 0)
 })
