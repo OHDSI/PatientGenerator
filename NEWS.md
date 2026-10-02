@@ -1,3 +1,7 @@
+# PatientGenerator 0.2.5
+
+* `patientChat()` now includes a logical 'PET' parameter to add the Pregnancy Extension Table (PET) to the JSON schema.  
+
 # PatientGenerator 0.2.4
 
 * `patientDesigner()` now has an option parameter to select tables to hide. 

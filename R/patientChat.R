@@ -51,22 +51,29 @@ patientChat <- R6::R6Class(
     #' Create a new chat to create JSON test sets for OMOP-CDM.
     #' @param system_prompt Initial system prompt to impose behaviour to the LLM
     #' @param model Such as "gpt-5.3". For a complete list, call patientChat$availableModels()
+    #' @param PET If TRUE, the JSON schema will include the Pregnancy Extention Table (PET)
     #' @param jsonSchemaPath The JSON schema to structure output from LLM
     #' @param echo How the output will be displayed in the console
     #' @param codelist_data A codelist with details to search for concepts ids
     #'
     #' @return A new `Person` object.
-    initialize = function(system_prompt = NULL,
-                          model = "gpt-5.4",
-                          jsonSchemaPath = NULL,
-                          echo = c("none", "output", "all"),
-                          codelist_data = NULL) {
+    initialize = function(
+      system_prompt = NULL,
+      model = "gpt-5.4",
+      PET = FALSE,
+      jsonSchemaPath = NULL,
+      echo = c("none", "output", "all"),
+      codelist_data = NULL
+    ) {
 
       # Check API and available models -----------------------
       private$.api_check(model)
 
       # check JSON schema file -------------------------------
-      private$.json_schema_check(jsonSchemaPath)
+      private$.json_schema_check(
+        jsonSchemaPath,
+        PET
+      )
 
       # System propmpt ---------------------------------------
       if (is.null(system_prompt)) {
@@ -246,15 +253,26 @@ patientChat <- R6::R6Class(
       }
     },
 
-    .json_schema_check = function(jsonSchemaPath) {
+    .json_schema_check = function(jsonSchemaPath, PET) {
+      checkmate::assertLogical(PET)
       if (is.null(jsonSchemaPath)) {
-        json_schema_path <- system.file(
-          "jsonSchemas",
-          "cdm54schema-complete.json",
-          package = "PatientGenerator"
+        if (isFALSE(PET)) {
+          json_schema_path <- system.file(
+            "jsonSchemas",
+            "cdm54schema-complete.json",
+            package = "PatientGenerator"
           )
-        checkmate::assertFileExists(json_schema_path)
-        self$json_schema_path <- json_schema_path
+          checkmate::assertFileExists(json_schema_path)
+          self$json_schema_path <- json_schema_path
+        } else {
+          json_schema_path <- system.file(
+            "jsonSchemas",
+            "cdm54schema-PET.json",
+            package = "PatientGenerator"
+          )
+          checkmate::assertFileExists(json_schema_path)
+          self$json_schema_path <- json_schema_path
+          }
         } else {
         checkmate::assertCharacter(jsonSchemaPath)
         checkmate::assertFileExists(jsonSchemaPath)
