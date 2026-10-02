@@ -371,6 +371,8 @@ patientDesigner <- function(path = NULL,
     # TRIGGERS
     file_refresh_trigger <- reactiveVal(0)
     loaded_listeners <- reactiveVal(character(0))
+    active_test_set <- reactiveVal(NULL)
+    default_test_set_loaded <- reactiveVal(FALSE)
     data_version <- reactiveVal(0)
     chat_generator <- reactiveVal(NULL)
     chat_json <- reactiveVal(NULL)
@@ -414,6 +416,7 @@ patientDesigner <- function(path = NULL,
     observeEvent(input$new_test_set, {
       # browser()
       cdm$reset()
+      active_test_set(NULL)
       data_version(data_version() + 1)
     })
 
@@ -443,6 +446,7 @@ patientDesigner <- function(path = NULL,
         return(invisible(NULL))
       }
 
+      active_test_set(NULL)
       data_version(data_version() + 1)
 
       if (length(result$ignored) > 0) {
@@ -471,19 +475,42 @@ patientDesigner <- function(path = NULL,
         full.names = FALSE
       )
     })
+
+    load_test_set <- function(filename) {
+      result <- tryCatch(
+        cdm$loadJsonTestSet(file.path(get_test_dir(), filename)),
+        error = function(e) e
+      )
+
+      if (inherits(result, "error")) {
+        showNotification(
+          conditionMessage(result),
+          type = "error",
+          duration = 8
+        )
+        return(FALSE)
+      }
+
+      active_test_set(filename)
+      data_version(data_version() + 1)
+      TRUE
+    }
     
     # Render list UI
     output$sidebar_file_list <- renderUI({
       files <- current_files()
+      selected_file <- active_test_set()
       
-      tagList(
+      tags$div(
+        class = "list-group list-group-flush",
         lapply(files, function(f) {
-          # ID includes extension to be unique and consistent
-          # Display name removes extension for looks
           actionLink(
             inputId = paste0("link_", f),
             label = tools::file_path_sans_ext(f),
-            class = "text-reset text-decoration-none d-block mb-1"
+            class = paste(
+              "list-group-item list-group-item-action border-0 rounded-2",
+              if (identical(f, selected_file)) "active"
+            )
           )
         })
       )
@@ -500,14 +527,19 @@ patientDesigner <- function(path = NULL,
         id <- paste0("link_", filename)
         
         observeEvent(input[[id]], {
-          path <- file.path(get_test_dir(), filename)
-          cdm$loadJsonTestSet(path)
-          data_version(data_version() + 1)
+          load_test_set(filename)
         })
       })
       
       if (length(new_files) > 0) {
         loaded_listeners(c(existing, new_files))
+      }
+
+      if (!default_test_set_loaded()) {
+        default_test_set_loaded(TRUE)
+        if (length(files) > 0) {
+          load_test_set(files[[1]])
+        }
       }
     })
     
@@ -547,6 +579,7 @@ patientDesigner <- function(path = NULL,
       )
       
       file_refresh_trigger(file_refresh_trigger() + 1)
+      active_test_set(new_name)
       removeModal()
     })
 
@@ -731,6 +764,7 @@ patientDesigner <- function(path = NULL,
           return(invisible(NULL))
         }
 
+        active_test_set(NULL)
         data_version(data_version() + 1)
         chat_status("Loaded chat dataset into the designer.")
         showNotification(
@@ -741,26 +775,6 @@ patientDesigner <- function(path = NULL,
       })
     }
     
-    
-    ##### Load JSON Test Set
-    lapply(
-      getTestSets(
-        path = get_test_dir()),
-      function(filename) {
-        id <- paste0("link_", filename)
-        observeEvent(input[[id]], {
-          path <- file.path(
-            get_test_dir(),
-            paste(
-              filename,
-              "json",
-              sep = "."
-            )
-          )
-          cdm$loadJsonTestSet(path)
-          data_version(data_version() + 1)
-        })
-      })
     
     ##### PERSON TABLE
     
