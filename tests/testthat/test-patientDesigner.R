@@ -26,6 +26,25 @@ test_that("patientDesigner provides a picker for all available Designer tables",
   expect_false("person" %in% unname(table_choices))
 })
 
+test_that("patientDesigner loads and highlights the first test set", {
+  test_set_dir <- tempfile("pg_cases_")
+  dir.create(test_set_dir)
+  file.copy(
+    testthat::test_path("testCases", "1_person_1_observation_period.json"),
+    file.path(test_set_dir, "first.json")
+  )
+
+  app <- patientDesigner(path = test_set_dir)
+  shiny::testServer(app$serverFuncSource(), {
+    sidebar <- output$sidebar_file_list$html
+    expect_match(
+      sidebar,
+      'rounded-2 active" href="#" id="link_first.json"'
+    )
+    expect_match(output$personDataTable, "person_id")
+  })
+})
+
 test_that("patientDesigner can prepare a publishable app directory", {
   prepare_publishable <- getFromNamespace(
     "preparePublishablePatientDesigner",
