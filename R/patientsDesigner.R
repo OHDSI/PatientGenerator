@@ -1007,7 +1007,8 @@ patientDesigner <- function(path = NULL,
     ##### FACT RELATIONSHIP TABLE
     fact_relationship_module <- factRelationshipServer(
       id = "fact_relationship",
-      cdm = cdm
+      cdm = cdm,
+      data_version = data_version
     )
 
     output$factRelationshipTable <- renderTable({
