@@ -11,6 +11,7 @@ cdmConstructor <- R6::R6Class(
     observation = NULL,
     death = NULL,
     pregnancy = NULL,
+    fact_relationship = NULL,
     initialize = function(tables = supportedCdmTables()) {
       self$tables <- tables
       self$person <- personTable$new()
@@ -99,6 +100,37 @@ cdmConstructor <- R6::R6Class(
           ),
         fill = TRUE
         )
+      },
+    # Add a row to a table that is not a person-level event table (for
+    # example, fact_relationship, which has a composite key and no person_id).
+    addRow = function(...) {
+      input_data <- list(...)
+      if (!all(names(input_data) %in% names(private$.columnNames))) {
+        stop("Error: one or more supplied columns are not from this CDM table")
+      }
+      new_row <- private$.constructNewRow(input_data)
+      private$.data <- rbindlist(list(private$.data, new_row), fill = TRUE)
+      },
+    updateRow = function(row_index, ...) {
+      checkmate::assertInt(row_index, lower = 1)
+      if (row_index > nrow(private$.data)) {
+        stop("Error: row_index is outside this CDM table")
+      }
+      new_data <- list(...)
+      if (!all(names(new_data) %in% names(private$.columnNames))) {
+        stop("Error: one or more supplied columns are not from this CDM table")
+      }
+      for (col_name in names(new_data)) {
+        data.table::set(private$.data, i = row_index, j = col_name,
+                        value = new_data[[col_name]])
+      }
+      },
+    deleteRow = function(row_index) {
+      checkmate::assertInt(row_index, lower = 1)
+      if (row_index > nrow(private$.data)) {
+        stop("Error: row_index is outside this CDM table")
+      }
+      private$.data <- private$.data[-row_index]
       },
     update = function(event_id, ...) {
       new_data <- list(...)
@@ -392,7 +424,7 @@ cdmConstructor <- R6::R6Class(
       if (self$person$data() |> length() > 0) {
         tables_timeline <- setNames(
           lapply(
-            self$tables, 
+            setdiff(self$tables, "fact_relationship"),
             function(table_name) {
               id_col <- self[[table_name]]$tableNameId()
               concept_col <- self[[table_name]]$tableNameConceptId()
