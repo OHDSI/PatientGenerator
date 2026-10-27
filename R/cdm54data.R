@@ -22,7 +22,8 @@ supportedCdmTables <- function(includePerson = FALSE) {
     "procedure_occurrence",
     "observation",
     "death",
-    "pregnancy"
+    "pregnancy",
+    "fact_relationship"
   )
 
   if (isTRUE(includePerson)) {

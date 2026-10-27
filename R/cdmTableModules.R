@@ -350,3 +350,107 @@ cdmTableServer <- function(
     }
   )
 }
+
+#' UI for the OMOP fact_relationship table.
+#'
+#' Unlike the other Designer tables, fact_relationship is not a patient-level
+#' event: it has no person_id, date, or single primary-key column.  It is
+#' therefore edited as rows identified by their position in the table.
+#' @noRd
+factRelationshipUI <- function(id) {
+  ns <- shiny::NS(id)
+  columns <- names(columnNames("fact_relationship"))
+
+  bslib::card(
+    full_screen = TRUE,
+    bslib::card_body(
+      shiny::fluidRow(
+        shiny::column(3, shiny::selectInput(ns("row_index"), "Relationship row", choices = character())),
+        shiny::column(2, shiny::actionButton(ns("add"), "Add")),
+        shiny::column(2, shiny::actionButton(ns("update"), "Update")),
+        shiny::column(2, shiny::actionButton(ns("delete"), "Delete"))
+      ),
+      shiny::br(),
+      shiny::fluidRow(lapply(columns, function(column_name) {
+        shiny::column(
+          2,
+          class = "cdm-input-col",
+          shiny::numericInput(
+            ns(column_name),
+            label = inputDisplayLabel(column_name, "fact_relationship"),
+            value = NULL,
+            step = 1
+          )
+        )
+      }))
+    )
+  )
+}
+
+#' Server logic for the OMOP fact_relationship table.
+#' @noRd
+factRelationshipServer <- function(id, cdm) {
+  shiny::moduleServer(id, function(input, output, session) {
+    columns <- names(columnNames("fact_relationship"))
+    field_update <- shiny::reactiveVal(0L)
+
+    refreshRows <- function(selected = NULL) {
+      row_count <- nrow(cdm$fact_relationship$data())
+      choices <- if (row_count == 0) character() else as.character(seq_len(row_count))
+      shiny::updateSelectInput(
+        session,
+        "row_index",
+        choices = choices,
+        selected = selected %||% if (length(choices)) tail(choices, 1) else character()
+      )
+    }
+
+    values <- function() {
+      values <- lapply(columns, function(column_name) input[[column_name]])
+      names(values) <- columns
+      if (any(vapply(values, function(value) is.null(value) || is.na(value), logical(1)))) {
+        return(NULL)
+      }
+      lapply(values, as.integer)
+    }
+
+    observeEvent(input$add, {
+      row_values <- values()
+      shiny::req(!is.null(row_values))
+      do.call(cdm$fact_relationship$addRow, row_values)
+      refreshRows(as.character(nrow(cdm$fact_relationship$data())))
+      field_update(field_update() + 1L)
+    })
+
+    observeEvent(input$row_index, {
+      row_index <- suppressWarnings(as.integer(input$row_index))
+      shiny::req(!is.na(row_index), row_index >= 1, row_index <= nrow(cdm$fact_relationship$data()))
+      row <- cdm$fact_relationship$data()[row_index]
+      for (column_name in columns) {
+        shiny::updateNumericInput(session, column_name, value = row[[column_name]])
+      }
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$update, {
+      row_index <- suppressWarnings(as.integer(input$row_index))
+      row_values <- values()
+      shiny::req(!is.na(row_index), !is.null(row_values))
+      do.call(cdm$fact_relationship$updateRow, c(list(row_index = row_index), row_values))
+      field_update(field_update() + 1L)
+    })
+
+    observeEvent(input$delete, {
+      row_index <- suppressWarnings(as.integer(input$row_index))
+      shiny::req(!is.na(row_index))
+      cdm$fact_relationship$deleteRow(row_index)
+      refreshRows()
+      field_update(field_update() + 1L)
+    })
+
+    list(
+      add_click = shiny::reactive(input$add),
+      delete_click = shiny::reactive(input$delete),
+      field_update = shiny::reactive(field_update())
+    )
+  })
+}

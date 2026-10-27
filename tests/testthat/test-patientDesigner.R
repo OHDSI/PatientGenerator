@@ -24,6 +24,7 @@ test_that("patientDesigner provides a picker for all available Designer tables",
     supportedCdmTables()
   )
   expect_false("person" %in% unname(table_choices))
+  expect_true("fact_relationship" %in% unname(table_choices))
 })
 
 test_that("patientDesigner can prepare a publishable app directory", {

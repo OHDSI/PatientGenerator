@@ -7,7 +7,8 @@ designerTableChoices <- function() {
     procedure_occurrence = "Procedure Occurrence",
     observation = "Observation",
     death = "Death",
-    pregnancy = "Pregnancy"
+    pregnancy = "Pregnancy",
+    fact_relationship = "Fact Relationship"
   )
   table_names <- supportedCdmTables()
   stats::setNames(table_names, table_labels[table_names])
@@ -192,6 +193,11 @@ patientDesigner <- function(path = NULL,
         "Pregnancy",
         cdmTableUI(id = "pregnancy"),
         value = "pregnancy_module"
+      ),
+      tabPanel(
+        "Fact Relationship",
+        factRelationshipUI(id = "fact_relationship"),
+        value = "fact_relationship_module"
       )
       )
     ),
@@ -216,7 +222,8 @@ patientDesigner <- function(path = NULL,
         tableOutput("procedureOccurrenceTable"),
         tableOutput("observationTable"),
         tableOutput("deathTable"),
-        tableOutput("pregnancyTable")
+        tableOutput("pregnancyTable"),
+        tableOutput("factRelationshipTable")
       )
     )
   )
@@ -975,6 +982,20 @@ patientDesigner <- function(path = NULL,
       pregnancy_module$field_update()
       pregnancy_module$elongation_click()
       formatDateColumns(cdm$pregnancy$data())
+    })
+
+    ##### FACT RELATIONSHIP TABLE
+    fact_relationship_module <- factRelationshipServer(
+      id = "fact_relationship",
+      cdm = cdm
+    )
+
+    output$factRelationshipTable <- renderTable({
+      data_version()
+      fact_relationship_module$add_click()
+      fact_relationship_module$delete_click()
+      fact_relationship_module$field_update()
+      cdm$fact_relationship$data()
     })
     
     # CDM Data Timeline

@@ -261,3 +261,24 @@ test_that("death table selector refresh targets person_id", {
   expect_true("death-person_id" %in% input_ids)
   expect_false("death-death_id" %in% input_ids)
 })
+
+test_that("factRelationshipServer adds a composite-key relationship row", {
+  cdm <- new_cdm()
+
+  shiny::testServer(fact_relationship_server,
+    args = list(id = "fact_relationship", cdm = cdm), {
+      session$setInputs(
+        domain_concept_id_1 = 19,
+        fact_id_1 = 101,
+        domain_concept_id_2 = 19,
+        fact_id_2 = 102,
+        relationship_concept_id = 44818821,
+        add = 1
+      )
+    }
+  )
+
+  relationship <- cdm$fact_relationship$data()
+  expect_equal(nrow(relationship), 1L)
+  expect_equal(relationship$relationship_concept_id[[1]], 44818821L)
+})

@@ -268,6 +268,23 @@ test_that("getCdmData omits an empty pregnancy table and exports populated data"
   expect_equal(nrow(exported$pregnancy), 1L)
 })
 
+test_that("fact_relationship rows can be added and exported", {
+  cdm <- new_cdm()
+
+  expect_no_error(cdm$fact_relationship$addRow(
+    domain_concept_id_1 = 19L,
+    fact_id_1 = 101L,
+    domain_concept_id_2 = 19L,
+    fact_id_2 = 102L,
+    relationship_concept_id = 44818821L
+  ))
+  expect_equal(nrow(cdm$fact_relationship$data()), 1L)
+
+  exported <- jsonlite::fromJSON(cdm$getCdmData())
+  expect_true("fact_relationship" %in% names(exported))
+  expect_equal(exported$fact_relationship$fact_id_2[[1]], 102L)
+})
+
 test_that("loadJsonTestSet completes beta blocker death table schema", {
   cdm <- new_cdm()
   path <- testthat::test_path("testCases", "beta_blocker.json")
