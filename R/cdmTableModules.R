@@ -389,7 +389,7 @@ factRelationshipUI <- function(id) {
 
 #' Server logic for the OMOP fact_relationship table.
 #' @noRd
-factRelationshipServer <- function(id, cdm) {
+factRelationshipServer <- function(id, cdm, data_version = NULL) {
   shiny::moduleServer(id, function(input, output, session) {
     columns <- names(columnNames("fact_relationship"))
     field_update <- shiny::reactiveVal(0L)
@@ -403,6 +403,12 @@ factRelationshipServer <- function(id, cdm) {
         choices = choices,
         selected = selected %||% if (length(choices)) tail(choices, 1) else character()
       )
+    }
+
+    if (!is.null(data_version)) {
+      shiny::observeEvent(data_version(), {
+        refreshRows()
+      }, ignoreInit = FALSE)
     }
 
     values <- function() {

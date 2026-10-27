@@ -422,9 +422,10 @@ cdmConstructor <- R6::R6Class(
     # Export data to json
     getCdmDataTimeline = function() {
       if (self$person$data() |> length() > 0) {
+        timeline_tables <- setdiff(self$tables, "fact_relationship")
         tables_timeline <- setNames(
           lapply(
-            setdiff(self$tables, "fact_relationship"),
+            timeline_tables,
             function(table_name) {
               id_col <- self[[table_name]]$tableNameId()
               concept_col <- self[[table_name]]$tableNameConceptId()
@@ -482,7 +483,7 @@ cdmConstructor <- R6::R6Class(
               }
             }
           ),
-          basename(self$tables)
+          basename(timeline_tables)
         )
         
         data_timeline <- rbindlist(
